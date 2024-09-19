@@ -1,4 +1,4 @@
-package org.example;
+package org.CSE464;
 
 public class Main {
     public static void main(String[] args) {
