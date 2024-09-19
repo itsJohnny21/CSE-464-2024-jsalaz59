@@ -7,7 +7,9 @@
     <groupId>org.example</groupId>
     <artifactId>CSE464-GraphManager</artifactId>
     <version>1.0-SNAPSHOT</version>
-    
+
+    <name>CSE-464-2024-jsalaz59</name>
+
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
