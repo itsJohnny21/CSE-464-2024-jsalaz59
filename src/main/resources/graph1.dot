@@ -4,6 +4,7 @@ digraph G {
     c [label="coconut"];
 
     a -> b;
-    b -> {c};
+    b -> b;
+    b -> c;
     c -> a;
 }
