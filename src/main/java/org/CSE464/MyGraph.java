@@ -7,11 +7,11 @@ import org.jgrapht.nio.dot.DOTImporter;
 import org.jgrapht.nio.ImportException;
 import org.jgrapht.nio.Attribute;
 
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -19,7 +19,7 @@ import java.util.Map;
 public class MyGraph extends DirectedPseudograph<String, DefaultEdge> {
     private final HashMap<String, HashMap<String, String>> attributes = new HashMap<>();
 
-    public MyGraph(Class edgeClass) {
+    public MyGraph(Class<DefaultEdge> edgeClass) {
         super(edgeClass);
     }
 
@@ -34,7 +34,7 @@ public class MyGraph extends DirectedPseudograph<String, DefaultEdge> {
             String attributeValue = attr.getValue();
 
             if (!graph.attributes.containsKey(vertex)) {
-                graph.attributes.put(vertex, new HashMap<String, String>());
+                graph.attributes.put(vertex, new HashMap<>());
             }
 
             graph.attributes.get(vertex).put(attributeName, attributeValue);
@@ -68,7 +68,7 @@ public class MyGraph extends DirectedPseudograph<String, DefaultEdge> {
         StringBuilder sb = new StringBuilder();
         String longestNodeName = this.vertexSet()
                 .stream()
-                .max((node1, node2) -> Integer.compare(node1.length(), node2.length()))
+                .max(Comparator.comparingInt(String::length))
                 .orElse(null);
 
         String longestNodeLabel = nodeLabel(this.vertexSet()
@@ -76,10 +76,9 @@ public class MyGraph extends DirectedPseudograph<String, DefaultEdge> {
                 .max((node1, node2) -> Integer.compare(nodeLabel(node1).length(), nodeLabel(node2).length()))
                 .orElse(null));
 
+        assert longestNodeName != null;
         int nameWidth = Math.max("Node".length(), longestNodeName.length()) + 3;
         int labelWidth = Math.max("Label".length(), longestNodeLabel.length()) + 3;
-
-
 
         sb.append(String.format("%-" + nameWidth + "s | %-" + labelWidth + "s\n", "Node", "Label"));
         sb.append("—".repeat(nameWidth + labelWidth)).append("\n");
