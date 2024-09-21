@@ -3,8 +3,11 @@ package org.CSE464;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
@@ -36,58 +39,79 @@ public class MyGraph extends MutableGraph {
     public static MyGraph parseGraph(String filepath) {
         try (InputStream dot = MyGraph.class.getResourceAsStream(filepath)) {
             assert dot != null;
-            MyGraph g = fromMutableGraph(new Parser().read(new File(filepath)));
-            Graphviz.fromGraph(g).width(700).render(Format.PNG).toFile(new File("trash/ex4-1.png"));
-            return g;
+            return fromMutableGraph(new Parser().read(new File(filepath)));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
+    public static void outputGraph(MyGraph g, String filepath) throws IOException {
+        Graphviz.fromGraph(g).render(Format.PNG).toFile(new File(filepath));
+    }
+
+    public String nodeLabels() {
+        String longestNodeName = Objects.requireNonNull(this.nodes()
+                .stream()
+                .max(Comparator.comparingInt(node -> node.name().toString().length()))
+                .orElse(null)).name().toString();
+
+        String longestNodeLabel = Objects.requireNonNull(this.nodes()
+                .stream()
+                .max(Comparator
+                        .comparingInt(node -> Objects.requireNonNull(node.attrs().get("label")).toString().length()))
+                .orElse(null)).name().toString();
+
+        int nameWidth = Math.max("Node".length(), longestNodeName.length()) + 3;
+        int labelWidth = Math.max("Label".length(), longestNodeLabel.length()) + 3;
+
+        String header = String.format("%-" + nameWidth + "s | %-" + labelWidth + "s\n", "Node", "Label") +
+                "—".repeat(nameWidth + labelWidth);
+
+        String rows = this.nodes().stream()
+                .map(node -> String.format("\n%-" + nameWidth + "s | %-" + labelWidth + "s",
+                        node.name(),
+                        node.attrs().get("label") != null ? Objects.requireNonNull(node.attrs().get("label")).toString()
+                                : "No Label"))
+                .collect(Collectors.joining());
+
+        return header + rows;
+    }
+
     public String edgeDirections() {
-        if (this.edges().size() == 0) {
-            return "";
-        }
+        return this.edges().stream()
+                .map(edge -> {
+                    assert edge.from() != null;
+                    return edge.from().name() + " -> " + edge.to().name();
+                })
+                .collect(Collectors.joining(", ", "[", "]"));
+    }
 
-        StringBuilder sb = new StringBuilder("[");
-        for (Link edge : this.edges()) {
-            assert edge.from() != null;
-            sb.append(edge.from().name()).append(" -> ").append(edge.to().name()).append(", ");
-        }
+    public String nodeNames() {
+        return "[" + this.nodes().stream()
+                .map(node -> node.name().toString())
+                .collect(Collectors.joining(", ")) + "]";
+    }
 
-        sb.replace(sb.length() - 2, sb.length(), "");
-        sb.append("]");
-        return sb.toString();
+    @Override
+    public String toString() {
+        return String.format(
+                "Number of nodes: " + this.nodes().size()
+                        + "\n" + this.nodeLabels()
+                        + "\nNumber of edges: " + this.edges().size()
+                        + "\nNodes: " + this.nodeNames()
+                        + "\nEdge Directions: " + this.edgeDirections());
     }
 
     public static void main(String[] args) {
         MyGraph g = MyGraph.parseGraph(
                 "/Users/jonisalazar/School/Fall 2024/CSE464/CSE-464-2024-jsalaz59/src/main/resources/graph1.dot");
-        System.out.print(
-                "Number of nodes: " + g.nodes().size()
-                        + "\nNodes: " + g.nodes()
-                        + "\nNumber of edges: " + g.edges().size()
-                        + "\nEdge Directions: " + g.edgeDirections());
-        //        System.out.println(g.name());
-        //        System.out.println(g.nodes().size());
-        //
-        //        g.edges().forEach(e -> {
-        //            assert e.from() != null;
-        //            System.out.printf("%s -> %s%n", e.from().name(), e.to().name());
-        //        });
-
+        System.out.println(g);
+        try {
+            MyGraph.outputGraph(g,
+                    "/Users/jonisalazar/School/Fall 2024/CSE464/CSE-464-2024-jsalaz59/src/main/resources/graph1.png");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Woohoo🥳😀");
     }
 }
-
-/*
-Number of nodes: 3
-Node    | Label
-—————————————————
-a       | apple
-b       | banana
-c       | coconut
-Number of edges: 4
-Nodes: [a, b, c]
-Edge Directions: [a -> b, b -> b, b -> c, c -> a]
-Woohoo🥳😀
- */
