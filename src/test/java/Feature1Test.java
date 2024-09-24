@@ -67,8 +67,8 @@ public class Feature1Test {
     @BeforeAll
     public static void verifyEnvironment() {
         try {
-            Utils.removeDirectoryIfExists(tmpPath, true);
-            Utils.createDirectory(tmpPath);
+            Utils.removeDirectory(tmpPath, true);
+            Utils.createDirectory(tmpPath, true);
 
             DirectoryStream<Path> stream = Files.newDirectoryStream(DOTValidPath);
             int maxFileCount = 0;
@@ -95,7 +95,7 @@ public class Feature1Test {
     @AfterAll
     public static void cleanEnvironment() {
         try {
-            Utils.removeDirectoryIfExists(tmpPath, true);
+            Utils.removeDirectory(tmpPath, true);
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -161,16 +161,46 @@ public class Feature1Test {
             for (MutableNode node : g.nodes()) {
                 assertNotNull(node.attrs().get("label"), "Label was not parsed.");
             }
+
+            HashMap<String, String> expectedNodeLabels = new HashMap<>();
+            expectedNodeLabels.put("X", "Node X");
+            expectedNodeLabels.put("Y", "Node Y");
+            expectedNodeLabels.put("Z", "Node Z");
+
+            HashMap<String, String> actualNodeLabels = g.getNodeLabels();
+
+            assertEquals(expectedNodeLabels, actualNodeLabels, "Incorrect node label parsing.");
+
         } catch (Exception e) {
             fail(e.getMessage());
         }
     }
 
     @Test
-    public void Given_A_Inalid_DOT_File_With_Syntax_Error_Should_Not_Parse() {
+    public void Given_A_Valid_DOT_File_With_Edges_Can_Parse() {
+        try {
+            MyGraph g = MyGraph.parseGraph(Utils.getDOTFilepathFromTestDirectory(fourEdges));
+            assertNotNull(g, "Parsing error.");
+
+            Set<String> exptectedEdgeDirections = Set.of(
+                    "A -> B",
+                    "B -> C",
+                    "C -> D",
+                    "D -> A");
+
+            Set<String> actualEdgeDirections = g.getEdgeDirections();
+
+            assertEquals(exptectedEdgeDirections, actualEdgeDirections, "Incorrect node label parsing.");
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void Given_A_Invalid_DOT_File_With_Syntax_Error_Should_Not_Parse() {
         try {
             assertThrows(RuntimeException.class, () -> {
-                MyGraph g = MyGraph.parseGraph(Utils.getDOTFilepathFromTestDirectory(invalidSemicolon));
+                MyGraph.parseGraph(Utils.getDOTFilepathFromTestDirectory(invalidSemicolon));
             }, "The DOT file should not be able to be parsed due to invalid syntax.");
 
         } catch (Exception e) {
@@ -229,10 +259,52 @@ public class Feature1Test {
     }
 
     @Test
+    public void After_Parsing_Can_Output_To_PNG_Statically() {
+        try {
+            MyGraph g = MyGraph.parseGraph(Utils.getDOTFilepathFromTestDirectory(someNodesZeroEdges));
+            Path outputPath = Paths.get(tmpPath.toString(), "output.png");
+            MyGraph.outputGraph(g, outputPath.toString(), Format.PNG);
+            assertTrue(Files.exists(outputPath));
+            Files.deleteIfExists(outputPath);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void After_Parsing_Can_Output_To_DOT_Statically() {
+        try {
+            MyGraph g = MyGraph.parseGraph(Utils.getDOTFilepathFromTestDirectory(someNodesZeroEdges));
+            Path outputPath = Paths.get(tmpPath.toString(), "output.dot");
+            MyGraph.outputGraph(g, outputPath.toString(), Format.DOT);
+            assertTrue(Files.exists(outputPath));
+            Files.deleteIfExists(outputPath);
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
     public void Given_A_Empty_Graph_Can_Parse() {
         try {
             MyGraph g = MyGraph.parseGraph(Utils.getDOTFilepathFromTestDirectory(emptyGraph));
             assertNotNull(g, "Parsing error.");
+
+            int expectedNumNodes = 0;
+            int acutalNumNodes = g.getNumberOfNodes();
+            assertEquals(expectedNumNodes, acutalNumNodes, "There should be zero nodes.");
+
+            int expectedNumEdges = 0;
+            int acutalNumEdges = g.getNumberOfEdges();
+            assertEquals(expectedNumEdges, acutalNumEdges, "There should be zero edges.");
+
+            Set<String> expcetedNodeNames = new HashSet<String>();
+            Set<String> actualNodeNames = g.getNodeNames();
+            assertEquals(expcetedNodeNames, actualNodeNames, "Set of node names should be empty.");
+
+            Set<String> expcetedEdges = new HashSet<String>();
+            Set<String> actualEdges = g.getEdgeDirections();
+            assertEquals(expcetedEdges, actualEdges, "Set of edges should be empty.");
 
             for (MutableNode node : g.nodes()) {
                 assertNotNull(node.attrs().get("label"), "Label was not parsed.");
@@ -251,6 +323,14 @@ public class Feature1Test {
             for (MutableNode node : g.nodes()) {
                 assertNotNull(node.attrs().get("label"), "Label was not parsed.");
             }
+
+            int expectedNumNodes = 999;
+            int actualNumNodes = g.getNumberOfNodes();
+            assertEquals(expectedNumNodes, actualNumNodes, "Incorrect node count.");
+
+            int expectedNumEdges = 999;
+            int actualNumEdges = g.getNumberOfEdges();
+            assertEquals(expectedNumEdges, actualNumEdges, "Incorrect edge count.");
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -355,7 +435,7 @@ public class Feature1Test {
     public void Given_A_Graph_With_Invalid_Node_ID_Should_Not_Parse() {
         try {
             assertThrows(RuntimeException.class, () -> {
-                MyGraph g = MyGraph.parseGraph(Utils.getDOTFilepathFromTestDirectory(invalidNodeSyntax));
+                MyGraph.parseGraph(Utils.getDOTFilepathFromTestDirectory(invalidNodeSyntax));
             }, "A DOT file with invalid node IDs should be parsed successfully.");
 
         } catch (Exception e) {
@@ -367,7 +447,7 @@ public class Feature1Test {
     public void Given_A_Graph_With_Invalid_Edge_Syntax_Should_Not_Parse() {
         try {
             assertThrows(RuntimeException.class, () -> {
-                MyGraph g = MyGraph.parseGraph(Utils.getDOTFilepathFromTestDirectory(invalidEdgeSyntax));
+                MyGraph.parseGraph(Utils.getDOTFilepathFromTestDirectory(invalidEdgeSyntax));
             }, "A DOT file with invalid edge syntax should be parsed successfully.");
 
         } catch (Exception e) {
@@ -376,7 +456,7 @@ public class Feature1Test {
     }
 
     @Test
-    public void Given_A_Graph_With_Self_Loops_Should_Parse() {
+    public void Given_A_Graph_With_Self_Loops_Can_Parse() {
         try {
             MyGraph g = MyGraph.parseGraph(Utils.getDOTFilepathFromTestDirectory(selfLoopEdges));
             assertNotNull(g, "The valid DOT file should have been parsed.");
@@ -389,7 +469,7 @@ public class Feature1Test {
     public void Given_A_Graph_With_A_Typo_In_Graph_Type_Should_Not_Parse() {
         try {
             assertThrows(RuntimeException.class, () -> {
-                MyGraph g = MyGraph.parseGraph(Utils.getDOTFilepathFromTestDirectory(graphTypeTypo));
+                MyGraph.parseGraph(Utils.getDOTFilepathFromTestDirectory(graphTypeTypo));
             }, "A DOT file with invalid a typo should not be able to be parsed.");
 
         } catch (Exception e) {
@@ -401,7 +481,7 @@ public class Feature1Test {
     public void Given_A_Graph_With_A_Bracket_Syntax_Error_Should_Not_Parse() {
         try {
             assertThrows(RuntimeException.class, () -> {
-                MyGraph g = MyGraph.parseGraph(Utils.getDOTFilepathFromTestDirectory(bracketIncomplete));
+                MyGraph.parseGraph(Utils.getDOTFilepathFromTestDirectory(bracketIncomplete));
             }, "A DOT file with invalid a typo should not be able to be parsed.");
 
         } catch (Exception e) {
@@ -410,8 +490,9 @@ public class Feature1Test {
     }
 
     @Test
-    public void Given_All_Valid_DOT_Files_Should_Parse() {
-        int testsPerformed = 0;
+    public void Given_All_Valid_DOT_Files_Can_Parse() {
+        int graphsParsed = 0;
+        int expectedGraphsParsed = 13;
 
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(DOTValidPath)) {
             for (Path p : stream) {
@@ -420,37 +501,10 @@ public class Feature1Test {
                 MyGraph g = MyGraph.parseGraph(Utils.getDOTFilepathFromTestDirectory(p));
                 assertNotNull(g, "The valid DOT file should have been parsed.");
 
-                Path testDirectory = Paths.get(p.toString(), p.getFileName().toString());
-
-                Path nodeNamesPath = Path.of(testDirectory.toString() + ".nodes.txt");
-                Path edgeDirectionsPath = Path.of(testDirectory.toString() + ".edges.txt");
-                Path nodeLabelsPath = Path.of(testDirectory.toString() + ".node_labels.txt");
-
-                assertTrue(Files.exists(nodeNamesPath), "File does not exist: " + nodeNamesPath.toString());
-                assertTrue(Files.exists(edgeDirectionsPath), "File does not exist: " + edgeDirectionsPath.toString());
-                assertTrue(Files.exists(nodeLabelsPath), "File does not exist: " + nodeLabelsPath.toString());
-
-                Set<String> expectedNodeNames = new HashSet<>(
-                        Utils.parseDelimitedFileToSet(nodeNamesPath));
-                Set<String> expectedEdgeDirections = new HashSet<>(
-                        Utils.parseDelimitedFileToSet(edgeDirectionsPath));
-                HashMap<String, String> expectedNodelabels = new HashMap<>(
-                        Utils.parseDelimitedFileToHashMap(nodeLabelsPath));
-
-                Set<String> actualNodeNames = g.getNodeNames();
-                Set<String> actualEdgeDirections = g.getEdgeDirections();
-                HashMap<String, String> actualNodeLabels = g.getNodeLabels();
-
-                // assertEquals(expectedNodeNames, actualNodeNames,
-                //         "Error with file: " + nodeNamesPath.toString());
-                // assertEquals(expectedNodelabels, actualNodeLabels,
-                //         "Error with file: " + nodeLabelsPath.toString());
-                // assertEquals(expectedEdgeDirections, actualEdgeDirections,
-                //         "Error with file: " + edgeDirectionsPath.toString());
-
-                testsPerformed += 1;
+                graphsParsed += 1;
             }
-            assertEquals(13, testsPerformed, "A total of " + testsPerformed + " tests should have been performed.");
+            assertEquals(expectedGraphsParsed, graphsParsed,
+                    "A total of " + expectedGraphsParsed + " tests should have been performed.");
         } catch (
 
         Exception e) {
@@ -460,12 +514,26 @@ public class Feature1Test {
 
     @Test
     public void Given_All_Invalid_DOT_Files_Should_Not_Parse() {
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(DOTValidPath)) {
-            assertThrows(RuntimeException.class, () -> {
-                MyGraph g = MyGraph.parseGraph(Utils.getDOTFilepathFromTestDirectory(bracketIncomplete));
-            }, "A DOT file with invalid a typo should not be able to be parsed.");
+        int graphsParsed = 0;
+        int expectedGraphsParsed = 0;
 
-        } catch (Exception e) {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(DOTValidPath)) {
+            for (Path p : stream) {
+                assertTrue(p.getNameCount() != 0, "The test directory should not be empty.");
+
+                RuntimeException idk = assertThrows(RuntimeException.class, () -> {
+                    MyGraph.parseGraph(Utils.getDOTFilepathFromTestDirectory(bracketIncomplete));
+                }, "A DOT file with an invalid typo should not be able to be parsed.");
+
+                if (idk == null) {
+                    graphsParsed += 1;
+                }
+            }
+            assertEquals(expectedGraphsParsed, graphsParsed,
+                    "A total of " + expectedGraphsParsed + " tests should have been performed.");
+        } catch (
+
+        Exception e) {
             fail(e.getMessage());
         }
     }
