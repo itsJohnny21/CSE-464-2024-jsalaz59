@@ -87,6 +87,7 @@ public class MyGraph extends MutableGraph {
 
         for (MutableNode node : this.nodes()) {
             nodeNames.add(node.name().toString());
+
         }
 
         return nodeNames;

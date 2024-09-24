@@ -215,6 +215,7 @@ public class Feature1Test {
             assertNotNull(g, "Parse error.");
 
             MyGraph g2 = g.copy();
+
             assertNotEquals(System.identityHashCode(g), System.identityHashCode(g2),
                     "The copied graph should not be the same instance as the original graph.");
 
@@ -306,7 +307,6 @@ public class Feature1Test {
             assertEquals(expcetedEdges, actualEdges, "Set of edges should be empty.");
 
             for (MutableNode node : g.nodes()) {
-
                 assertNotNull(node.attrs().get("label"), "Label was not parsed.");
             }
         } catch (Exception e) {
