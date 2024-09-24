@@ -1,23 +1,23 @@
 digraph {
-	HBU [];
-	qdD [];
-	NXe [];
-	DeP [];
+	QET [];
+	HmL [];
+	ilg [];
+	cOk [];
 
-	qdD -> HBU [];
-	HBU -> DeP [];
-	NXe -> qdD [];
-	qdD -> qdD [];
-	DeP -> qdD [];
-	HBU -> NXe [];
-	NXe -> NXe [];
-	NXe -> DeP [];
-	DeP -> NXe [];
-	HBU -> HBU [];
-	DeP -> HBU [];
-	HBU -> qdD [];
-	NXe -> HBU [];
-	DeP -> DeP [];
-	qdD -> NXe [];
-	qdD -> DeP [];
+	cOk -> QET [];
+	cOk -> ilg [];
+	QET -> cOk [];
+	HmL -> ilg [];
+	cOk -> cOk [];
+	ilg -> cOk [];
+	ilg -> HmL [];
+	cOk -> HmL [];
+	QET -> HmL [];
+	ilg -> QET [];
+	QET -> QET [];
+	QET -> ilg [];
+	HmL -> cOk [];
+	HmL -> HmL [];
+	HmL -> QET [];
+	ilg -> ilg [];
 }

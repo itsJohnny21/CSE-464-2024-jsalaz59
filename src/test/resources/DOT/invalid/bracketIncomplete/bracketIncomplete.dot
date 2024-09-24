@@ -1,6 +1,6 @@
 digraph {
 	X label="Node X"];
-	Y [label="Node Y";
+	Y label="Node Y"];
 	Z [label="Node Z";
 
 	X -> Y [label="Edge XY"];

@@ -213,7 +213,7 @@ public class Feature1Test {
         try {
             MyGraph g = MyGraph.parseGraph(Utils.getDOTFilepathFromTestDirectory(nodesX_Y_Z));
             assertNotNull(g, "Parse error.");
-            
+
             MyGraph g2 = g.copy();
             assertNotEquals(System.identityHashCode(g), System.identityHashCode(g2),
                     "The copied graph should not be the same instance as the original graph.");
@@ -488,5 +488,4 @@ public class Feature1Test {
             fail(e.getMessage());
         }
     }
-
-    
+}
