@@ -1,8 +1,6 @@
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.DirectoryStream;
@@ -13,9 +11,6 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 public class Utils {
@@ -58,11 +53,14 @@ public class Utils {
         }
     }
 
-    public static void createDirectory(Path path) throws IOException {
+    public static void createDirectory(Path path, boolean failIfExists) throws IOException {
+        if (failIfExists && Files.exists(path)) {
+            fail("The directory already exists: " + path.toString());
+        }
         Files.createDirectory(path);
     }
 
-    public static void removeDirectoryIfExists(Path filepath, boolean force) throws IOException {
+    public static void removeDirectory(Path filepath, boolean force) throws IOException {
         if (force) {
             if (Files.exists(filepath)) {
                 Files.walkFileTree(filepath, new SimpleFileVisitor<Path>() {
@@ -84,43 +82,6 @@ public class Utils {
         }
     }
 
-    public static Set<String> parseDelimitedFileToSet(Path filepath) {
-        Set<String> answer = new HashSet<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(filepath.toFile()))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                answer.add(line);
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return answer;
-    }
-
-    public static HashMap<String, String> parseDelimitedFileToHashMap(Path filepath) {
-        HashMap<String, String> answer = new HashMap<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(filepath.toFile()))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String delimiter = ", ";
-                String[] parts = line.split(delimiter);
-                String[] remainingParts = Arrays.copyOfRange(parts, 1, parts.length);
-
-                String first = parts[0];
-                String second = String.join(delimiter, remainingParts);
-                answer.put(first, second);
-
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return answer;
-    }
-
     public static String getDOTFilepathFromTestDirectory(Path testDirectory) throws Exception {
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(testDirectory)) {
             for (Path p : stream) {
@@ -134,16 +95,5 @@ public class Utils {
         }
 
         throw new Exception("DOT file not found.");
-    }
-
-    public static void main(String[] args) {
-        Path path = Path.of(
-                "/Users/jonisalazar/School/Fall 2024/CSE464/CSE-464-2024-jsalaz59/src/test/resources/DOT/valid/someNodesZeroEdges/someNodesZeroEdges.edges.txt");
-        // HashMap<String, String> nodeLabels = parseDelimitedFileToHashMap(path);
-        // Set<String> nodesNames = parseDelimitedFileToSet(path);
-        Set<String> edgeDirections = parseDelimitedFileToSet(path);
-        // System.out.println(nodeLabels);
-        // System.out.println(nodesNames);
-        System.out.println(edgeDirections);
     }
 }
