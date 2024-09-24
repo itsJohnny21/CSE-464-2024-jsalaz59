@@ -1,0 +1,16 @@
+qdD -> HBU
+HBU -> DeP
+NXe -> qdD
+qdD -> qdD
+DeP -> qdD
+HBU -> NXe
+NXe -> NXe
+NXe -> DeP
+DeP -> NXe
+HBU -> HBU
+DeP -> HBU
+HBU -> qdD
+NXe -> HBU
+DeP -> DeP
+qdD -> NXe
+qdD -> DeP

@@ -1,0 +1,9 @@
+digraph {
+	X label="Node X"];
+	Y [label="Node Y";
+	Z [label="Node Z";
+
+	X -> Y [label="Edge XY"];
+	Z -> X [label="Edge ZX"];
+	Z -> Z [label="Edge ZZ"];
+}

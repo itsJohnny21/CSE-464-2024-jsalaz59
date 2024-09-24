@@ -1,0 +1,8 @@
+digraph {
+	Node_A [];
+	Node_B [];
+	Node_C [];
+
+	Node_A -> Node_B [];
+	Node_B -> Node_C [];
+}

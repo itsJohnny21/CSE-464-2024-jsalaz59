@@ -1,0 +1,11 @@
+digraph {
+	W [label="(label) <- paranthesis()"];
+	X [];
+	Y [];
+	Z [];
+
+	X -> Y [label="  ,  , what" weight="3"];
+	Z -> X [label="did the baby say" weight="2"];
+	Z -> Z [label="to his computer science father" weight="1"];
+	W -> Z [label="(data)" weight="1"];
+}
