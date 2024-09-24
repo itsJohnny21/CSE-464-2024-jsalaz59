@@ -17,18 +17,18 @@
     </properties>
 
     <dependencies>
-        <!-- JGraphT IO -->
+        <!-- NOP Logger Implementation -->
         <dependency>
-            <groupId>org.jgrapht</groupId>
-            <artifactId>jgrapht-io</artifactId>
-            <version>1.5.2</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-nop</artifactId>
+            <version>2.0.16</version>
         </dependency>
 
-        <!-- JGraphT Core -->
+        <!-- Graphviz-Java Parser -->
         <dependency>
-            <groupId>org.jgrapht</groupId>
-            <artifactId>jgrapht-core</artifactId>
-            <version>1.5.2</version>
+            <groupId>guru.nidi</groupId>
+            <artifactId>graphviz-java</artifactId>
+            <version>0.18.1</version>
         </dependency>
 
         <!-- JUnit 5 API -->
