@@ -75,7 +75,7 @@ public class MyGraph extends MutableGraph {
         Set<String> edgeDirections = new HashSet<>();
         String linkString = this.isDirected() ? " -> " : " -- ";
 
-        for (Link edge : this.edges()) { //! test here
+        for (Link edge : this.edges()) {
             edgeDirections.add(edge.from().name() + linkString + edge.to().name());
         }
 
