@@ -1,3 +1,5 @@
+package test;
+
 import org.CSE464.Main;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
@@ -5,7 +7,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 
-public class Example {
+public class ExampleTest {
 
     @Test
     public void hasMain() {
