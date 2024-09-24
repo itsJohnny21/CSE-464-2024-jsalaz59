@@ -1,0 +1,9 @@
+digraph G {
+  a [ label="apple" ];
+  b [ label="banana" ];
+  c [ label="coconut" ];
+  a -> b;
+  b -> b;
+  b -> c;
+  c -> a;
+}
