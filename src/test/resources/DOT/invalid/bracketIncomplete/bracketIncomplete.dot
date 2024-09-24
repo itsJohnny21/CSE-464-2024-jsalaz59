@@ -1,5 +1,5 @@
 digraph {
-	X label="Node X"];
+	X [label="Node X";
 	Y [label="Node Y";
 	Z [label="Node Z";
 

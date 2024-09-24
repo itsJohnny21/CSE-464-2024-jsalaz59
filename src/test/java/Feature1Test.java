@@ -537,7 +537,4 @@ public class Feature1Test {
             fail(e.getMessage());
         }
     }
-
-    public static void main(String[] args) {
-    }
 }
