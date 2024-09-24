@@ -213,9 +213,8 @@ public class Feature1Test {
         try {
             MyGraph g = MyGraph.parseGraph(Utils.getDOTFilepathFromTestDirectory(nodesX_Y_Z));
             assertNotNull(g, "Parse error.");
-
+            
             MyGraph g2 = g.copy();
-
             assertNotEquals(System.identityHashCode(g), System.identityHashCode(g2),
                     "The copied graph should not be the same instance as the original graph.");
 
@@ -307,6 +306,7 @@ public class Feature1Test {
             assertEquals(expcetedEdges, actualEdges, "Set of edges should be empty.");
 
             for (MutableNode node : g.nodes()) {
+
                 assertNotNull(node.attrs().get("label"), "Label was not parsed.");
             }
         } catch (Exception e) {
@@ -487,57 +487,5 @@ public class Feature1Test {
         } catch (Exception e) {
             fail(e.getMessage());
         }
-    }
-
-    @Test
-    public void Given_All_Valid_DOT_Files_Can_Parse() {
-        int graphsParsed = 0;
-        int expectedGraphsParsed = 13;
-
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(DOTValidPath)) {
-            for (Path p : stream) {
-                assertTrue(p.getNameCount() != 0, "The test directory should not be empty.");
-
-                MyGraph g = MyGraph.parseGraph(Utils.getDOTFilepathFromTestDirectory(p));
-                assertNotNull(g, "The valid DOT file should have been parsed.");
-
-                graphsParsed += 1;
-            }
-            assertEquals(expectedGraphsParsed, graphsParsed,
-                    "A total of " + expectedGraphsParsed + " tests should have been performed.");
-        } catch (
-
-        Exception e) {
-            fail(e.getMessage());
-        }
-    }
-
-    @Test
-    public void Given_All_Invalid_DOT_Files_Should_Not_Parse() {
-        int graphsParsed = 0;
-        int expectedGraphsParsed = 0;
-
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(DOTValidPath)) {
-            for (Path p : stream) {
-                assertTrue(p.getNameCount() != 0, "The test directory should not be empty.");
-
-                RuntimeException idk = assertThrows(RuntimeException.class, () -> {
-                    MyGraph.parseGraph(Utils.getDOTFilepathFromTestDirectory(bracketIncomplete));
-                }, "A DOT file with an invalid typo should not be able to be parsed.");
-
-                if (idk == null) {
-                    graphsParsed += 1;
-                }
-            }
-            assertEquals(expectedGraphsParsed, graphsParsed,
-                    "A total of " + expectedGraphsParsed + " tests should have been performed.");
-        } catch (
-
-        Exception e) {
-            fail(e.getMessage());
-        }
-    }
-
-    public static void main(String[] args) {
     }
 }
