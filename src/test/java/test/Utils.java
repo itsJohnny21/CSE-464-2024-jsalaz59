@@ -1,4 +1,4 @@
-package org.utils;
+package test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -15,7 +15,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-public class TestUtils {
+public class Utils {
     public static void hasMethod(Class<?> clazz, String methodName, Class<?>... parameters) {
         try {
             Method method = clazz.getMethod(methodName, parameters);
