@@ -1,37 +1,104 @@
 package org.CSE464;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
-public class Graph {
-    HashMap<String, Node> nodes;
+import guru.nidi.graphviz.model.LinkTarget;
+import guru.nidi.graphviz.model.MutableGraph;
+import guru.nidi.graphviz.model.MutableNode;
+import guru.nidi.graphviz.parse.Parser;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-    //! Not tested
-    public Graph() {
+@Data
+@EqualsAndHashCode(callSuper = false)
+public class Graph extends DOTElement {
+    private static final String DIRECTED_SIGN = "->";
+    private static final String UNDIRECTED_SIGN = "--";
+    private final HashMap<String, Node> nodes;
+    private final HashMap<String, Edge> edges;
+
+    public Graph(String ID) {
+        super(ID);
         this.nodes = new HashMap<>();
+        this.edges = new HashMap<>();
+    }
+
+    public static Graph parseGraph(String filepath) {
+        try {
+            MutableGraph mutableGraph = new Parser().read(new File(filepath));
+            String graphID = mutableGraph.name().toString();
+
+            Graph graph = new Graph(graphID);
+            mutableGraph.graphAttrs().forEach(a -> {
+                graph.setAttribute(a.getKey(), a.getValue().toString());
+            });
+
+            for (MutableNode node : mutableGraph.nodes()) {
+                String nodeID = node.name().toString();
+                Node nodeCopy;
+
+                if (!graph.nodeExists(nodeID)) {
+                    nodeCopy = graph.addNode(nodeID);
+                } else {
+                    nodeCopy = graph.getNode(nodeID);
+                }
+
+                node.attrs().forEach(a -> {
+                    nodeCopy.setAttribute(a.getKey(), a.getValue().toString());
+                });
+                node.links().forEach(l -> {
+                    LinkTarget toNode = l.to();
+                    String toNodeID = toNode.name().toString();
+                    Node toNodeCopy;
+
+                    if (!graph.nodeExists(toNodeID)) {
+                        toNodeCopy = graph.addNode(toNodeID);
+                    } else {
+                        toNodeCopy = graph.getNode(toNodeID);
+                    }
+
+                    Edge edge = graph.addEdge(nodeCopy.ID, toNodeCopy.ID);
+
+                    l.attrs().forEach(a -> {
+                        edge.setAttribute(a.getKey(), a.getValue().toString());
+                    });
+                });
+            }
+
+            return graph;
+        } catch (IOException e) {
+            throw new ParseGraphException(String.format("Error: Unable to parse graph: %s", e.getMessage()));
+        }
     }
 
     //! Not tested
     public Node addNode(String nodeID) {
-        if (nodeExists(nodeID)) {
-            System.err.println(String.format("Warning: Node with id '%s' already exists.", nodeID));
-            return getNode(nodeID);
+        if (!nodeID.matches(ID_REGEX)) {
+            throw new InvalidIDException(
+                    String.format("Error: Attempt to add node with id '%s' failed. The id is not allowed.", nodeID,
+                            nodeID));
         }
 
-        Node node = new Node(nodeID);
+        if (nodeExists(nodeID)) {
+            throw new NodeAlreadyExistsException(
+                    String.format("Error: Attempt to add node '%s' failed. The node already exists.", nodeID));
+        }
+
+        Node node = new Node(this, nodeID);
         nodes.put(nodeID, node);
 
         return node;
-    }
-
-    //! Not tested
-    public void addNodeLabel(String nodeID, String label) {
-        Node node = getNode(nodeID);
-        node.attributes.put("label", label);
     }
 
     //! Not tested
@@ -47,6 +114,39 @@ public class Graph {
     }
 
     //! Not tested
+    public void removeNode(String nodeID) {
+        if (!nodeExists(nodeID)) {
+            throw new NodeDoesNotExistException(String.format(
+                    "Error: Attempt to remove node '%s' failed. Node does not exist.",
+                    nodeID));
+        }
+
+        Node node = getNode(nodeID);
+
+        for (Iterator<Entry<String, Node>> it = node.to.entrySet().iterator(); it.hasNext();) {
+            Entry<String, Node> entry = it.next();
+            Node toNode = entry.getValue();
+            toNode.from.remove(node.ID);
+
+            String edgeID = Graph.createEdgeID(node.ID, toNode.ID);
+            edges.remove(edgeID);
+            it.remove();
+        }
+        for (Iterator<Entry<String, Node>> it = node.from.entrySet().iterator(); it.hasNext();) {
+            Entry<String, Node> entry = it.next();
+            Node fromNode = entry.getValue();
+            fromNode.to.remove(node.ID);
+
+            String edgeID = Graph.createEdgeID(fromNode.ID, node.ID);
+            edges.remove(edgeID);
+            it.remove();
+        }
+
+        nodes.remove(node.ID);
+        node.graph = null;
+    }
+
+    //! Not tested
     public boolean nodeExists(String nodeID) {
         return nodes.containsKey(nodeID);
     }
@@ -54,7 +154,7 @@ public class Graph {
     //! Not tested
     public Node getNode(String nodeID) {
         if (!nodeExists(nodeID)) {
-            throw new RuntimeException(String.format("Node '%s' does not exist.", nodeID));
+            throw new NodeDoesNotExistException(String.format("Error: Node with id '%s' does not exist.", nodeID));
         }
 
         Node node = nodes.get(nodeID);
@@ -63,50 +163,68 @@ public class Graph {
 
     //! Not tested
     public Edge addEdge(String fromID, String toID) {
+        if (edgeExists(fromID, toID)) {
+            throw new EdgeAlreadyExistsException(
+                    String.format("Error: Edge with id '%s' already exists.", Graph.createEdgeID(fromID, toID)));
+        }
+
+        Node fromNode;
         if (!nodeExists(fromID)) {
-            addNode(fromID);
+            fromNode = addNode(fromID);
+        } else {
+            fromNode = getNode(fromID);
         }
 
+        Node toNode;
         if (!nodeExists(toID)) {
-            addNode(toID);
+            toNode = addNode(toID);
+        } else {
+            toNode = getNode(toID);
         }
 
-        Node srcNode = getNode(fromID);
-        Node dstNode = getNode(toID);
-
-        Edge edge = srcNode.addTo(dstNode);
+        Edge edge = new Edge(fromNode, toNode);
+        fromNode.to.put(toNode.ID, toNode);
+        toNode.from.put(fromNode.ID, fromNode);
+        edges.put(edge.ID, edge);
         return edge;
     }
 
     //! Not tested
     public boolean edgeExists(String fromID, String toID) {
-        if (!nodeExists(fromID)) {
-            return false;
+        String edgeID = Graph.createEdgeID(fromID, toID);
+        return edges.containsKey(edgeID);
+    }
+
+    //! Not tested
+    public void removeEdge(String fromID, String toID) {
+        if (!edgeExists(fromID, toID)) {
+            throw new EdgeDoesNotExistException(
+                    String.format("Error: Edge '%s' does not exist.", Graph.createEdgeID(fromID, toID)));
         }
 
-        if (!nodeExists(toID)) {
-            return false;
-        }
+        Edge edge = getEdge(fromID, toID);
+        Node fromNode = edge.fromNode;
+        Node toNode = edge.toNode;
 
-        Node fromNode = getNode(fromID);
-        return fromNode.to.containsKey(toID);
+        fromNode.to.remove(toNode.ID);
+        toNode.from.remove(fromNode.ID);
+        edges.remove(edge.ID);
+    }
+
+    //! Not tested
+    private static String createEdgeID(String fromID, String toID) {
+        return String.format("%s %s %s", fromID, DIRECTED_SIGN, toID);
     }
 
     //! Not tested
     public Edge getEdge(String fromID, String toID) {
         if (!edgeExists(fromID, toID)) {
-            throw new RuntimeException(String.format("Edge '%s -> %s' does not exist.", fromID, toID));
+            throw new EdgeDoesNotExistException(
+                    String.format("Edge '%s' does not exist.", Graph.createEdgeID(fromID, toID)));
         }
 
-        Node fromNode = getNode(fromID);
-        System.out.println(fromNode);
-        return fromNode.to.get(toID);
-    }
-
-    //! Not tested
-    public void addEdgeLabel(String fromID, String toID, String label) {
-        Edge edge = getEdge(fromID, toID);
-        edge.attributes.put("label", label);
+        String edgeID = Graph.createEdgeID(fromID, toID);
+        return edges.get(edgeID);
     }
 
     //! Not tested
@@ -121,27 +239,12 @@ public class Graph {
 
     //! Not tested
     public int getNumberOfEdges() {
-        int numberOfEdges = 0;
-
-        for (Node node : nodes.values()) {
-            numberOfEdges += node.to.size();
-        }
-
-        return numberOfEdges;
+        return edges.size();
     }
 
     //! Not tested
     public Set<String> getEdgeDirections() {
-        HashSet<String> edgeDirections = new HashSet<>();
-
-        for (Node node : nodes.values()) {
-
-            for (Edge edge : node.to.values()) {
-                edgeDirections.add(String.format("%s -> %s", node.ID, edge.toNode.ID));
-            }
-        }
-
-        return edgeDirections;
+        return edges.keySet();
     }
 
     //! Not tested
@@ -149,17 +252,41 @@ public class Graph {
         HashSet<String> nodeLabels = new HashSet<>();
 
         for (Node node : nodes.values()) {
-            nodeLabels.add(String.format("%s: %s", node.ID, node.label));
+            nodeLabels.add(String.format("%s=%s", node.ID, node.attributes.get("label")));
         }
 
         return nodeLabels;
     }
 
     //! Not tested
-    public void outputGraph(String filepath, Format format) throws IOException {
+    public void outputGraph(String filepath, Format format) throws IOException, InterruptedException {
         switch (format) {
             case DOT -> {
                 String dotContent = toDot();
+
+                ProcessBuilder processBuilder = new ProcessBuilder(
+                        new String[] { "dot", Format.DOT.value, });
+                processBuilder.redirectErrorStream(true);
+
+                Process process = processBuilder.start();
+
+                try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()))) {
+                    writer.write(dotContent);
+                }
+
+                StringBuilder output = new StringBuilder();
+                String line;
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                    while ((line = reader.readLine()) != null) {
+                        output.append(line).append("\n");
+                    }
+                }
+
+                int exitCode = process.waitFor();
+                if (exitCode != 0) {
+                    throw new RuntimeException(
+                            String.format("Error: Unable to parse DOT content. DOT %s", output.toString())); //! This line should never run if my program works correctly
+                }
 
                 if (!filepath.endsWith(".dot")) {
                     filepath += ".dot";
@@ -177,6 +304,13 @@ public class Graph {
         StringBuilder nodesSection = new StringBuilder();
         StringBuilder edgesSection = new StringBuilder();
 
+        StringBuilder graphAttrs = new StringBuilder();
+        for (Entry<String, String> entry : attributes.entrySet()) {
+            if (!entry.getValue().isEmpty()) {
+                graphAttrs.append(String.format("\t%s=\"%s\";\n", entry.getKey(), entry.getValue()));
+            }
+        }
+
         for (Node node : nodes.values()) {
             StringBuilder nodeAttrs = new StringBuilder();
             for (Entry<String, String> entry : node.attributes.entrySet()) {
@@ -187,7 +321,8 @@ public class Graph {
             nodesSection.append(String.format("\t%s [%s];\n", node.ID, nodeAttrs.toString().trim()));
 
             if (!node.to.isEmpty()) {
-                for (Edge edge : node.to.values()) {
+                for (Node toNode : node.to.values()) {
+                    Edge edge = getEdge(node.ID, toNode.ID);
                     StringBuilder edgeAttrs = new StringBuilder();
                     for (Entry<String, String> entry : edge.attributes.entrySet()) {
                         if (!entry.getValue().isEmpty()) {
@@ -195,101 +330,150 @@ public class Graph {
                         }
                     }
                     edgesSection.append(
-                            String.format("\t%s -> %s [%s];\n", node.ID, edge.toNode.ID, edgeAttrs.toString().trim()));
+                            String.format("\t%s [%s];\n", edge.ID, edgeAttrs.toString().trim()));
                 }
             }
         }
 
-        String dotContent = String.format("digraph {\n%s\n%s}", nodesSection.toString(),
+        String dotContent = String.format("digraph%s{\n%s\n%s\n%s}", ID != null ? String.format(" %s ", ID) : " ",
+                graphAttrs.toString(),
+                nodesSection.toString(),
                 edgesSection.toString());
 
         return dotContent;
+    }
+
+    //! Not tested
+    public void setAttribute(Attribute attribute, String value) {
+        setAttribute(attribute.value, value);
     }
 
     // ! Not tested
     @Override
     public String toString() {
         return String.format(
-                "Number of nodes: " + getNumberOfNodes()
+                "Graph: " + ID
+                        + "\nNumber of nodes: " + getNumberOfNodes()
                         + "\nNodes: " + getNodeNames()
                         + "\nNumber of edges: " + getNumberOfEdges()
                         + "\nEdges: " + getEdgeDirections())
                 + "\nNode labels: " + getNodeLabels();
     }
 
-    protected class Node {
-        protected String ID;
-        protected String label;
-        protected HashMap<String, String> attributes;
-        protected HashMap<String, Edge> from;
-        public HashMap<String, Edge> to;
+    /**
+     * Enum representing the attributes of a graph in Graphviz.
+     * 
+     * <p>For more information, see the Graphviz documentation:</p>
+     * <a href="https://graphviz.org/docs/edges/">Graphviz Graph Attributes</a>
+     */
+    public enum Attribute {
+        _BACKGROUND("_background"),
+        BB("bb"),
+        BEAUTIFY("beautify"),
+        BGCOLOR("bgcolor"),
+        CENTER("center"),
+        CHARSET("charset"),
+        CLASS("class"),
+        CLUSTERRANK("clusterrank"),
+        COLORSCHEME("colorscheme"),
+        COMMENT("comment"),
+        COMPOUND("compound"),
+        CONCENTRATE("concentrate"),
+        DAMPING("Damping"),
+        DEFAULTDIST("defaultdist"),
+        DIM("dim"),
+        DIMEN("dimen"),
+        DIREDGECONSTRAINTS("diredgeconstraints"),
+        DPI("dpi"),
+        EPSILON("epsilon"),
+        ESEP("esep"),
+        FONTCOLOR("fontcolor"),
+        FONTNAME("fontname"),
+        FONTNAMES("fontnames"),
+        FONTPATH("fontpath"),
+        FONTSIZE("fontsize"),
+        FORCELABELS("forcelabels"),
+        GRADIENTANGLE("gradientangle"),
+        HREF("href"),
+        ID("id"),
+        IMAGEPATH("imagepath"),
+        INPUTSCALE("inputscale"),
+        K("K"),
+        LABEL("label"),
+        LABEL_SCHEME("label_scheme"),
+        LABELJUST("labeljust"),
+        LABELLOC("labelloc"),
+        LANDSCAPE("landscape"),
+        LAYERLISTSEP("layerlistsep"),
+        LAYERS("layers"),
+        LAYERSELECT("layerselect"),
+        LAYERSEP("layersep"),
+        LAYOUT("layout"),
+        LEVELS("levels"),
+        LEVELSGAP("levelsgap"),
+        LHEIGHT("lheight"),
+        LINELENGTH("linelength"),
+        LP("lp"),
+        LWIDTH("lwidth"),
+        MARGIN("margin"),
+        MAXITER("maxiter"),
+        MCLIMIT("mclimit"),
+        MINDIST("mindist"),
+        MODE("mode"),
+        MODEL("model"),
+        NEWRANK("newrank"),
+        NODESEP("nodesep"),
+        NOJUSTIFY("nojustify"),
+        NORMALIZE("normalize"),
+        NOTRANSLATE("notranslate"),
+        NSLIMIT("nslimit"),
+        NSLIMIT1("nslimit1"),
+        ONEBLOCK("oneblock"),
+        ORDERING("ordering"),
+        ORIENTATION("orientation"),
+        OUTPUTORDER("outputorder"),
+        OVERLAP("overlap"),
+        OVERLAP_SCALING("overlap_scaling"),
+        OVERLAP_SHRINK("overlap_shrink"),
+        PACK("pack"),
+        PACKMODE("packmode"),
+        PAD("pad"),
+        PAGE("page"),
+        PAGEDIR("pagedir"),
+        QUADTREE("quadtree"),
+        QUANTUM("quantum"),
+        RANKDIR("rankdir"),
+        RANKSEP("ranksep"),
+        RATIO("ratio"),
+        REMINCROSS("remincross"),
+        REPULSIVEFORCE("repulsiveforce"),
+        RESOLUTION("resolution"),
+        ROOT("root"),
+        ROTATE("rotate"),
+        ROTATION("rotation"),
+        SCALE("scale"),
+        SEARCHSIZE("searchsize"),
+        SEP("sep"),
+        SHOWBOXES("showboxes"),
+        SIZE("size"),
+        SMOOTHING("smoothing"),
+        SORTV("sortv"),
+        SPLINES("splines"),
+        START("start"),
+        STYLE("style"),
+        STYLESHEET("stylesheet"),
+        TARGET("target"),
+        TBBALANCE("TBbalance"),
+        TOOLTIP("tooltip"),
+        TRUECOLOR("truecolor"),
+        URL("URL"),
+        VIEWPORT("viewport"),
+        VORO_MARGIN("voro_margin"),
+        XDOTVERSION("xdotversion");
 
-        //! Not tested
-        protected Node(String ID) {
-            this.ID = ID;
-            this.from = new HashMap<>();
-            this.to = new HashMap<>();
-            this.attributes = new HashMap<>();
-        }
+        protected final String value;
 
-        //! Not tested
-        protected Edge addTo(Node toNode) {
-            Edge edge = new Edge(this, toNode);
-            to.put(toNode.ID, edge);
-
-            return edge;
-        }
-
-        //! Not tested
-        protected Edge addFrom(Node fromNode) {
-            Edge edge = new Edge(fromNode, this);
-            from.put(fromNode.ID, edge);
-
-            return edge;
-        }
-
-        //! Not tested
-        protected void removeTo(Node toNode) {
-            to.remove(toNode.ID);
-        }
-
-        //! Not tested
-        protected void removeFrom(Node fromNode) {
-            from.remove(fromNode.ID);
-        }
-
-        //! Not tested
-        @Override
-        public String toString() {
-            return this.ID;
-        }
-    }
-
-    public class Edge {
-        protected Node fromNode;
-        protected Node toNode;
-        protected String label;
-        protected HashMap<String, String> attributes;
-
-        protected Edge(Node fromNode, Node toNode) {
-            this.fromNode = fromNode;
-            this.toNode = toNode;
-            this.attributes = new HashMap<>();
-        }
-
-        //! Not tested
-        protected void remove() {
-            fromNode.removeTo(toNode);
-        }
-    }
-
-    public enum Format {
-        BMP("-Tbmp"), DOT("-Tdot"), JEPG("-Tjpg"), JSON("-Tjson"), PDF("-Tpdf"), PICT("-Tpict"), PLAINTEXT("-Tplain"),
-        PNG("-Tpng"), SVG("Tsvg");
-
-        private final String value;
-
-        Format(String value) {
+        Attribute(String value) {
             this.value = value;
         }
 
@@ -298,39 +482,248 @@ public class Graph {
         }
     }
 
-    public static void main(String[] args) {
-        try {
+    @Data
+    @EqualsAndHashCode(callSuper = false)
+    public final class Node extends DOTElement {
+        protected Graph graph;
+        protected final HashMap<String, Node> from;
+        protected final HashMap<String, Node> to;
 
-            Graph gm = new Graph();
-            Node n1 = gm.addNode("n1");
-            gm.addNodeLabel(n1.ID, "hello");
+        //! Not tested
+        private Node(Graph graph, String ID) {
+            super(ID);
+            this.graph = graph;
+            this.from = new HashMap<>();
+            this.to = new HashMap<>();
+        }
 
-            Node[] ns = gm.addNodes("n3", "n4");
+        //! Not tested
+        public Edge connectTo(Node toNode) {
+            return graph.addEdge(this.ID, toNode.ID);
+        }
 
-            for (Node n : ns) {
-                gm.addNodeLabel(n.ID, "world!");
-                System.out.println(n);
+        //! Not tested
+        public Edge to(Node toNode) {
+            return graph.getEdge(this.ID, toNode.ID);
+        }
+
+        //! Not tested
+        public Edge connectFrom(Node fromNode) {
+            return graph.addEdge(fromNode.ID, this.ID);
+        }
+
+        //! Not tested
+        public Edge from(Node fromNode) {
+            return graph.getEdge(fromNode.ID, this.ID);
+        }
+
+        //! Not tested
+        public void removeTo(Node toNode) {
+            graph.removeEdge(this.ID, toNode.ID);
+        }
+
+        //! Not tested
+        public void removeFrom(Node fromNode) {
+            graph.removeEdge(fromNode.ID, this.ID);
+        }
+
+        //! Not tested
+        public void removeFromGraph() {
+            graph.removeNode(ID);
+        }
+
+        //! Not tested
+        public void setAttribute(Attribute attribute, String value) {
+            setAttribute(attribute.value, value);
+        }
+
+        //! Not tested
+        @Override
+        public String toString() {
+            return this.ID;
+        }
+
+        /**
+         * Enum representing the attributes of a node in Graphviz.
+         * 
+         * <p>For more information, see the Graphviz documentation:</p>
+         * <a href="https://graphviz.org/docs/nodes/">Graphviz Node Attributes</a>
+         */
+        public enum Attribute {
+            AREA("area"),
+            CLASS("class"),
+            COLOR("color"),
+            COLORSCHEME("colorscheme"),
+            COMMENT("comment"),
+            DISTORTION("distortion"),
+            FILLCOLOR("fillcolor"),
+            FIXEDSIZE("fixedsize"),
+            FONTCOLOR("fontcolor"),
+            FONTNAME("fontname"),
+            FONTSIZE("fontsize"),
+            GRADIENTANGLE("gradientangle"),
+            GROUP("group"),
+            HEIGHT("height"),
+            HREF("href"),
+            ID("id"),
+            IMAGE("image"),
+            IMAGEPOS("imagepos"),
+            IMAGESCALE("imagescale"),
+            LABEL("label"),
+            LABELLOC("labelloc"),
+            LAYER("layer"),
+            MARGIN("margin"),
+            NOJUSTIFY("nojustify"),
+            ORDERING("ordering"),
+            ORIENTATION("orientation"),
+            PENWIDTH("penwidth"),
+            PERIPHERIES("peripheries"),
+            PIN("pin"),
+            POS("pos"),
+            RECTS("rects"),
+            REGULAR("regular"),
+            ROOT("root"),
+            SAMPLEPOINTS("samplepoints"),
+            SHAPE("shape"),
+            SHAPEFILE("shapefile"),
+            SHOWBOXES("showboxes"),
+            SIDES("sides"),
+            SKEW("skew"),
+            SORTV("sortv"),
+            STYLE("style"),
+            TARGET("target"),
+            TOOLTIP("tooltip"),
+            URL("URL"),
+            VERTICES("vertices"),
+            WIDTH("width"),
+            XLABEL("xlabel"),
+            XLP("xlp"),
+            Z("z");
+
+            protected final String value;
+
+            Attribute(String value) {
+                this.value = value;
             }
 
-            gm.addEdge("n1", "n2");
-            gm.addEdge("n1", "n3");
-
-            gm.addEdge("n2", "n1");
-
-            gm.addEdge("n3", "n2");
-            gm.addEdge("n3", "n4");
-
-            gm.addEdge("n4", "n2");
-            Edge e4_1 = gm.addEdge("n4", "n4");
-
-            gm.addEdgeLabel(e4_1.fromNode.ID, e4_1.toNode.ID, "yessirr");
-
-            System.out.println(gm);
-
-            gm.outputGraph("./idkbruvvv", Format.DOT);
-
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
+            public String getValue() {
+                return value;
+            }
         }
     }
+
+    @Data
+    @EqualsAndHashCode(callSuper = false)
+    public final class Edge extends DOTElement {
+        protected final Node fromNode;
+        protected final Node toNode;
+
+        private Edge(Node fromNode, Node toNode) {
+            super(Graph.createEdgeID(fromNode.ID, toNode.ID));
+            this.fromNode = fromNode;
+            this.toNode = toNode;
+        }
+
+        //! Not tested
+        public void removeFromGraph() {
+            fromNode.graph.removeEdge(fromNode.ID, toNode.ID);
+        }
+
+        //! Not tested
+        public void setAttribute(Attribute attribute, String value) {
+            setAttribute(attribute.value, value);
+        }
+
+        //! Not tested
+        @Override
+        public String toString() {
+            return this.ID;
+        }
+
+        /**
+         * Enum representing the attributes of an edge in Graphviz.
+         * 
+         * <p>For more information, see the Graphviz documentation:</p>
+         * <a href="https://graphviz.org/docs/edges/">Graphviz Edge Attributes</a>
+         */
+        public enum Attribute {
+            ARROWHEAD("arrowhead"),
+            ARROWSIZE("arrowsize"),
+            ARROWTAIL("arrowtail"),
+            CLASS("class"),
+            COLOR("color"),
+            COLORSCHEME("colorscheme"),
+            COMMENT("comment"),
+            CONSTRAINT("constraint"),
+            DECORATE("decorate"),
+            DIR("dir"),
+            EDGEHREF("edgehref"),
+            EDGETARGET("edgetarget"),
+            EDGETOOLTIP("edgetooltip"),
+            EDGEURL("edgeURL"),
+            FILLCOLOR("fillcolor"),
+            FONTCOLOR("fontcolor"),
+            FONTNAME("fontname"),
+            FONTSIZE("fontsize"),
+            HEAD_LP("head_lp"),
+            HEADCLIP("headclip"),
+            HEADHREF("headhref"),
+            HEADLABEL("headlabel"),
+            HEADPORT("headport"),
+            HEADTARGET("headtarget"),
+            HEADTOOLTIP("headtooltip"),
+            HEADURL("headURL"),
+            HREF("href"),
+            ID("id"),
+            LABEL("label"),
+            LABELANGLE("labelangle"),
+            LABELDISTANCE("labeldistance"),
+            LABELFLOAT("labelfloat"),
+            LABELFONTCOLOR("labelfontcolor"),
+            LABELFONTNAME("labelfontname"),
+            LABELFONTSIZE("labelfontsize"),
+            LABELHREF("labelhref"),
+            LABELTARGET("labeltarget"),
+            LABELTOOLTIP("labeltooltip"),
+            LABELURL("labelURL"),
+            LAYER("layer"),
+            LEN("len"),
+            LHEAD("lhead"),
+            LP("lp"),
+            LTAIL("ltail"),
+            MINLEN("minlen"),
+            NOJUSTIFY("nojustify"),
+            PENWIDTH("penwidth"),
+            POS("pos"),
+            SAMEHEAD("samehead"),
+            SAMETAIL("sametail"),
+            SHOWBOXES("showboxes"),
+            STYLE("style"),
+            TAIL_LP("tail_lp"),
+            TAILCLIP("tailclip"),
+            TAILHREF("tailhref"),
+            TAILLABEL("taillabel"),
+            TAILPORT("tailport"),
+            TAILTARGET("tailtarget"),
+            TAILTOOLTIP("tailtooltip"),
+            TAILURL("tailURL"),
+            TARGET("target"),
+            TOOLTIP("tooltip"),
+            URL("URL"),
+            WEIGHT("weight"),
+            XLABEL("xlabel"),
+            XLP("xlp");
+
+            protected final String value;
+
+            Attribute(String value) {
+                this.value = value;
+            }
+
+            public String getValue() {
+                return value;
+            }
+        }
+    }
+
 }
