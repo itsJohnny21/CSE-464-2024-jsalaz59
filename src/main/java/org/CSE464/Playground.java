@@ -7,7 +7,7 @@ public class Playground {
     public static void main(String[] args) {
         try {
 
-            Graph g = Graph.parseGraph(
+            Graph g = Graph.parseDOTFile(
                     "/Users/jonisalazar/School/Fall 2024/CSE464/CSE-464-2024-jsalaz59/src/main/resources/idkbruvvv.dot");
 
             // Node node = g.addNode("t1");
