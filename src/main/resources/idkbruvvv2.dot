@@ -1,16 +1,6 @@
-digraph  {
-	bgcolor="red";
-
-	n1 [label="hello"];
-	n2 [];
-	n3 [label="world!"];
-	n4 [area="100" fillcolor="green" shape="Mcircle" style="filled" label="breh"];
+digraph johnny {
+	n1 [];
+	n2 [label="n1"];
 
 	n1 -> n2 [];
-	n1 -> n3 [];
-	n2 -> n1 [];
-	n3 -> n2 [];
-	n3 -> n4 [];
-	n4 -> n2 [color="pink"];
-	n4 -> n4 [color="pink" label="yessirr2" arrowsize="2"];
 }
