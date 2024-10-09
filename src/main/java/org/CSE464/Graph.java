@@ -19,6 +19,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class Graph extends DOTElement {
+
     private static final String DIRECTED_SIGN = "->";
     private static final String UNDIRECTED_SIGN = "--";
     private final HashMap<String, Node> nodes;
@@ -87,9 +88,8 @@ public class Graph extends DOTElement {
     //! Not tested
     public Node addNode(String nodeID) {
         if (!nodeID.matches(ID_REGEX)) {
-            throw new InvalidIDException(
-                    String.format("Error: Attempt to add node with id '%s' failed. The id is not allowed.", nodeID,
-                            nodeID));
+            throw new InvalidIDException(String
+                    .format("Error: Attempt to add node with id '%s' failed. The id is not allowed.", nodeID, nodeID));
         }
 
         if (nodeExists(nodeID)) {
@@ -118,9 +118,8 @@ public class Graph extends DOTElement {
     //! Not tested
     public void removeNode(String nodeID) {
         if (!nodeExists(nodeID)) {
-            throw new NodeDoesNotExistException(String.format(
-                    "Error: Attempt to remove node '%s' failed. Node does not exist.",
-                    nodeID));
+            throw new NodeDoesNotExistException(
+                    String.format("Error: Attempt to remove node '%s' failed. Node does not exist.", nodeID));
         }
 
         Node node = getNode(nodeID);
@@ -277,7 +276,8 @@ public class Graph extends DOTElement {
                 // String dotContent = toD
 
             }
-            default -> throw new AssertionError();
+            default ->
+                throw new AssertionError();
         }
     }
 
@@ -311,16 +311,13 @@ public class Graph extends DOTElement {
                             edgeAttrs.append(String.format("%s=\"%s\" ", entry.getKey(), entry.getValue()));
                         }
                     }
-                    edgesSection.append(
-                            String.format("\t%s [%s];\n", edge.ID, edgeAttrs.toString().trim()));
+                    edgesSection.append(String.format("\t%s [%s];\n", edge.ID, edgeAttrs.toString().trim()));
                 }
             }
         }
 
         String dotContent = String.format("digraph%s{%s\n%s\n%s}", ID != null ? String.format(" %s ", ID) : " ",
-                graphAttrs.toString(),
-                nodesSection.toString(),
-                edgesSection.toString());
+                graphAttrs.toString(), nodesSection.toString(), edgesSection.toString());
 
         return dotContent;
     }
@@ -333,125 +330,42 @@ public class Graph extends DOTElement {
     // ! Not tested
     @Override
     public String toString() {
-        return String.format(
-                "Graph: " + ID
-                        + "\nNumber of nodes: " + getNumberOfNodes()
-                        + "\nNodes: " + getNodeNames()
-                        + "\nNumber of edges: " + getNumberOfEdges()
-                        + "\nEdges: " + getEdgeDirections())
+        return String
+                .format("Graph: " + ID + "\nNumber of nodes: " + getNumberOfNodes() + "\nNodes: " + getNodeNames()
+                        + "\nNumber of edges: " + getNumberOfEdges() + "\nEdges: " + getEdgeDirections())
                 + "\nNode labels: " + getNodeLabels();
     }
 
     /**
      * Enum representing the attributes of a graph in Graphviz.
-     * 
-     * <p>For more information, see the Graphviz documentation:</p>
+     *
+     * <p>
+     * For more information, see the Graphviz documentation:</p>
      * <a href="https://graphviz.org/docs/edges/">Graphviz Graph Attributes</a>
      */
     public enum Attribute {
-        _BACKGROUND("_background"),
-        BB("bb"),
-        BEAUTIFY("beautify"),
-        BGCOLOR("bgcolor"),
-        CENTER("center"),
-        CHARSET("charset"),
-        CLASS("class"),
-        CLUSTERRANK("clusterrank"),
-        COLORSCHEME("colorscheme"),
-        COMMENT("comment"),
-        COMPOUND("compound"),
-        CONCENTRATE("concentrate"),
-        DAMPING("Damping"),
-        DEFAULTDIST("defaultdist"),
-        DIM("dim"),
-        DIMEN("dimen"),
-        DIREDGECONSTRAINTS("diredgeconstraints"),
-        DPI("dpi"),
-        EPSILON("epsilon"),
-        ESEP("esep"),
-        FONTCOLOR("fontcolor"),
-        FONTNAME("fontname"),
-        FONTNAMES("fontnames"),
-        FONTPATH("fontpath"),
-        FONTSIZE("fontsize"),
-        FORCELABELS("forcelabels"),
-        GRADIENTANGLE("gradientangle"),
-        HREF("href"),
-        ID("id"),
-        IMAGEPATH("imagepath"),
-        INPUTSCALE("inputscale"),
-        K("K"),
-        LABEL("label"),
-        LABEL_SCHEME("label_scheme"),
-        LABELJUST("labeljust"),
-        LABELLOC("labelloc"),
-        LANDSCAPE("landscape"),
-        LAYERLISTSEP("layerlistsep"),
-        LAYERS("layers"),
-        LAYERSELECT("layerselect"),
-        LAYERSEP("layersep"),
-        LAYOUT("layout"),
-        LEVELS("levels"),
-        LEVELSGAP("levelsgap"),
-        LHEIGHT("lheight"),
-        LINELENGTH("linelength"),
-        LP("lp"),
-        LWIDTH("lwidth"),
-        MARGIN("margin"),
-        MAXITER("maxiter"),
-        MCLIMIT("mclimit"),
-        MINDIST("mindist"),
-        MODE("mode"),
-        MODEL("model"),
-        NEWRANK("newrank"),
-        NODESEP("nodesep"),
-        NOJUSTIFY("nojustify"),
-        NORMALIZE("normalize"),
-        NOTRANSLATE("notranslate"),
-        NSLIMIT("nslimit"),
-        NSLIMIT1("nslimit1"),
-        ONEBLOCK("oneblock"),
-        ORDERING("ordering"),
-        ORIENTATION("orientation"),
-        OUTPUTORDER("outputorder"),
-        OVERLAP("overlap"),
-        OVERLAP_SCALING("overlap_scaling"),
-        OVERLAP_SHRINK("overlap_shrink"),
-        PACK("pack"),
-        PACKMODE("packmode"),
-        PAD("pad"),
-        PAGE("page"),
-        PAGEDIR("pagedir"),
-        QUADTREE("quadtree"),
-        QUANTUM("quantum"),
-        RANKDIR("rankdir"),
-        RANKSEP("ranksep"),
-        RATIO("ratio"),
-        REMINCROSS("remincross"),
-        REPULSIVEFORCE("repulsiveforce"),
-        RESOLUTION("resolution"),
-        ROOT("root"),
-        ROTATE("rotate"),
-        ROTATION("rotation"),
-        SCALE("scale"),
-        SEARCHSIZE("searchsize"),
-        SEP("sep"),
-        SHOWBOXES("showboxes"),
-        SIZE("size"),
-        SMOOTHING("smoothing"),
-        SORTV("sortv"),
-        SPLINES("splines"),
-        START("start"),
-        STYLE("style"),
-        STYLESHEET("stylesheet"),
-        TARGET("target"),
-        TBBALANCE("TBbalance"),
-        TOOLTIP("tooltip"),
-        TRUECOLOR("truecolor"),
-        URL("URL"),
-        VIEWPORT("viewport"),
-        VORO_MARGIN("voro_margin"),
-        XDOTVERSION("xdotversion");
+        _BACKGROUND("_background"), BB("bb"), BEAUTIFY("beautify"), BGCOLOR("bgcolor"), CENTER("center"),
+        CHARSET("charset"), CLASS("class"), CLUSTERRANK("clusterrank"), COLORSCHEME("colorscheme"), COMMENT("comment"),
+        COMPOUND("compound"), CONCENTRATE("concentrate"), DAMPING("Damping"), DEFAULTDIST("defaultdist"), DIM("dim"),
+        DIMEN("dimen"), DIREDGECONSTRAINTS("diredgeconstraints"), DPI("dpi"), EPSILON("epsilon"), ESEP("esep"),
+        FONTCOLOR("fontcolor"), FONTNAME("fontname"), FONTNAMES("fontnames"), FONTPATH("fontpath"),
+        FONTSIZE("fontsize"), FORCELABELS("forcelabels"), GRADIENTANGLE("gradientangle"), HREF("href"), ID("id"),
+        IMAGEPATH("imagepath"), INPUTSCALE("inputscale"), K("K"), LABEL("label"), LABEL_SCHEME("label_scheme"),
+        LABELJUST("labeljust"), LABELLOC("labelloc"), LANDSCAPE("landscape"), LAYERLISTSEP("layerlistsep"),
+        LAYERS("layers"), LAYERSELECT("layerselect"), LAYERSEP("layersep"), LAYOUT("layout"), LEVELS("levels"),
+        LEVELSGAP("levelsgap"), LHEIGHT("lheight"), LINELENGTH("linelength"), LP("lp"), LWIDTH("lwidth"),
+        MARGIN("margin"), MAXITER("maxiter"), MCLIMIT("mclimit"), MINDIST("mindist"), MODE("mode"), MODEL("model"),
+        NEWRANK("newrank"), NODESEP("nodesep"), NOJUSTIFY("nojustify"), NORMALIZE("normalize"),
+        NOTRANSLATE("notranslate"), NSLIMIT("nslimit"), NSLIMIT1("nslimit1"), ONEBLOCK("oneblock"),
+        ORDERING("ordering"), ORIENTATION("orientation"), OUTPUTORDER("outputorder"), OVERLAP("overlap"),
+        OVERLAP_SCALING("overlap_scaling"), OVERLAP_SHRINK("overlap_shrink"), PACK("pack"), PACKMODE("packmode"),
+        PAD("pad"), PAGE("page"), PAGEDIR("pagedir"), QUADTREE("quadtree"), QUANTUM("quantum"), RANKDIR("rankdir"),
+        RANKSEP("ranksep"), RATIO("ratio"), REMINCROSS("remincross"), REPULSIVEFORCE("repulsiveforce"),
+        RESOLUTION("resolution"), ROOT("root"), ROTATE("rotate"), ROTATION("rotation"), SCALE("scale"),
+        SEARCHSIZE("searchsize"), SEP("sep"), SHOWBOXES("showboxes"), SIZE("size"), SMOOTHING("smoothing"),
+        SORTV("sortv"), SPLINES("splines"), START("start"), STYLE("style"), STYLESHEET("stylesheet"), TARGET("target"),
+        TBBALANCE("TBbalance"), TOOLTIP("tooltip"), TRUECOLOR("truecolor"), URL("URL"), VIEWPORT("viewport"),
+        VORO_MARGIN("voro_margin"), XDOTVERSION("xdotversion");
 
         protected final String value;
 
@@ -467,6 +381,7 @@ public class Graph extends DOTElement {
     @Data
     @EqualsAndHashCode(callSuper = false)
     public final class Node extends DOTElement {
+
         protected Graph graph;
         protected final HashMap<String, Node> from;
         protected final HashMap<String, Node> to;
@@ -527,60 +442,23 @@ public class Graph extends DOTElement {
 
         /**
          * Enum representing the attributes of a node in Graphviz.
-         * 
-         * <p>For more information, see the Graphviz documentation:</p>
-         * <a href="https://graphviz.org/docs/nodes/">Graphviz Node Attributes</a>
+         *
+         * <p>
+         * For more information, see the Graphviz documentation:</p>
+         * <a href="https://graphviz.org/docs/nodes/">Graphviz Node
+         * Attributes</a>
          */
         public enum Attribute {
-            AREA("area"),
-            CLASS("class"),
-            COLOR("color"),
-            COLORSCHEME("colorscheme"),
-            COMMENT("comment"),
-            DISTORTION("distortion"),
-            FILLCOLOR("fillcolor"),
-            FIXEDSIZE("fixedsize"),
-            FONTCOLOR("fontcolor"),
-            FONTNAME("fontname"),
-            FONTSIZE("fontsize"),
-            GRADIENTANGLE("gradientangle"),
-            GROUP("group"),
-            HEIGHT("height"),
-            HREF("href"),
-            ID("id"),
-            IMAGE("image"),
-            IMAGEPOS("imagepos"),
-            IMAGESCALE("imagescale"),
-            LABEL("label"),
-            LABELLOC("labelloc"),
-            LAYER("layer"),
-            MARGIN("margin"),
-            NOJUSTIFY("nojustify"),
-            ORDERING("ordering"),
-            ORIENTATION("orientation"),
-            PENWIDTH("penwidth"),
-            PERIPHERIES("peripheries"),
-            PIN("pin"),
-            POS("pos"),
-            RECTS("rects"),
-            REGULAR("regular"),
-            ROOT("root"),
-            SAMPLEPOINTS("samplepoints"),
-            SHAPE("shape"),
-            SHAPEFILE("shapefile"),
-            SHOWBOXES("showboxes"),
-            SIDES("sides"),
-            SKEW("skew"),
-            SORTV("sortv"),
-            STYLE("style"),
-            TARGET("target"),
-            TOOLTIP("tooltip"),
-            URL("URL"),
-            VERTICES("vertices"),
-            WIDTH("width"),
-            XLABEL("xlabel"),
-            XLP("xlp"),
-            Z("z");
+            AREA("area"), CLASS("class"), COLOR("color"), COLORSCHEME("colorscheme"), COMMENT("comment"),
+            DISTORTION("distortion"), FILLCOLOR("fillcolor"), FIXEDSIZE("fixedsize"), FONTCOLOR("fontcolor"),
+            FONTNAME("fontname"), FONTSIZE("fontsize"), GRADIENTANGLE("gradientangle"), GROUP("group"),
+            HEIGHT("height"), HREF("href"), ID("id"), IMAGE("image"), IMAGEPOS("imagepos"), IMAGESCALE("imagescale"),
+            LABEL("label"), LABELLOC("labelloc"), LAYER("layer"), MARGIN("margin"), NOJUSTIFY("nojustify"),
+            ORDERING("ordering"), ORIENTATION("orientation"), PENWIDTH("penwidth"), PERIPHERIES("peripheries"),
+            PIN("pin"), POS("pos"), RECTS("rects"), REGULAR("regular"), ROOT("root"), SAMPLEPOINTS("samplepoints"),
+            SHAPE("shape"), SHAPEFILE("shapefile"), SHOWBOXES("showboxes"), SIDES("sides"), SKEW("skew"),
+            SORTV("sortv"), STYLE("style"), TARGET("target"), TOOLTIP("tooltip"), URL("URL"), VERTICES("vertices"),
+            WIDTH("width"), XLABEL("xlabel"), XLP("xlp"), Z("z");
 
             protected final String value;
 
@@ -597,6 +475,7 @@ public class Graph extends DOTElement {
     @Data
     @EqualsAndHashCode(callSuper = false)
     public final class Edge extends DOTElement {
+
         protected final Node fromNode;
         protected final Node toNode;
 
@@ -624,77 +503,28 @@ public class Graph extends DOTElement {
 
         /**
          * Enum representing the attributes of an edge in Graphviz.
-         * 
-         * <p>For more information, see the Graphviz documentation:</p>
-         * <a href="https://graphviz.org/docs/edges/">Graphviz Edge Attributes</a>
+         *
+         * <p>
+         * For more information, see the Graphviz documentation:</p>
+         * <a href="https://graphviz.org/docs/edges/">Graphviz Edge
+         * Attributes</a>
          */
         public enum Attribute {
-            ARROWHEAD("arrowhead"),
-            ARROWSIZE("arrowsize"),
-            ARROWTAIL("arrowtail"),
-            CLASS("class"),
-            COLOR("color"),
-            COLORSCHEME("colorscheme"),
-            COMMENT("comment"),
-            CONSTRAINT("constraint"),
-            DECORATE("decorate"),
-            DIR("dir"),
-            EDGEHREF("edgehref"),
-            EDGETARGET("edgetarget"),
-            EDGETOOLTIP("edgetooltip"),
-            EDGEURL("edgeURL"),
-            FILLCOLOR("fillcolor"),
-            FONTCOLOR("fontcolor"),
-            FONTNAME("fontname"),
-            FONTSIZE("fontsize"),
-            HEAD_LP("head_lp"),
-            HEADCLIP("headclip"),
-            HEADHREF("headhref"),
-            HEADLABEL("headlabel"),
-            HEADPORT("headport"),
-            HEADTARGET("headtarget"),
-            HEADTOOLTIP("headtooltip"),
-            HEADURL("headURL"),
-            HREF("href"),
-            ID("id"),
-            LABEL("label"),
-            LABELANGLE("labelangle"),
-            LABELDISTANCE("labeldistance"),
-            LABELFLOAT("labelfloat"),
-            LABELFONTCOLOR("labelfontcolor"),
-            LABELFONTNAME("labelfontname"),
-            LABELFONTSIZE("labelfontsize"),
-            LABELHREF("labelhref"),
-            LABELTARGET("labeltarget"),
-            LABELTOOLTIP("labeltooltip"),
-            LABELURL("labelURL"),
-            LAYER("layer"),
-            LEN("len"),
-            LHEAD("lhead"),
-            LP("lp"),
-            LTAIL("ltail"),
-            MINLEN("minlen"),
-            NOJUSTIFY("nojustify"),
-            PENWIDTH("penwidth"),
-            POS("pos"),
-            SAMEHEAD("samehead"),
-            SAMETAIL("sametail"),
-            SHOWBOXES("showboxes"),
-            STYLE("style"),
-            TAIL_LP("tail_lp"),
-            TAILCLIP("tailclip"),
-            TAILHREF("tailhref"),
-            TAILLABEL("taillabel"),
-            TAILPORT("tailport"),
-            TAILTARGET("tailtarget"),
-            TAILTOOLTIP("tailtooltip"),
-            TAILURL("tailURL"),
-            TARGET("target"),
-            TOOLTIP("tooltip"),
-            URL("URL"),
-            WEIGHT("weight"),
-            XLABEL("xlabel"),
-            XLP("xlp");
+            ARROWHEAD("arrowhead"), ARROWSIZE("arrowsize"), ARROWTAIL("arrowtail"), CLASS("class"), COLOR("color"),
+            COLORSCHEME("colorscheme"), COMMENT("comment"), CONSTRAINT("constraint"), DECORATE("decorate"), DIR("dir"),
+            EDGEHREF("edgehref"), EDGETARGET("edgetarget"), EDGETOOLTIP("edgetooltip"), EDGEURL("edgeURL"),
+            FILLCOLOR("fillcolor"), FONTCOLOR("fontcolor"), FONTNAME("fontname"), FONTSIZE("fontsize"),
+            HEAD_LP("head_lp"), HEADCLIP("headclip"), HEADHREF("headhref"), HEADLABEL("headlabel"),
+            HEADPORT("headport"), HEADTARGET("headtarget"), HEADTOOLTIP("headtooltip"), HEADURL("headURL"),
+            HREF("href"), ID("id"), LABEL("label"), LABELANGLE("labelangle"), LABELDISTANCE("labeldistance"),
+            LABELFLOAT("labelfloat"), LABELFONTCOLOR("labelfontcolor"), LABELFONTNAME("labelfontname"),
+            LABELFONTSIZE("labelfontsize"), LABELHREF("labelhref"), LABELTARGET("labeltarget"),
+            LABELTOOLTIP("labeltooltip"), LABELURL("labelURL"), LAYER("layer"), LEN("len"), LHEAD("lhead"), LP("lp"),
+            LTAIL("ltail"), MINLEN("minlen"), NOJUSTIFY("nojustify"), PENWIDTH("penwidth"), POS("pos"),
+            SAMEHEAD("samehead"), SAMETAIL("sametail"), SHOWBOXES("showboxes"), STYLE("style"), TAIL_LP("tail_lp"),
+            TAILCLIP("tailclip"), TAILHREF("tailhref"), TAILLABEL("taillabel"), TAILPORT("tailport"),
+            TAILTARGET("tailtarget"), TAILTOOLTIP("tailtooltip"), TAILURL("tailURL"), TARGET("target"),
+            TOOLTIP("tooltip"), URL("URL"), WEIGHT("weight"), XLABEL("xlabel"), XLP("xlp");
 
             protected final String value;
 

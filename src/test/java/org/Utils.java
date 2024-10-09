@@ -1,4 +1,4 @@
-package test;
+package org;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -21,9 +21,8 @@ public class Utils {
             Method method = clazz.getMethod(methodName, parameters);
             assertNotNull(method);
         } catch (NoSuchMethodException e) {
-            throw new RuntimeException(
-                    "Method '" + methodName + "' with parameter signature '" + Arrays.toString(parameters)
-                            + "' not found.");
+            throw new RuntimeException("Method '" + methodName + "' with parameter signature '"
+                    + Arrays.toString(parameters) + "' not found.");
         }
     }
 
