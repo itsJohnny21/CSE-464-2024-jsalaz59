@@ -1,12 +1,8 @@
 package org.CSE464;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -27,6 +23,12 @@ public class Graph extends DOTElement {
     private static final String UNDIRECTED_SIGN = "--";
     private final HashMap<String, Node> nodes;
     private final HashMap<String, Edge> edges;
+
+    public Graph() {
+        super();
+        this.nodes = new HashMap<>();
+        this.edges = new HashMap<>();
+    }
 
     public Graph(String ID) {
         super(ID);
@@ -77,8 +79,8 @@ public class Graph extends DOTElement {
             }
 
             return graph;
-        } catch (IOException e) {
-            throw new ParseDOTFileException(String.format("Error: Unable to parse graph: %s", e.getMessage()));
+        } catch (guru.nidi.graphviz.parse.ParserException | IOException e) {
+            throw new ParseException(String.format("Error: Unable to parse graph: %s", e.getMessage()));
         }
     }
 
@@ -264,36 +266,16 @@ public class Graph extends DOTElement {
             case DOT -> {
                 String dotContent = toDot();
 
-                ProcessBuilder processBuilder = new ProcessBuilder(
-                        new String[] { "dot", Format.DOT.value, });
-                processBuilder.redirectErrorStream(true);
-
-                Process process = processBuilder.start();
-
-                try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()))) {
-                    writer.write(dotContent);
-                }
-
-                StringBuilder output = new StringBuilder();
-                String line;
-                try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-                    while ((line = reader.readLine()) != null) {
-                        output.append(line).append("\n");
-                    }
-                }
-
-                int exitCode = process.waitFor();
-                if (exitCode != 0) {
-                    throw new RuntimeException(
-                            String.format("Error: Unable to parse DOT content. DOT %s", output.toString())); //! This line should never run if my program works correctly
-                }
-
                 if (!filepath.endsWith(".dot")) {
                     filepath += ".dot";
                 }
                 try (FileWriter fileWriter = new FileWriter(filepath)) {
                     fileWriter.write(dotContent);
                 }
+            }
+            case PNG -> {
+                // String dotContent = toD
+
             }
             default -> throw new AssertionError();
         }
@@ -307,7 +289,7 @@ public class Graph extends DOTElement {
         StringBuilder graphAttrs = new StringBuilder();
         for (Entry<String, String> entry : attributes.entrySet()) {
             if (!entry.getValue().isEmpty()) {
-                graphAttrs.append(String.format("\t%s=\"%s\";\n", entry.getKey(), entry.getValue()));
+                graphAttrs.append(String.format("\n\t%s=\"%s\";\n", entry.getKey(), entry.getValue()));
             }
         }
 
@@ -335,7 +317,7 @@ public class Graph extends DOTElement {
             }
         }
 
-        String dotContent = String.format("digraph%s{\n%s\n%s\n%s}", ID != null ? String.format(" %s ", ID) : " ",
+        String dotContent = String.format("digraph%s{%s\n%s\n%s}", ID != null ? String.format(" %s ", ID) : " ",
                 graphAttrs.toString(),
                 nodesSection.toString(),
                 edgesSection.toString());
