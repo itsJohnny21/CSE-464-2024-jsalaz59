@@ -1,38 +1,53 @@
 package org.CSE464;
 
-import org.CSE464.Graph.Edge;
 import org.CSE464.Graph.Node;
 
 public class Playground {
     public static void main(String[] args) {
         try {
+            Graph g = new Graph();
+            g.addNode("n1");
+            g.addEdge("n1", "n2");
+            g.removeNode("n1");
 
-            Graph g = Graph.parseDOTFile(
-                    "/Users/jonisalazar/School/Fall 2024/CSE464/CSE-464-2024-jsalaz59/src/main/resources/idkbruvvv.dot");
-
-            // Node node = g.addNode("t1");
-            // Node n1 = g.getNode("n1");
-            System.out.println(g);
+            System.out.println(g.getNode("n2").from);
+            g.addEdge("n1", "n2");
+            System.out.println(g.getNode("n2"));
             Node n2 = g.getNode("n2");
-            Node n4 = g.getNode("n4");
+            n2.setAttribute("label", "n1");
 
-            n4.setAttribute("shape", "Mcircle");
-            n4.setAttribute(Node.Attribute.AREA, "100");
-            n4.setAttribute("style", "filled");
-            n4.setAttribute("fillcolor", "green");
-            n4.setAttribute("label", "breh");
-
-            n4.to(n4).setAttribute("arrowsize", "2");
-            n4.to.forEach((k, v) -> {
-                n4.to(v).setAttribute(Edge.Attribute.COLOR, "pink");
-            });
-            g.setAttribute("Graph.Attribute.BGCOLOR", "red");
-            // n2.connectTo(n4);
-            // n4.to(n2).setAttribute("arrowsize", "10"); //! change the names to make them more intuitive such as node1.to(node2);
             g.outputGraph(
                     "/Users/jonisalazar/School/Fall 2024/CSE464/CSE-464-2024-jsalaz59/src/main/resources/idkbruvvv2.dot",
                     Format.DOT);
-            System.out.println(g);
+
+            // Graph g = Graph.parseDOTFile(
+            //         "/Users/jonisalazar/School/Fall 2024/CSE464/CSE-464-2024-jsalaz59/src/main/resources/idkbruvvv.dot");
+
+            // // Node node = g.addNode("t1");
+            // // Node n1 = g.getNode("n1");
+            // System.out.println(g);
+            // Node n2 = g.getNode("n2");
+            // Node n4 = g.getNode("n4");
+
+            // n4.setAttribute("shape", "Mcircle");
+            // n4.setAttribute(Node.Attribute.AREA, "100");
+            // n4.setAttribute("style", "filled");
+            // n4.setAttribute("fillcolor", "green");
+            // n4.setAttribute("label", "breh");
+
+            // n4.to(n4).setAttribute("arrowsize", "2");
+            // n4.to.forEach((k, v) -> {
+            //     n4.to(v).setAttribute(Edge.Attribute.COLOR, "pink");
+            // });
+
+            // g.setAttribute("bg", "red");
+            // // g.setAttribute("Graph.Attribute.BGCOLOR", "red");
+            // // n2.connectTo(n4);
+            // // n4.to(n2).setAttribute("arrowsize", "10"); //! change the names to make them more intuitive such as node1.to(node2);
+            // g.outputGraph(
+            //         "/Users/jonisalazar/School/Fall 2024/CSE464/CSE-464-2024-jsalaz59/src/main/resources/idkbruvvv2.dot",
+            //         Format.DOT);
+            // System.out.println(g);
             // g.removeNode("n1");
 
             // System.out.println(n1.graph);
