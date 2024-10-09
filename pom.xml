@@ -17,6 +17,14 @@
     </properties>
 
     <dependencies>
+        <!-- For Setters and Getters -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.34</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- NOP Logger Implementation -->
         <dependency>
             <groupId>org.slf4j</groupId>
