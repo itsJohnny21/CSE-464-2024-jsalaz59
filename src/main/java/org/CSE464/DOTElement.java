@@ -10,6 +10,11 @@ public abstract class DOTElement {
     protected final HashMap<String, String> attributes;
     protected final String ID;
 
+    public DOTElement() {
+        this.ID = String.valueOf(this.hashCode());
+        this.attributes = new HashMap<>();
+    }
+
     public DOTElement(String ID) {
         this.attributes = new HashMap<>();
         this.ID = ID;
