@@ -1,0 +1,14 @@
+digraph {
+	n1 [label="hello"];
+	n2 [];
+	n3 [label="world!"];
+	n4 [label="world!"];
+
+	n1 -> n2 [];
+	n1 -> n3 [];
+	n2 -> n1 [];
+	n3 -> n2 [];
+	n3 -> n4 [];
+	n4 -> n2 [];
+	n4 -> n4 [label="yessirr2"];
+}
