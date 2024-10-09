@@ -34,7 +34,7 @@ public class Graph extends DOTElement {
         this.edges = new HashMap<>();
     }
 
-    public static Graph parseGraph(String filepath) {
+    public static Graph parseDOTFile(String filepath) {
         try {
             MutableGraph mutableGraph = new Parser().read(new File(filepath));
             String graphID = mutableGraph.name().toString();
@@ -78,7 +78,7 @@ public class Graph extends DOTElement {
 
             return graph;
         } catch (IOException e) {
-            throw new ParseGraphException(String.format("Error: Unable to parse graph: %s", e.getMessage()));
+            throw new ParseDOTFileException(String.format("Error: Unable to parse graph: %s", e.getMessage()));
         }
     }
 
