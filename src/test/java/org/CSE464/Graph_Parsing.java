@@ -19,7 +19,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class GraphTest {
+public class Graph_Parsing {
 
     private final static Path resourcesFilepath = Paths.get("src/test/resources");
     private final static Path DOTPath = Paths.get(resourcesFilepath.toString(), "DOT");
