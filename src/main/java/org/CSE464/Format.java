@@ -7,13 +7,15 @@ package org.CSE464;
  * <a href="https://graphviz.org/docs/outputs/">Graphviz Output Formats</a>
  */
 public enum Format {
-    BMP("-Tbmp"), DOT("-Tdot"), JEPG("-Tjpg"), JSON("-Tjson"), PDF("-Tpdf"), PICT("-Tpict"), PLAINTEXT("-Tplain"),
-    PNG("-Tpng"), SVG("Tsvg");
+    BMP("-Tbmp", ".bmp"), DOT("-Tdot", ".dot"), JPEG("-Tjpg", ".jpg"), JSON("-Tjson", ".json"), PDF("-Tpdf", ".pdf"),
+    PICT("-Tpict", ".pict"), PLAINTEXT("-Tplain", ".txt"), PNG("-Tpng", ".png"), SVG("-Tsvg", ".svg");
 
     protected final String value;
+    protected final String extension;
 
-    Format(String value) {
+    Format(String value, String extension) {
         this.value = value;
+        this.extension = extension;
     }
 
     public String getValue() {
