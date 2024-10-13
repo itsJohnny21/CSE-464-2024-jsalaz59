@@ -107,6 +107,19 @@ public class Graph extends DOTElement {
 
     //! Not tested
     public Node[] addNodes(String... nodeIDs) {
+        for (String nodeID : nodeIDs) {
+            if (!nodeID.matches(ID_REGEX)) {
+                throw new InvalidIDException(
+                        String.format("Error: Attempt to add multiple nodes failed. Node with id '%s' is not allowed.",
+                                nodeID, nodeID));
+            }
+
+            if (nodeExists(nodeID)) {
+                throw new NodeAlreadyExistsException(String
+                        .format("Error: Attempt to add multiple nodes failed. Node '%s' already exists.", nodeID));
+            }
+        }
+
         Node[] newNodes = new Node[nodeIDs.length];
 
         int i = 0;
@@ -328,12 +341,7 @@ public class Graph extends DOTElement {
         return dotContent;
     }
 
-    //! Not tested
-    public void setAttribute(Attribute attribute, String value) {
-        setAttribute(attribute.value, value);
-    }
-
-    // // ! Not tested
+    // ! Not tested
     @Override
     public String toString() {
         return String.format("%s %s %s", super.toString(), nodes, edges);
@@ -445,11 +453,6 @@ public class Graph extends DOTElement {
         }
 
         //! Not tested
-        public void setAttribute(Attribute attribute, String value) {
-            setAttribute(attribute.value, value);
-        }
-
-        //! Not tested
         @Override
         public String toString() {
             return super.toString();
@@ -503,11 +506,6 @@ public class Graph extends DOTElement {
         //! Not tested
         public void removeFromGraph() {
             fromNode.graph.removeEdge(fromNode.ID, toNode.ID);
-        }
-
-        //! Not tested
-        public void setAttribute(Attribute attribute, String value) {
-            setAttribute(attribute.value, value);
         }
 
         //! Not tested
