@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public abstract class DOTElement {
-    protected static final String ID_REGEX = "^[a-zA-Z_][a-zA-Z_0-9]*$|^[-]?(\\.[0-9]+|[0-9]+(\\.[0-9]*)?)$|^\"(\\\\\"|[^\"])*\"$|^<[^>]*>$";
+    protected static final String ID_REGEX = "^[a-zA-Z_][a-zA-Z_0-9]*$|^[-]?(\\.[0-9]+|[0-9]+(\\.[0-9]*)?)$|^\\\"(\\\"|[^\\\"])*\\\"$|^<([a-zA-Z][a-zA-Z0-9]*)\\b[^>]*>(.*?)<\\/\\4>$";
     protected final HashMap<String, String> attributes;
     protected final String ID;
 
