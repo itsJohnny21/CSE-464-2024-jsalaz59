@@ -41,3 +41,5 @@ build/
 
 ### Hidden Files ###
 *.env
+**/ignore/
+.gitignore
