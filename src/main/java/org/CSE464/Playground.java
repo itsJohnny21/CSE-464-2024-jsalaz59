@@ -12,12 +12,14 @@ public class Playground {
 
             System.out.println(g.getNode("n2").from);
             g.addEdge("n1", "n2");
+            g.addEdge("n1", "n1");
+            g.addEdge("n2", "n2");
             System.out.println(g.getNode("n2"));
             Node n2 = g.getNode("n2");
             n2.setAttribute("label", "n1");
 
             g.outputGraph(
-                    "/Users/jonisalazar/School/Fall 2024/CSE464/CSE-464-2024-jsalaz59/src/main/resources/idkbruvvv2.dot",
+                    "/Users/jonisalazar/School/Fall 2024/CSE464/CSE-464-2024-jsalaz59/src/main/resources/idkbruvvv2.png",
                     Format.DOT);
 
             // Graph g = Graph.parseDOTFile(
