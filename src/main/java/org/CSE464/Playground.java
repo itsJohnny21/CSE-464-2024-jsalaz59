@@ -1,22 +1,38 @@
 package org.CSE464;
 
+import org.CSE464.Graph.Edge;
 import org.CSE464.Graph.Node;
 
 public class Playground {
     public static void main(String[] args) {
         try {
             Graph g = new Graph();
-            g.addNode("n1");
-            g.addEdge("n1", "n2");
-            g.removeNode("n1");
+            Node n1 = g.addNode("n1");
+            n1.setAttribute("label", "n1");
+            n1.setAttribute("color", "blue");
 
-            System.out.println(g.getNode("n2").from);
-            g.addEdge("n1", "n2");
-            g.addEdge("n1", "n1");
-            g.addEdge("n2", "n2");
-            System.out.println(g.getNode("n2"));
-            Node n2 = g.getNode("n2");
-            n2.setAttribute("label", "n1");
+            Edge e = g.addEdge("n1", "n2");
+            e.setAttribute("label", "4");
+            e.setAttribute("color", "red");
+
+            System.out.println(n1);
+            System.out.println(e);
+            System.out.println(g);
+            System.out.println(g.describe());
+            // g.addEdge("n1", "n2");
+            // g.removeNode("n1");
+
+            // System.out.println(g.getNode("n2").from);
+            // g.addEdge("n1", "n2");
+            // g.addEdge("n1", "n1");
+            // Edge n2_n2 = g.addEdge("n2", "n2");
+            // n2_n2.setAttribute("arrowsize", "21");
+            // n2_n2.setAttribute("weight", "we\\\"ig\\\"ht=21");
+            // System.out.println(g.getNode("n2"));
+            // Node n2 = g.getNode("n2");
+            // n2.setAttribute("label", "n1");
+
+            // System.out.println(n2_n2);
 
             g.outputGraph(
                     "/Users/jonisalazar/School/Fall 2024/CSE464/CSE-464-2024-jsalaz59/src/main/resources/idkbruvvv2.png",
