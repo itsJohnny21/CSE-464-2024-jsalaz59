@@ -146,7 +146,7 @@ public class Graph extends DOTElement {
         }
 
         nodes.remove(node.ID);
-        node.graph = null;
+        node.setGraph(null);
     }
 
     //! Not tested
@@ -333,9 +333,14 @@ public class Graph extends DOTElement {
         setAttribute(attribute.value, value);
     }
 
-    // ! Not tested
+    // // ! Not tested
     @Override
     public String toString() {
+        return String.format("%s %s %s", super.toString(), nodes, edges);
+    }
+
+    // ! Not tested
+    public String describe() {
         return String
                 .format("Graph: " + ID + "\nNumber of nodes: " + getNumberOfNodes() + "\nNodes: " + getNodeNames()
                         + "\nNumber of edges: " + getNumberOfEdges() + "\nEdges: " + getEdgeDirections())
@@ -400,6 +405,10 @@ public class Graph extends DOTElement {
             this.to = new HashMap<>();
         }
 
+        private void setGraph(Graph graph) {
+            this.graph = graph;
+        }
+
         //! Not tested
         public Edge connectTo(Node toNode) {
             return graph.addEdge(this.ID, toNode.ID);
@@ -421,17 +430,17 @@ public class Graph extends DOTElement {
         }
 
         //! Not tested
-        public void removeTo(Node toNode) {
+        public void disconnectTo(Node toNode) {
             graph.removeEdge(this.ID, toNode.ID);
         }
 
         //! Not tested
-        public void removeFrom(Node fromNode) {
+        public void disconnectFrom(Node fromNode) {
             graph.removeEdge(fromNode.ID, this.ID);
         }
 
         //! Not tested
-        public void removeFromGraph() {
+        public void disconnectFromGraph() {
             graph.removeNode(ID);
         }
 
@@ -443,7 +452,7 @@ public class Graph extends DOTElement {
         //! Not tested
         @Override
         public String toString() {
-            return this.ID;
+            return super.toString();
         }
 
         /**
@@ -504,7 +513,7 @@ public class Graph extends DOTElement {
         //! Not tested
         @Override
         public String toString() {
-            return this.ID;
+            return super.toString();
         }
 
         /**
