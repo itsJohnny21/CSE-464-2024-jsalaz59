@@ -1,8 +1,10 @@
 package org.CSE464;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -37,7 +39,7 @@ public class Graph extends DOTElement {
         this.edges = new HashMap<>();
     }
 
-    public static Graph parseDOTFile(String filepath) {
+    public static Graph parseDOT(String filepath) {
         try {
             MutableGraph mutableGraph = new Parser().read(new File(filepath));
             String graphID = mutableGraph.name().toString();
@@ -261,23 +263,27 @@ public class Graph extends DOTElement {
 
     //! Not tested
     public void outputGraph(String filepath, Format format) throws IOException, InterruptedException {
-        switch (format) {
-            case DOT -> {
-                String dotContent = toDot();
+        String dotContent = toDot();
 
-                if (!filepath.endsWith(".dot")) {
-                    filepath += ".dot";
-                }
-                try (FileWriter fileWriter = new FileWriter(filepath)) {
-                    fileWriter.write(dotContent);
-                }
-            }
-            case PNG -> {
-                // String dotContent = toD
+        if (!filepath.endsWith(format.extension)) {
+            filepath += format.extension;
+        }
 
-            }
-            default ->
-                throw new AssertionError();
+        ProcessBuilder processBuilder = new ProcessBuilder("dot", format.value, "-o", filepath);
+        processBuilder.redirectErrorStream(true);
+        Process process = processBuilder.start();
+
+        try (OutputStream outputStream = process.getOutputStream()) {
+            outputStream.write(dotContent.getBytes());
+            outputStream.flush();
+        }
+
+        int exitCode = process.waitFor();
+
+        if (exitCode != 0) {
+            InputStream inputStream = process.getInputStream();
+            String errorMessage = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+            throw new ParseException(errorMessage);
         }
     }
 
