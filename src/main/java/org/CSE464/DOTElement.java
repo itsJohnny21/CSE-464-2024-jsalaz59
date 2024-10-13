@@ -11,7 +11,7 @@ public abstract class DOTElement {
     protected final String ID;
 
     public DOTElement() {
-        this.ID = String.valueOf(this.hashCode());
+        this.ID = null;
         this.attributes = new HashMap<>();
     }
 
@@ -26,10 +26,9 @@ public abstract class DOTElement {
 
     public void setAttribute(String attribute, String value) {
         if (!attribute.matches(ID_REGEX)) {
-            throw new InvalidIDException(
-                    String.format(
-                            "Error: Attempt to set attribute '%s' to '%s' failed. The attribute does not satisfy the ID regex.",
-                            attribute, getClass()));
+            throw new InvalidIDException(String.format(
+                    "Error: Attempt to set attribute '%s' to '%s' failed. The attribute does not satisfy the ID regex.",
+                    attribute, getClass()));
         }
         attributes.put(attribute, value);
     }
