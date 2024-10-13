@@ -1,6 +1,7 @@
 package org.CSE464;
 
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 import lombok.Data;
 
@@ -37,4 +38,12 @@ public abstract class DOTElement {
         attributes.remove(attribute);
     }
 
+    @Override
+    public String toString() {
+        String attrsString = "[" + attributes.entrySet().stream()
+                .map(e -> String.format("%s=\"%s\"", e.getKey(), e.getValue())).collect(Collectors.joining(" ")) + "]";
+
+        String toString = String.format("%s %s %s", getClass().getSimpleName(), ID, attrsString);
+        return toString;
+    }
 }
