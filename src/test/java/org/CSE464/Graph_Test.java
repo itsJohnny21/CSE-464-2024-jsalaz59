@@ -2,6 +2,7 @@ package org.CSE464;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -11,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.Utils;
@@ -19,7 +21,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class Graph_Parsing {
+public class Graph_Test {
 
     private final static Path resourcesFilepath = Paths.get("src/test/resources");
     private final static Path DOTPath = Paths.get(resourcesFilepath.toString(), "DOT");
@@ -40,6 +42,7 @@ public class Graph_Parsing {
     private final static Path circularABC = Paths.get(DOTValidPath.toString(), "circularABC");
     private final static Path selfLoopEdges = Paths.get(DOTValidPath.toString(), "selfLoopEdges");
     private final static Path veryLargeGraph = Paths.get(DOTValidPath.toString(), "veryLargeGraph");
+    private final static Path graphWithAttributes = Paths.get(DOTValidPath.toString(), "graphWithAttributes");
     private final static Path invalidNodeSyntax = Paths.get(DOTInvalidPath.toString(), "invalidNodeSyntax");
     private final static Path invalidEdgeSyntax = Paths.get(DOTInvalidPath.toString(), "invalidEdgeSyntax");
     private final static Path invalidSemicolon = Paths.get(DOTInvalidPath.toString(), "invalidSemicolon");
@@ -66,7 +69,7 @@ public class Graph_Parsing {
             }
             stream.close();
 
-            assertEquals(78, DOTFileCount, "There should be 78 files in the DOT Valid path.");
+            assertEquals(84, DOTFileCount, "There should be 78 files in the DOT Valid path.");
 
         } catch (Exception e) {
             fail(e.getMessage());
@@ -81,6 +84,23 @@ public class Graph_Parsing {
         } catch (Exception e) {
             fail(e.getMessage());
         }
+    }
+
+    @Test
+    public void Graph_Can_Be_Constructed_Without_An_ID() {
+        Graph g = new Graph();
+        assertNotNull(g);
+
+        assertNull(g.getID());
+    }
+
+    @Test
+    public void Graph_Can_Be_Constructed_With_An_ID() {
+        String graphID = "test";
+        Graph g = new Graph(graphID);
+        assertNotNull(g);
+
+        assertEquals(g.getID(), graphID);
     }
 
     @Test
@@ -251,6 +271,16 @@ public class Graph_Parsing {
     }
 
     @Test
+    public void Given_A_Graph_With_With_Attributes_Can_Parse() {
+        try {
+            Graph g = Graph.parseDOT(Utils.getDOTFilepathFromTestDirectory(graphWithAttributes));
+            assertNotNull(g, "The valid DOT file should have been parsed.");
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
     public void Given_A_Circular_A_To_B_To_C_Graph_Can_Parse() {
         try {
             Graph g = Graph.parseDOT(Utils.getDOTFilepathFromTestDirectory(circularABC));
@@ -364,7 +394,7 @@ public class Graph_Parsing {
     @Test
     public void Given_All_Valid_DOT_Files_Can_Parse() {
         int graphsParsed = 0;
-        int expectedGraphsParsed = 13;
+        int expectedGraphsParsed = 14;
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(DOTValidPath)) {
             for (Path p : stream) {
                 assertTrue(p.getNameCount() != 0, "The test directory should not be empty.");
@@ -374,6 +404,68 @@ public class Graph_Parsing {
             }
             assertEquals(expectedGraphsParsed, graphsParsed,
                     "A total of " + expectedGraphsParsed + " tests should have been performed.");
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void All_Graph_Attributes_Work() {
+        Graph g = new Graph();
+        for (Graph.Attribute attribute : Graph.Attribute.values()) {
+            g.setAttribute(attribute.getValue(), "some value");
+        }
+
+        assertEquals(Graph.Attribute.values().length, g.getAttributes().size());
+    }
+
+    @Test
+    public void All_Output_Formats_Work() {
+        try {
+            Graph g = Graph.parseDOT(Utils.getDOTFilepathFromTestDirectory(nodesX_Y_ZLabeled));
+
+            for (Format format : Format.values()) {
+                assertNotNull(format.getValue());
+                assertNotNull(format.getExtension());
+
+                String path = Path.of(tmpPath.toString(), String.format("tmp_file%s", format.extension)).toString();
+                g.outputGraph(path, format);
+                assertTrue(Files.exists(Path.of(path)));
+            }
+
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void Graph_Can_Describe_Itself() {
+        try {
+            Graph g = Graph.parseDOT(Utils.getDOTFilepathFromTestDirectory(nodesX_Y_ZLabeled));
+            String graphDescription = g.describe();
+            assertTrue(graphDescription.contains("Node X"));
+            assertTrue(graphDescription.contains("Node Y"));
+            assertTrue(graphDescription.contains("Node Z"));
+            assertTrue(graphDescription.contains(String.valueOf(g.getNumberOfNodes())));
+            assertTrue(graphDescription.contains(String.valueOf(g.getNumberOfEdges())));
+
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void Graph_To_String_Shows_ID_Nodes_Edges_And_Attributes() {
+        try {
+            Graph g = Graph.parseDOT(Utils.getDOTFilepathFromTestDirectory(nodesX_Y_ZLabeled));
+
+            for (Entry<String, String> entry : g.getAttributes().entrySet()) {
+                String attribute = entry.getKey();
+                String value = entry.getValue();
+
+                assertTrue(g.toString().contains(attribute));
+                assertTrue(g.toString().contains(value));
+            }
         } catch (Exception e) {
             fail(e.getMessage());
         }
