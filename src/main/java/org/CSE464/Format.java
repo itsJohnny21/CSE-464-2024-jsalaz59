@@ -3,8 +3,7 @@ package org.CSE464;
 /**
  * Enum representing the output formats for Graphviz.
  * 
- * <p>For more information, see the Graphviz documentation:</p>
- * <a href="https://graphviz.org/docs/outputs/">Graphviz Output Formats</a>
+ * <p>For more information, see the Graphviz documentation:</p> <a href="https://graphviz.org/docs/outputs/">Graphviz Output Formats</a>
  */
 public enum Format {
     BMP("-Tbmp", ".bmp"), DOT("-Tdot", ".dot"), JPEG("-Tjpg", ".jpg"), JSON("-Tjson", ".json"), PDF("-Tpdf", ".pdf"),
