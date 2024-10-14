@@ -1,4 +1,6 @@
 digraph {
+	bgcolor="pink";
+
 	n1 [label="hello"];
 	n2 [];
 	n3 [label="world!"];
