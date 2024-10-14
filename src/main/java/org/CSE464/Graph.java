@@ -1,12 +1,10 @@
 package org.CSE464;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -23,10 +21,17 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class Graph extends DOTElement {
+
     private static final String DIRECTED_SIGN = "->";
     private static final String UNDIRECTED_SIGN = "--";
     private final HashMap<String, Node> nodes;
     private final HashMap<String, Edge> edges;
+
+    public Graph() {
+        super();
+        this.nodes = new HashMap<>();
+        this.edges = new HashMap<>();
+    }
 
     public Graph(String ID) {
         super(ID);
@@ -34,7 +39,7 @@ public class Graph extends DOTElement {
         this.edges = new HashMap<>();
     }
 
-    public static Graph parseDOTFile(String filepath) {
+    public static Graph parseDOT(String filepath) {
         try {
             MutableGraph mutableGraph = new Parser().read(new File(filepath));
             String graphID = mutableGraph.name().toString();
@@ -77,17 +82,16 @@ public class Graph extends DOTElement {
             }
 
             return graph;
-        } catch (IOException e) {
-            throw new ParseDOTFileException(String.format("Error: Unable to parse graph: %s", e.getMessage()));
+        } catch (guru.nidi.graphviz.parse.ParserException | IOException e) {
+            throw new ParseException(String.format("Error: Unable to parse graph: %s", e.getMessage()));
         }
     }
 
     //! Not tested
     public Node addNode(String nodeID) {
         if (!nodeID.matches(ID_REGEX)) {
-            throw new InvalidIDException(
-                    String.format("Error: Attempt to add node with id '%s' failed. The id is not allowed.", nodeID,
-                            nodeID));
+            throw new InvalidIDException(String
+                    .format("Error: Attempt to add node with id '%s' failed. The id is not allowed.", nodeID, nodeID));
         }
 
         if (nodeExists(nodeID)) {
@@ -103,6 +107,19 @@ public class Graph extends DOTElement {
 
     //! Not tested
     public Node[] addNodes(String... nodeIDs) {
+        for (String nodeID : nodeIDs) {
+            if (!nodeID.matches(ID_REGEX)) {
+                throw new InvalidIDException(
+                        String.format("Error: Attempt to add multiple nodes failed. Node with id '%s' is not allowed.",
+                                nodeID, nodeID));
+            }
+
+            if (nodeExists(nodeID)) {
+                throw new NodeAlreadyExistsException(String
+                        .format("Error: Attempt to add multiple nodes failed. Node '%s' already exists.", nodeID));
+            }
+        }
+
         Node[] newNodes = new Node[nodeIDs.length];
 
         int i = 0;
@@ -116,9 +133,8 @@ public class Graph extends DOTElement {
     //! Not tested
     public void removeNode(String nodeID) {
         if (!nodeExists(nodeID)) {
-            throw new NodeDoesNotExistException(String.format(
-                    "Error: Attempt to remove node '%s' failed. Node does not exist.",
-                    nodeID));
+            throw new NodeDoesNotExistException(
+                    String.format("Error: Attempt to remove node '%s' failed. Node does not exist.", nodeID));
         }
 
         Node node = getNode(nodeID);
@@ -143,7 +159,7 @@ public class Graph extends DOTElement {
         }
 
         nodes.remove(node.ID);
-        node.graph = null;
+        node.setGraph(null);
     }
 
     //! Not tested
@@ -260,42 +276,27 @@ public class Graph extends DOTElement {
 
     //! Not tested
     public void outputGraph(String filepath, Format format) throws IOException, InterruptedException {
-        switch (format) {
-            case DOT -> {
-                String dotContent = toDot();
+        String dotContent = toDot();
 
-                ProcessBuilder processBuilder = new ProcessBuilder(
-                        new String[] { "dot", Format.DOT.value, });
-                processBuilder.redirectErrorStream(true);
+        if (!filepath.endsWith(format.extension)) {
+            filepath += format.extension;
+        }
 
-                Process process = processBuilder.start();
+        ProcessBuilder processBuilder = new ProcessBuilder("dot", format.value, "-o", filepath);
+        processBuilder.redirectErrorStream(true);
+        Process process = processBuilder.start();
 
-                try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()))) {
-                    writer.write(dotContent);
-                }
+        try (OutputStream outputStream = process.getOutputStream()) {
+            outputStream.write(dotContent.getBytes());
+            outputStream.flush();
+        }
 
-                StringBuilder output = new StringBuilder();
-                String line;
-                try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-                    while ((line = reader.readLine()) != null) {
-                        output.append(line).append("\n");
-                    }
-                }
+        int exitCode = process.waitFor();
 
-                int exitCode = process.waitFor();
-                if (exitCode != 0) {
-                    throw new RuntimeException(
-                            String.format("Error: Unable to parse DOT content. DOT %s", output.toString())); //! This line should never run if my program works correctly
-                }
-
-                if (!filepath.endsWith(".dot")) {
-                    filepath += ".dot";
-                }
-                try (FileWriter fileWriter = new FileWriter(filepath)) {
-                    fileWriter.write(dotContent);
-                }
-            }
-            default -> throw new AssertionError();
+        if (exitCode != 0) {
+            InputStream inputStream = process.getInputStream();
+            String errorMessage = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+            throw new ParseException(errorMessage);
         }
     }
 
@@ -307,7 +308,7 @@ public class Graph extends DOTElement {
         StringBuilder graphAttrs = new StringBuilder();
         for (Entry<String, String> entry : attributes.entrySet()) {
             if (!entry.getValue().isEmpty()) {
-                graphAttrs.append(String.format("\t%s=\"%s\";\n", entry.getKey(), entry.getValue()));
+                graphAttrs.append(String.format("\n\t%s=\"%s\";\n", entry.getKey(), entry.getValue()));
             }
         }
 
@@ -329,147 +330,61 @@ public class Graph extends DOTElement {
                             edgeAttrs.append(String.format("%s=\"%s\" ", entry.getKey(), entry.getValue()));
                         }
                     }
-                    edgesSection.append(
-                            String.format("\t%s [%s];\n", edge.ID, edgeAttrs.toString().trim()));
+                    edgesSection.append(String.format("\t%s [%s];\n", edge.ID, edgeAttrs.toString().trim()));
                 }
             }
         }
 
-        String dotContent = String.format("digraph%s{\n%s\n%s\n%s}", ID != null ? String.format(" %s ", ID) : " ",
-                graphAttrs.toString(),
-                nodesSection.toString(),
-                edgesSection.toString());
+        String dotContent = String.format("digraph%s{%s\n%s\n%s}", ID != null ? String.format(" %s ", ID) : " ",
+                graphAttrs.toString(), nodesSection.toString(), edgesSection.toString());
 
         return dotContent;
-    }
-
-    //! Not tested
-    public void setAttribute(Attribute attribute, String value) {
-        setAttribute(attribute.value, value);
     }
 
     // ! Not tested
     @Override
     public String toString() {
-        return String.format(
-                "Graph: " + ID
-                        + "\nNumber of nodes: " + getNumberOfNodes()
-                        + "\nNodes: " + getNodeNames()
-                        + "\nNumber of edges: " + getNumberOfEdges()
-                        + "\nEdges: " + getEdgeDirections())
+        return String.format("%s %s %s", super.toString(), nodes, edges);
+    }
+
+    // ! Not tested
+    public String describe() {
+        return String
+                .format("Graph: " + ID + "\nNumber of nodes: " + getNumberOfNodes() + "\nNodes: " + getNodeNames()
+                        + "\nNumber of edges: " + getNumberOfEdges() + "\nEdges: " + getEdgeDirections())
                 + "\nNode labels: " + getNodeLabels();
     }
 
     /**
      * Enum representing the attributes of a graph in Graphviz.
-     * 
-     * <p>For more information, see the Graphviz documentation:</p>
+     *
+     * <p>
+     * For more information, see the Graphviz documentation:</p>
      * <a href="https://graphviz.org/docs/edges/">Graphviz Graph Attributes</a>
      */
     public enum Attribute {
-        _BACKGROUND("_background"),
-        BB("bb"),
-        BEAUTIFY("beautify"),
-        BGCOLOR("bgcolor"),
-        CENTER("center"),
-        CHARSET("charset"),
-        CLASS("class"),
-        CLUSTERRANK("clusterrank"),
-        COLORSCHEME("colorscheme"),
-        COMMENT("comment"),
-        COMPOUND("compound"),
-        CONCENTRATE("concentrate"),
-        DAMPING("Damping"),
-        DEFAULTDIST("defaultdist"),
-        DIM("dim"),
-        DIMEN("dimen"),
-        DIREDGECONSTRAINTS("diredgeconstraints"),
-        DPI("dpi"),
-        EPSILON("epsilon"),
-        ESEP("esep"),
-        FONTCOLOR("fontcolor"),
-        FONTNAME("fontname"),
-        FONTNAMES("fontnames"),
-        FONTPATH("fontpath"),
-        FONTSIZE("fontsize"),
-        FORCELABELS("forcelabels"),
-        GRADIENTANGLE("gradientangle"),
-        HREF("href"),
-        ID("id"),
-        IMAGEPATH("imagepath"),
-        INPUTSCALE("inputscale"),
-        K("K"),
-        LABEL("label"),
-        LABEL_SCHEME("label_scheme"),
-        LABELJUST("labeljust"),
-        LABELLOC("labelloc"),
-        LANDSCAPE("landscape"),
-        LAYERLISTSEP("layerlistsep"),
-        LAYERS("layers"),
-        LAYERSELECT("layerselect"),
-        LAYERSEP("layersep"),
-        LAYOUT("layout"),
-        LEVELS("levels"),
-        LEVELSGAP("levelsgap"),
-        LHEIGHT("lheight"),
-        LINELENGTH("linelength"),
-        LP("lp"),
-        LWIDTH("lwidth"),
-        MARGIN("margin"),
-        MAXITER("maxiter"),
-        MCLIMIT("mclimit"),
-        MINDIST("mindist"),
-        MODE("mode"),
-        MODEL("model"),
-        NEWRANK("newrank"),
-        NODESEP("nodesep"),
-        NOJUSTIFY("nojustify"),
-        NORMALIZE("normalize"),
-        NOTRANSLATE("notranslate"),
-        NSLIMIT("nslimit"),
-        NSLIMIT1("nslimit1"),
-        ONEBLOCK("oneblock"),
-        ORDERING("ordering"),
-        ORIENTATION("orientation"),
-        OUTPUTORDER("outputorder"),
-        OVERLAP("overlap"),
-        OVERLAP_SCALING("overlap_scaling"),
-        OVERLAP_SHRINK("overlap_shrink"),
-        PACK("pack"),
-        PACKMODE("packmode"),
-        PAD("pad"),
-        PAGE("page"),
-        PAGEDIR("pagedir"),
-        QUADTREE("quadtree"),
-        QUANTUM("quantum"),
-        RANKDIR("rankdir"),
-        RANKSEP("ranksep"),
-        RATIO("ratio"),
-        REMINCROSS("remincross"),
-        REPULSIVEFORCE("repulsiveforce"),
-        RESOLUTION("resolution"),
-        ROOT("root"),
-        ROTATE("rotate"),
-        ROTATION("rotation"),
-        SCALE("scale"),
-        SEARCHSIZE("searchsize"),
-        SEP("sep"),
-        SHOWBOXES("showboxes"),
-        SIZE("size"),
-        SMOOTHING("smoothing"),
-        SORTV("sortv"),
-        SPLINES("splines"),
-        START("start"),
-        STYLE("style"),
-        STYLESHEET("stylesheet"),
-        TARGET("target"),
-        TBBALANCE("TBbalance"),
-        TOOLTIP("tooltip"),
-        TRUECOLOR("truecolor"),
-        URL("URL"),
-        VIEWPORT("viewport"),
-        VORO_MARGIN("voro_margin"),
-        XDOTVERSION("xdotversion");
+        _BACKGROUND("_background"), BB("bb"), BEAUTIFY("beautify"), BGCOLOR("bgcolor"), CENTER("center"),
+        CHARSET("charset"), CLASS("class"), CLUSTERRANK("clusterrank"), COLORSCHEME("colorscheme"), COMMENT("comment"),
+        COMPOUND("compound"), CONCENTRATE("concentrate"), DAMPING("Damping"), DEFAULTDIST("defaultdist"), DIM("dim"),
+        DIMEN("dimen"), DIREDGECONSTRAINTS("diredgeconstraints"), DPI("dpi"), EPSILON("epsilon"), ESEP("esep"),
+        FONTCOLOR("fontcolor"), FONTNAME("fontname"), FONTNAMES("fontnames"), FONTPATH("fontpath"),
+        FONTSIZE("fontsize"), FORCELABELS("forcelabels"), GRADIENTANGLE("gradientangle"), HREF("href"), ID("id"),
+        IMAGEPATH("imagepath"), INPUTSCALE("inputscale"), K("K"), LABEL("label"), LABEL_SCHEME("label_scheme"),
+        LABELJUST("labeljust"), LABELLOC("labelloc"), LANDSCAPE("landscape"), LAYERLISTSEP("layerlistsep"),
+        LAYERS("layers"), LAYERSELECT("layerselect"), LAYERSEP("layersep"), LAYOUT("layout"), LEVELS("levels"),
+        LEVELSGAP("levelsgap"), LHEIGHT("lheight"), LINELENGTH("linelength"), LP("lp"), LWIDTH("lwidth"),
+        MARGIN("margin"), MAXITER("maxiter"), MCLIMIT("mclimit"), MINDIST("mindist"), MODE("mode"), MODEL("model"),
+        NEWRANK("newrank"), NODESEP("nodesep"), NOJUSTIFY("nojustify"), NORMALIZE("normalize"),
+        NOTRANSLATE("notranslate"), NSLIMIT("nslimit"), NSLIMIT1("nslimit1"), ONEBLOCK("oneblock"),
+        ORDERING("ordering"), ORIENTATION("orientation"), OUTPUTORDER("outputorder"), OVERLAP("overlap"),
+        OVERLAP_SCALING("overlap_scaling"), OVERLAP_SHRINK("overlap_shrink"), PACK("pack"), PACKMODE("packmode"),
+        PAD("pad"), PAGE("page"), PAGEDIR("pagedir"), QUADTREE("quadtree"), QUANTUM("quantum"), RANKDIR("rankdir"),
+        RANKSEP("ranksep"), RATIO("ratio"), REMINCROSS("remincross"), REPULSIVEFORCE("repulsiveforce"),
+        RESOLUTION("resolution"), ROOT("root"), ROTATE("rotate"), ROTATION("rotation"), SCALE("scale"),
+        SEARCHSIZE("searchsize"), SEP("sep"), SHOWBOXES("showboxes"), SIZE("size"), SMOOTHING("smoothing"),
+        SORTV("sortv"), SPLINES("splines"), START("start"), STYLE("style"), STYLESHEET("stylesheet"), TARGET("target"),
+        TBBALANCE("TBbalance"), TOOLTIP("tooltip"), TRUECOLOR("truecolor"), URL("URL"), VIEWPORT("viewport"),
+        VORO_MARGIN("voro_margin"), XDOTVERSION("xdotversion");
 
         protected final String value;
 
@@ -485,6 +400,7 @@ public class Graph extends DOTElement {
     @Data
     @EqualsAndHashCode(callSuper = false)
     public final class Node extends DOTElement {
+
         protected Graph graph;
         protected final HashMap<String, Node> from;
         protected final HashMap<String, Node> to;
@@ -495,6 +411,10 @@ public class Graph extends DOTElement {
             this.graph = graph;
             this.from = new HashMap<>();
             this.to = new HashMap<>();
+        }
+
+        private void setGraph(Graph graph) {
+            this.graph = graph;
         }
 
         //! Not tested
@@ -518,87 +438,45 @@ public class Graph extends DOTElement {
         }
 
         //! Not tested
-        public void removeTo(Node toNode) {
+        public void disconnectTo(Node toNode) {
             graph.removeEdge(this.ID, toNode.ID);
         }
 
         //! Not tested
-        public void removeFrom(Node fromNode) {
+        public void disconnectFrom(Node fromNode) {
             graph.removeEdge(fromNode.ID, this.ID);
         }
 
         //! Not tested
-        public void removeFromGraph() {
+        public void disconnectFromGraph() {
             graph.removeNode(ID);
-        }
-
-        //! Not tested
-        public void setAttribute(Attribute attribute, String value) {
-            setAttribute(attribute.value, value);
         }
 
         //! Not tested
         @Override
         public String toString() {
-            return this.ID;
+            return super.toString();
         }
 
         /**
          * Enum representing the attributes of a node in Graphviz.
-         * 
-         * <p>For more information, see the Graphviz documentation:</p>
-         * <a href="https://graphviz.org/docs/nodes/">Graphviz Node Attributes</a>
+         *
+         * <p>
+         * For more information, see the Graphviz documentation:</p>
+         * <a href="https://graphviz.org/docs/nodes/">Graphviz Node
+         * Attributes</a>
          */
         public enum Attribute {
-            AREA("area"),
-            CLASS("class"),
-            COLOR("color"),
-            COLORSCHEME("colorscheme"),
-            COMMENT("comment"),
-            DISTORTION("distortion"),
-            FILLCOLOR("fillcolor"),
-            FIXEDSIZE("fixedsize"),
-            FONTCOLOR("fontcolor"),
-            FONTNAME("fontname"),
-            FONTSIZE("fontsize"),
-            GRADIENTANGLE("gradientangle"),
-            GROUP("group"),
-            HEIGHT("height"),
-            HREF("href"),
-            ID("id"),
-            IMAGE("image"),
-            IMAGEPOS("imagepos"),
-            IMAGESCALE("imagescale"),
-            LABEL("label"),
-            LABELLOC("labelloc"),
-            LAYER("layer"),
-            MARGIN("margin"),
-            NOJUSTIFY("nojustify"),
-            ORDERING("ordering"),
-            ORIENTATION("orientation"),
-            PENWIDTH("penwidth"),
-            PERIPHERIES("peripheries"),
-            PIN("pin"),
-            POS("pos"),
-            RECTS("rects"),
-            REGULAR("regular"),
-            ROOT("root"),
-            SAMPLEPOINTS("samplepoints"),
-            SHAPE("shape"),
-            SHAPEFILE("shapefile"),
-            SHOWBOXES("showboxes"),
-            SIDES("sides"),
-            SKEW("skew"),
-            SORTV("sortv"),
-            STYLE("style"),
-            TARGET("target"),
-            TOOLTIP("tooltip"),
-            URL("URL"),
-            VERTICES("vertices"),
-            WIDTH("width"),
-            XLABEL("xlabel"),
-            XLP("xlp"),
-            Z("z");
+            AREA("area"), CLASS("class"), COLOR("color"), COLORSCHEME("colorscheme"), COMMENT("comment"),
+            DISTORTION("distortion"), FILLCOLOR("fillcolor"), FIXEDSIZE("fixedsize"), FONTCOLOR("fontcolor"),
+            FONTNAME("fontname"), FONTSIZE("fontsize"), GRADIENTANGLE("gradientangle"), GROUP("group"),
+            HEIGHT("height"), HREF("href"), ID("id"), IMAGE("image"), IMAGEPOS("imagepos"), IMAGESCALE("imagescale"),
+            LABEL("label"), LABELLOC("labelloc"), LAYER("layer"), MARGIN("margin"), NOJUSTIFY("nojustify"),
+            ORDERING("ordering"), ORIENTATION("orientation"), PENWIDTH("penwidth"), PERIPHERIES("peripheries"),
+            PIN("pin"), POS("pos"), RECTS("rects"), REGULAR("regular"), ROOT("root"), SAMPLEPOINTS("samplepoints"),
+            SHAPE("shape"), SHAPEFILE("shapefile"), SHOWBOXES("showboxes"), SIDES("sides"), SKEW("skew"),
+            SORTV("sortv"), STYLE("style"), TARGET("target"), TOOLTIP("tooltip"), URL("URL"), VERTICES("vertices"),
+            WIDTH("width"), XLABEL("xlabel"), XLP("xlp"), Z("z");
 
             protected final String value;
 
@@ -615,6 +493,7 @@ public class Graph extends DOTElement {
     @Data
     @EqualsAndHashCode(callSuper = false)
     public final class Edge extends DOTElement {
+
         protected final Node fromNode;
         protected final Node toNode;
 
@@ -630,89 +509,35 @@ public class Graph extends DOTElement {
         }
 
         //! Not tested
-        public void setAttribute(Attribute attribute, String value) {
-            setAttribute(attribute.value, value);
-        }
-
-        //! Not tested
         @Override
         public String toString() {
-            return this.ID;
+            return super.toString();
         }
 
         /**
          * Enum representing the attributes of an edge in Graphviz.
-         * 
-         * <p>For more information, see the Graphviz documentation:</p>
-         * <a href="https://graphviz.org/docs/edges/">Graphviz Edge Attributes</a>
+         *
+         * <p>
+         * For more information, see the Graphviz documentation:</p>
+         * <a href="https://graphviz.org/docs/edges/">Graphviz Edge
+         * Attributes</a>
          */
         public enum Attribute {
-            ARROWHEAD("arrowhead"),
-            ARROWSIZE("arrowsize"),
-            ARROWTAIL("arrowtail"),
-            CLASS("class"),
-            COLOR("color"),
-            COLORSCHEME("colorscheme"),
-            COMMENT("comment"),
-            CONSTRAINT("constraint"),
-            DECORATE("decorate"),
-            DIR("dir"),
-            EDGEHREF("edgehref"),
-            EDGETARGET("edgetarget"),
-            EDGETOOLTIP("edgetooltip"),
-            EDGEURL("edgeURL"),
-            FILLCOLOR("fillcolor"),
-            FONTCOLOR("fontcolor"),
-            FONTNAME("fontname"),
-            FONTSIZE("fontsize"),
-            HEAD_LP("head_lp"),
-            HEADCLIP("headclip"),
-            HEADHREF("headhref"),
-            HEADLABEL("headlabel"),
-            HEADPORT("headport"),
-            HEADTARGET("headtarget"),
-            HEADTOOLTIP("headtooltip"),
-            HEADURL("headURL"),
-            HREF("href"),
-            ID("id"),
-            LABEL("label"),
-            LABELANGLE("labelangle"),
-            LABELDISTANCE("labeldistance"),
-            LABELFLOAT("labelfloat"),
-            LABELFONTCOLOR("labelfontcolor"),
-            LABELFONTNAME("labelfontname"),
-            LABELFONTSIZE("labelfontsize"),
-            LABELHREF("labelhref"),
-            LABELTARGET("labeltarget"),
-            LABELTOOLTIP("labeltooltip"),
-            LABELURL("labelURL"),
-            LAYER("layer"),
-            LEN("len"),
-            LHEAD("lhead"),
-            LP("lp"),
-            LTAIL("ltail"),
-            MINLEN("minlen"),
-            NOJUSTIFY("nojustify"),
-            PENWIDTH("penwidth"),
-            POS("pos"),
-            SAMEHEAD("samehead"),
-            SAMETAIL("sametail"),
-            SHOWBOXES("showboxes"),
-            STYLE("style"),
-            TAIL_LP("tail_lp"),
-            TAILCLIP("tailclip"),
-            TAILHREF("tailhref"),
-            TAILLABEL("taillabel"),
-            TAILPORT("tailport"),
-            TAILTARGET("tailtarget"),
-            TAILTOOLTIP("tailtooltip"),
-            TAILURL("tailURL"),
-            TARGET("target"),
-            TOOLTIP("tooltip"),
-            URL("URL"),
-            WEIGHT("weight"),
-            XLABEL("xlabel"),
-            XLP("xlp");
+            ARROWHEAD("arrowhead"), ARROWSIZE("arrowsize"), ARROWTAIL("arrowtail"), CLASS("class"), COLOR("color"),
+            COLORSCHEME("colorscheme"), COMMENT("comment"), CONSTRAINT("constraint"), DECORATE("decorate"), DIR("dir"),
+            EDGEHREF("edgehref"), EDGETARGET("edgetarget"), EDGETOOLTIP("edgetooltip"), EDGEURL("edgeURL"),
+            FILLCOLOR("fillcolor"), FONTCOLOR("fontcolor"), FONTNAME("fontname"), FONTSIZE("fontsize"),
+            HEAD_LP("head_lp"), HEADCLIP("headclip"), HEADHREF("headhref"), HEADLABEL("headlabel"),
+            HEADPORT("headport"), HEADTARGET("headtarget"), HEADTOOLTIP("headtooltip"), HEADURL("headURL"),
+            HREF("href"), ID("id"), LABEL("label"), LABELANGLE("labelangle"), LABELDISTANCE("labeldistance"),
+            LABELFLOAT("labelfloat"), LABELFONTCOLOR("labelfontcolor"), LABELFONTNAME("labelfontname"),
+            LABELFONTSIZE("labelfontsize"), LABELHREF("labelhref"), LABELTARGET("labeltarget"),
+            LABELTOOLTIP("labeltooltip"), LABELURL("labelURL"), LAYER("layer"), LEN("len"), LHEAD("lhead"), LP("lp"),
+            LTAIL("ltail"), MINLEN("minlen"), NOJUSTIFY("nojustify"), PENWIDTH("penwidth"), POS("pos"),
+            SAMEHEAD("samehead"), SAMETAIL("sametail"), SHOWBOXES("showboxes"), STYLE("style"), TAIL_LP("tail_lp"),
+            TAILCLIP("tailclip"), TAILHREF("tailhref"), TAILLABEL("taillabel"), TAILPORT("tailport"),
+            TAILTARGET("tailtarget"), TAILTOOLTIP("tailtooltip"), TAILURL("tailURL"), TARGET("target"),
+            TOOLTIP("tooltip"), URL("URL"), WEIGHT("weight"), XLABEL("xlabel"), XLP("xlp");
 
             protected final String value;
 

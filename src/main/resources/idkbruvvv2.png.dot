@@ -1,0 +1,23 @@
+digraph {
+	graph [bb="0,0,126,124.5",
+		bgcolor=pink,
+		font=roboto
+	];
+	node [label="\N"];
+	A	[height=0.5,
+		pos="27,106.5",
+		width=0.75];
+	B	[height=0.5,
+		pos="27,18",
+		width=0.75];
+	A -> B	[label=red,
+		lp="35.625,62.25",
+		pos="e,27,36.35 27,88.41 27,76.758 27,61.047 27,47.519"];
+	C	[height=0.5,
+		pos="99,106.5",
+		width=0.75];
+	D	[height=0.5,
+		pos="99,18",
+		width=0.75];
+	C -> D	[pos="e,99,36.35 99,88.41 99,76.758 99,61.047 99,47.519"];
+}

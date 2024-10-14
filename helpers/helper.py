@@ -451,29 +451,29 @@ def main():
     if not os.path.exists(tmp_path): os.mkdir(tmp_path)
     dot = DOTGenerator(tmp_path)
     
-    # Valid
-    dot.generate_file(filename="nodesX_Y_Z", graph=nodesX_Y_Z, with_answers=True)
-    dot.generate_file(filename="emptyGraph", graph=emptyGraph, with_answers=True)
-    dot.generate_file(filename="someNodesZeroEdges", graph=someNodesZeroEdges, with_answers=True)
-    dot.generate_file(filename="nodeIDsWithLettersOnly", graph=nodeIDsWithLettersOnly, with_answers=True)
-    dot.generate_file(filename="nodeIDsWithNumbers", graph=nodeIDsWithNumbers, with_answers=True)
-    dot.generate_file(filename="nodeIDsWithUnderscores", graph=nodeIDsWithUnderscores, with_answers=True)
-    dot.generate_file(filename="nodesX_Y_ZLabeled", graph=nodesX_Y_ZLabeled, with_answers=True)
-    dot.generate_file(filename="threeNodes", graph=threeNodes, with_answers=True)
-    dot.generate_file(filename="fourEdges", graph=fourEdges, with_answers=True)
-    dot.generate_file(filename="circularABC", graph=circularABC, with_answers=True)
-    dot.generate_file(filename="funnyGraph", graph=funnyGraph, with_answers=True)
+    # # Valid
+    # dot.generate_file(filename="nodesX_Y_Z", graph=nodesX_Y_Z, with_answers=True)
+    # dot.generate_file(filename="emptyGraph", graph=emptyGraph, with_answers=True)
+    # dot.generate_file(filename="someNodesZeroEdges", graph=someNodesZeroEdges, with_answers=True)
+    # dot.generate_file(filename="nodeIDsWithLettersOnly", graph=nodeIDsWithLettersOnly, with_answers=True)
+    # dot.generate_file(filename="nodeIDsWithNumbers", graph=nodeIDsWithNumbers, with_answers=True)
+    # dot.generate_file(filename="nodeIDsWithUnderscores", graph=nodeIDsWithUnderscores, with_answers=True)
+    # dot.generate_file(filename="nodesX_Y_ZLabeled", graph=nodesX_Y_ZLabeled, with_answers=True)
+    # dot.generate_file(filename="threeNodes", graph=threeNodes, with_answers=True)
+    # dot.generate_file(filename="fourEdges", graph=fourEdges, with_answers=True)
+    # dot.generate_file(filename="circularABC", graph=circularABC, with_answers=True)
+    # dot.generate_file(filename="funnyGraph", graph=funnyGraph, with_answers=True)
     
-    # Invalid
-    dot.generate_file(filename="invalidNodeSyntax", graph=fourEdges, error_options="n", invalid=True)
-    dot.generate_file(filename="invalidEdgeSyntax", graph=circularABC, error_options="e", invalid=True)
-    dot.generate_file(filename="invalidSemicolon", graph=funnyGraph, error_options="s", invalid=True)
-    dot.generate_file(filename="graphTypeTypo", graph=fourEdges, error_options="t", invalid=True)
-    dot.generate_file(filename="bracketIncomplete", graph=nodesX_Y_ZLabeled, error_options="b", invalid=True)
+    # # Invalid
+    # dot.generate_file(filename="invalidNodeSyntax", graph=fourEdges, error_options="n", invalid=True)
+    # dot.generate_file(filename="invalidEdgeSyntax", graph=circularABC, error_options="e", invalid=True)
+    # dot.generate_file(filename="invalidSemicolon", graph=funnyGraph, error_options="s", invalid=True)
+    # dot.generate_file(filename="graphTypeTypo", graph=fourEdges, error_options="t", invalid=True)
+    # dot.generate_file(filename="bracketIncomplete", graph=nodesX_Y_ZLabeled, error_options="b", invalid=True)
     
-    # Generated
-    dot.generate_file(filename="selfLoopEdges", graph_options="d", node_options="4", edge_options="16", with_answers=True)
-    dot.generate_file(filename="veryLargeGraph", graph_options="d", node_options="999al", edge_options="999l", with_answers=True)
+    # # Generated
+    # dot.generate_file(filename="selfLoopEdges", graph_options="d", node_options="4", edge_options="16", with_answers=True)
+    # dot.generate_file(filename="veryLargeGraph", graph_options="d", node_options="999al", edge_options="999l", with_answers=True)
     
     
 main()

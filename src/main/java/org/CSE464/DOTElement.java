@@ -1,14 +1,20 @@
 package org.CSE464;
 
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 import lombok.Data;
 
 @Data
 public abstract class DOTElement {
-    protected static final String ID_REGEX = "^[a-zA-Z_][a-zA-Z_0-9]*$|^[-]?(\\.[0-9]+|[0-9]+(\\.[0-9]*)?)$|^\"(\\\\\"|[^\"])*\"$|^<[^>]*>$";
+    protected static final String ID_REGEX = "^[a-zA-Z_][a-zA-Z_0-9]*$|^[-]?(\\.[0-9]+|[0-9]+(\\.[0-9]*)?)$|^\\\"(\\\"|[^\\\"])*\\\"$|^<([a-zA-Z][a-zA-Z0-9]*)\\b[^>]*>(.*?)<\\/\\4>$";
     protected final HashMap<String, String> attributes;
     protected final String ID;
+
+    public DOTElement() {
+        this.ID = null;
+        this.attributes = new HashMap<>();
+    }
 
     public DOTElement(String ID) {
         this.attributes = new HashMap<>();
@@ -21,10 +27,9 @@ public abstract class DOTElement {
 
     public void setAttribute(String attribute, String value) {
         if (!attribute.matches(ID_REGEX)) {
-            throw new InvalidIDException(
-                    String.format(
-                            "Error: Attempt to set attribute '%s' to '%s' failed. The attribute does not satisfy the ID regex.",
-                            attribute, getClass()));
+            throw new InvalidIDException(String.format(
+                    "Error: Attempt to set attribute '%s' to '%s' failed. The attribute does not satisfy the ID regex.",
+                    attribute, getClass()));
         }
         attributes.put(attribute, value);
     }
@@ -33,4 +38,12 @@ public abstract class DOTElement {
         attributes.remove(attribute);
     }
 
+    @Override
+    public String toString() {
+        String attrsString = "[" + attributes.entrySet().stream()
+                .map(e -> String.format("%s=\"%s\"", e.getKey(), e.getValue())).collect(Collectors.joining(" ")) + "]";
+
+        String toString = String.format("%s %s %s", getClass().getSimpleName(), ID, attrsString);
+        return toString;
+    }
 }

@@ -1,4 +1,4 @@
-package org.utils;
+package org;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -15,15 +15,14 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-public class TestUtils {
+public class Utils {
     public static void hasMethod(Class<?> clazz, String methodName, Class<?>... parameters) {
         try {
             Method method = clazz.getMethod(methodName, parameters);
             assertNotNull(method);
         } catch (NoSuchMethodException e) {
-            throw new RuntimeException(
-                    "Method '" + methodName + "' with parameter signature '" + Arrays.toString(parameters)
-                            + "' not found.");
+            throw new RuntimeException("Method '" + methodName + "' with parameter signature '"
+                    + Arrays.toString(parameters) + "' not found.");
         }
     }
 
