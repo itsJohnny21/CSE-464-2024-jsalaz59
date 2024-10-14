@@ -1,6 +1,8 @@
 package org.CSE464;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -8,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -24,19 +27,19 @@ public class Graph extends DOTElement {
 
     private static final String DIRECTED_SIGN = "->";
     private static final String UNDIRECTED_SIGN = "--";
-    private final HashMap<String, Node> nodes;
-    private final HashMap<String, Edge> edges;
+    private final LinkedHashMap<String, Node> nodes;
+    private final LinkedHashMap<String, Edge> edges;
 
     public Graph() {
         super();
-        this.nodes = new HashMap<>();
-        this.edges = new HashMap<>();
+        this.nodes = new LinkedHashMap<>();
+        this.edges = new LinkedHashMap<>();
     }
 
     public Graph(String ID) {
         super(ID);
-        this.nodes = new HashMap<>();
-        this.edges = new HashMap<>();
+        this.nodes = new LinkedHashMap<>();
+        this.edges = new LinkedHashMap<>();
     }
 
     public static Graph parseDOT(String filepath) {
@@ -275,29 +278,38 @@ public class Graph extends DOTElement {
     }
 
     //! Not tested
-    public void outputGraph(String filepath, Format format) throws IOException, InterruptedException {
+    public String outputGraph(String filepath, Format format) throws IOException, InterruptedException {
         String dotContent = toDot();
 
         if (!filepath.endsWith(format.extension)) {
             filepath += format.extension;
         }
 
-        ProcessBuilder processBuilder = new ProcessBuilder("dot", format.value, "-o", filepath);
-        processBuilder.redirectErrorStream(true);
-        Process process = processBuilder.start();
+        if (format.equals(Format.RAWDOT)) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(filepath))) {
+                writer.write(dotContent);
+            }
+        } else {
 
-        try (OutputStream outputStream = process.getOutputStream()) {
-            outputStream.write(dotContent.getBytes());
-            outputStream.flush();
+            ProcessBuilder processBuilder = new ProcessBuilder("dot", format.value, "-o", filepath);
+            processBuilder.redirectErrorStream(true);
+            Process process = processBuilder.start();
+
+            try (OutputStream outputStream = process.getOutputStream()) {
+                outputStream.write(dotContent.getBytes());
+                outputStream.flush();
+            }
+
+            int exitCode = process.waitFor();
+
+            if (exitCode != 0) {
+                InputStream inputStream = process.getInputStream();
+                String errorMessage = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+                throw new ParseException(errorMessage);
+            }
         }
 
-        int exitCode = process.waitFor();
-
-        if (exitCode != 0) {
-            InputStream inputStream = process.getInputStream();
-            String errorMessage = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-            throw new ParseException(errorMessage);
-        }
+        return dotContent;
     }
 
     // ! Not tested
