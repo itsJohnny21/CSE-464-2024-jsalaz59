@@ -2,128 +2,18 @@ package org.CSE464;
 
 public class Playground {
     public static void main(String[] args) throws Exception {
-        // Graph g = new Graph();
-        // g.setAttribute(Graph.Attribute._BACKGROUND.value, "red");
-        // Node n1 = g.addNode("n1");
-        // n1.setAttribute("label", "n1");
-        // n1.setAttribute("color", "blue");
+        Graph g = new Graph();
+        String projectName = "GraphMaster";
 
-        // Edge e = g.addEdge("n1", "n2");
-        // e.setAttribute("label", "4");
-        // e.setAttribute("color", "red");
+        for (char c : projectName.toCharArray()) {
+            String nodeID = String.valueOf(c);
+            if (!g.nodeExists(nodeID)) {
+                g.addNode(nodeID);
 
-        // System.out.println(n1);
-        // System.out.println(e);
-        // System.out.println(g);
-        // System.out.println(g.describe());
-        Graph g = Graph.parseDOT(
-                "/Users/jonisalazar/School/Fall 2024/CSE464/CSE-464-2024-jsalaz59/src/test/resources/DOT/valid/nodesX_Y_ZLabeled/nodesX_Y_ZLabeled.dot");
-        // g.addEdge("n1", "n2");
-        // g.removeNode("n1");
+            }
+        }
 
-        // System.out.println(g.getNode("n2").from);
-        // g.addEdge("n1", "n2");
-        // g.addEdge("n1", "n1");
-        // Edge n2_n2 = g.addEdge("n2", "n2");
-        // n2_n2.setAttribute("arrowsize", "21");
-        // n2_n2.setAttribute("weight", "we\\\"ig\\\"ht=21");
-        // System.out.println(g.getNode("n2"));
-        // Node n2 = g.getNode("n2");
-        // n2.setAttribute("label", "n1");
-
-        // System.out.println(n2_n2);
-        System.out.println(g.describe());
-
-        // g.outputGraph(
-        //         "/Users/jonisalazar/School/Fall 2024/CSE464/CSE-464-2024-jsalaz59/src/main/resources/idkbruvvv2.png",
-        //         Format.DOT);
-
-        // Graph g = Graph.parseDOTFile(
-        //         "/Users/jonisalazar/School/Fall 2024/CSE464/CSE-464-2024-jsalaz59/src/main/resources/idkbruvvv.dot");
-
-        // // Node node = g.addNode("t1");
-        // // Node n1 = g.getNode("n1");
-        // System.out.println(g);
-        // Node n2 = g.getNode("n2");
-        // Node n4 = g.getNode("n4");
-
-        // n4.setAttribute("shape", "Mcircle");
-        // n4.setAttribute(Node.Attribute.AREA, "100");
-        // n4.setAttribute("style", "filled");
-        // n4.setAttribute("fillcolor", "green");
-        // n4.setAttribute("label", "breh");
-
-        // n4.to(n4).setAttribute("arrowsize", "2");
-        // n4.to.forEach((k, v) -> {
-        //     n4.to(v).setAttribute(Edge.Attribute.COLOR, "pink");
-        // });
-
-        // g.setAttribute("bg", "red");
-        // // g.setAttribute("Graph.Attribute.BGCOLOR", "red");
-        // // n2.connectTo(n4);
-        // // n4.to(n2).setAttribute("arrowsize", "10"); //! change the names to make them more intuitive such as node1.to(node2);
-        // g.outputGraph(
-        //         "/Users/jonisalazar/School/Fall 2024/CSE464/CSE-464-2024-jsalaz59/src/main/resources/idkbruvvv2.dot",
-        //         Format.DOT);
-        // System.out.println(g);
-        // g.removeNode("n1");
-
-        // System.out.println(n1.graph);
-        // g.addEdge("fromID", "toID");
-        // System.out.println(g);
-
-        // g.removeNode("n1");
-        // System.out.println(g);
-
-        // HashMap<String, Graph> edges = new HashMap<>();
-        // HashSet<Graph> toEdges = new HashSet<>();
-
-        // Graph g = new Graph();
-
-        // edges.put("1", g);
-        // toEdges.add(g);
-
-        // System.out.println(edges.size());
-        // System.out.println(toEdges.size());
-
-        // destroy(g);
-
-        // System.out.println(edges.size());
-        // System.out.println(toEdges.size());
-
-        // String curDir = System.getProperty("user.dir");
-        // System.out.printf("curDir: %s\n", curDir);
-
-        // boolean exists = Files.exists(Path.of("./src/main/resources/idkbruvvv.dot"));
-        // System.out.printf("exists: %s\n", exists);
-
-        // Graph gm = new Graph();
-        // Node n1 = gm.addNode("n1");
-        // gm.addNodeLabel(n1.getID(), "hello");
-
-        // Node[] ns = gm.addNodes("n3", "n4");
-
-        // for (Node n : ns) {
-        //     gm.addNodeLabel(n.getID(), "world!");
-        //     System.out.println(n);
-        // }
-
-        // gm.addEdge("n1", "n2");
-        // gm.addEdge("n1", "n3");
-
-        // gm.addEdge("n2", "n1");
-
-        // gm.addEdge("n3", "n2");
-        // gm.addEdge("n3", "n4");
-
-        // gm.addEdge("n4", "n2");
-        // Edge e4_1 = gm.addEdge("n4", "n4");
-
-        // gm.addEdgeLabel(e4_1.getFromNode().getID(), e4_1.getFromNode().getID(), "yessirr2");
-
-        // System.out.println(gm);
-
-        // gm.outputGraph("./idkbruvvv", Format.DOT);
+        g.outputGraph("./filepath", Format.RAWDOT);
 
     }
 }
