@@ -90,7 +90,6 @@ public class Graph extends DOTElement {
         }
     }
 
-    //! Not tested
     public Node addNode(String nodeID) {
         if (!nodeID.matches(ID_REGEX)) {
             throw new InvalidIDException(String
@@ -108,7 +107,6 @@ public class Graph extends DOTElement {
         return node;
     }
 
-    //! Not tested
     public Node[] addNodes(String... nodeIDs) {
         for (String nodeID : nodeIDs) {
             if (!nodeID.matches(ID_REGEX)) {
@@ -133,7 +131,6 @@ public class Graph extends DOTElement {
         return newNodes;
     }
 
-    //! Not tested
     public void removeNode(String nodeID) {
         if (!nodeExists(nodeID)) {
             throw new NodeDoesNotExistException(
@@ -165,12 +162,10 @@ public class Graph extends DOTElement {
         node.setGraph(null);
     }
 
-    //! Not tested
     public boolean nodeExists(String nodeID) {
         return nodes.containsKey(nodeID);
     }
 
-    //! Not tested
     public Node getNode(String nodeID) {
         if (!nodeExists(nodeID)) {
             throw new NodeDoesNotExistException(String.format("Error: Node with id '%s' does not exist.", nodeID));
@@ -180,7 +175,6 @@ public class Graph extends DOTElement {
         return node;
     }
 
-    //! Not tested
     public Edge addEdge(String fromID, String toID) {
         if (edgeExists(fromID, toID)) {
             throw new EdgeAlreadyExistsException(
@@ -208,13 +202,11 @@ public class Graph extends DOTElement {
         return edge;
     }
 
-    //! Not tested
     public boolean edgeExists(String fromID, String toID) {
         String edgeID = Graph.createEdgeID(fromID, toID);
         return edges.containsKey(edgeID);
     }
 
-    //! Not tested
     public void removeEdge(String fromID, String toID) {
         if (!edgeExists(fromID, toID)) {
             throw new EdgeDoesNotExistException(
@@ -230,12 +222,10 @@ public class Graph extends DOTElement {
         edges.remove(edge.ID);
     }
 
-    //! Not tested
     private static String createEdgeID(String fromID, String toID) {
         return String.format("%s %s %s", fromID, DIRECTED_SIGN, toID);
     }
 
-    //! Not tested
     public Edge getEdge(String fromID, String toID) {
         if (!edgeExists(fromID, toID)) {
             throw new EdgeDoesNotExistException(
@@ -246,27 +236,22 @@ public class Graph extends DOTElement {
         return edges.get(edgeID);
     }
 
-    //! Not tested
     public int getNumberOfNodes() {
         return nodes.size();
     }
 
-    //! Not tested
     public Set<String> getNodeNames() {
         return nodes.keySet();
     }
 
-    //! Not tested
     public int getNumberOfEdges() {
         return edges.size();
     }
 
-    //! Not tested
     public Set<String> getEdgeDirections() {
         return edges.keySet();
     }
 
-    //! Not tested
     public Set<String> getNodeLabels() {
         HashSet<String> nodeLabels = new HashSet<>();
 
@@ -277,7 +262,11 @@ public class Graph extends DOTElement {
         return nodeLabels;
     }
 
-    //! Not tested
+    /**
+     * Parsing made possible using Nidi3's Graphviz-Java.
+     * 
+     * <p> For more information, see the Graphviz-Java documentation:</p> <a href="https://github.com/nidi3/graphviz-java">Graphviz-Java By Nidi3</a>
+    **/
     public String outputGraph(String filepath, Format format) throws IOException, InterruptedException {
         String dotContent = toDot();
 
@@ -291,7 +280,7 @@ public class Graph extends DOTElement {
             }
         } else {
 
-            ProcessBuilder processBuilder = new ProcessBuilder("dot", format.value, "-o", filepath);
+            ProcessBuilder processBuilder = new ProcessBuilder("dot", "-Kfdp", "-n", format.value, "-o", filepath);
             processBuilder.redirectErrorStream(true);
             Process process = processBuilder.start();
 
@@ -370,9 +359,7 @@ public class Graph extends DOTElement {
     /**
      * Enum representing the attributes of a graph in Graphviz.
      *
-     * <p>
-     * For more information, see the Graphviz documentation:</p>
-     * <a href="https://graphviz.org/docs/edges/">Graphviz Graph Attributes</a>
+     * <p> For more information, see the Graphviz documentation:</p> <a href="https://graphviz.org/docs/edges/">Graphviz Graph Attributes</a>
      */
     public enum Attribute {
         _BACKGROUND("_background"), BB("bb"), BEAUTIFY("beautify"), BGCOLOR("bgcolor"), CENTER("center"),
@@ -417,7 +404,6 @@ public class Graph extends DOTElement {
         protected final HashMap<String, Node> from;
         protected final HashMap<String, Node> to;
 
-        //! Not tested
         private Node(Graph graph, String ID) {
             super(ID);
             this.graph = graph;
@@ -429,42 +415,34 @@ public class Graph extends DOTElement {
             this.graph = graph;
         }
 
-        //! Not tested
         public Edge connectTo(Node toNode) {
             return graph.addEdge(this.ID, toNode.ID);
         }
 
-        //! Not tested
         public Edge to(Node toNode) {
             return graph.getEdge(this.ID, toNode.ID);
         }
 
-        //! Not tested
         public Edge connectFrom(Node fromNode) {
             return graph.addEdge(fromNode.ID, this.ID);
         }
 
-        //! Not tested
         public Edge from(Node fromNode) {
             return graph.getEdge(fromNode.ID, this.ID);
         }
 
-        //! Not tested
         public void disconnectTo(Node toNode) {
             graph.removeEdge(this.ID, toNode.ID);
         }
 
-        //! Not tested
         public void disconnectFrom(Node fromNode) {
             graph.removeEdge(fromNode.ID, this.ID);
         }
 
-        //! Not tested
         public void disconnectFromGraph() {
             graph.removeNode(ID);
         }
 
-        //! Not tested
         @Override
         public String toString() {
             return super.toString();
@@ -473,10 +451,7 @@ public class Graph extends DOTElement {
         /**
          * Enum representing the attributes of a node in Graphviz.
          *
-         * <p>
-         * For more information, see the Graphviz documentation:</p>
-         * <a href="https://graphviz.org/docs/nodes/">Graphviz Node
-         * Attributes</a>
+         * <p> For more information, see the Graphviz documentation:</p> <a href="https://graphviz.org/docs/nodes/">Graphviz Node Attributes</a>
          */
         public enum Attribute {
             AREA("area"), CLASS("class"), COLOR("color"), COLORSCHEME("colorscheme"), COMMENT("comment"),
@@ -515,12 +490,10 @@ public class Graph extends DOTElement {
             this.toNode = toNode;
         }
 
-        //! Not tested
         public void removeFromGraph() {
             fromNode.graph.removeEdge(fromNode.ID, toNode.ID);
         }
 
-        //! Not tested
         @Override
         public String toString() {
             return super.toString();
@@ -529,10 +502,7 @@ public class Graph extends DOTElement {
         /**
          * Enum representing the attributes of an edge in Graphviz.
          *
-         * <p>
-         * For more information, see the Graphviz documentation:</p>
-         * <a href="https://graphviz.org/docs/edges/">Graphviz Edge
-         * Attributes</a>
+         * <p> For more information, see the Graphviz documentation:</p> <a href="https://graphviz.org/docs/edges/">Graphviz Edge Attributes</a>
          */
         public enum Attribute {
             ARROWHEAD("arrowhead"), ARROWSIZE("arrowsize"), ARROWTAIL("arrowtail"), CLASS("class"), COLOR("color"),
