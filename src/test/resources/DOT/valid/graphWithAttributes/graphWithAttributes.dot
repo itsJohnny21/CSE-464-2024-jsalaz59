@@ -1,0 +1,12 @@
+digraph {
+	bgcolor="pink";
+	font="roboto";
+
+	A [];
+	B [];
+	C [];
+	D [];
+
+	A -> B [label="red"];
+	C -> D [];
+}
