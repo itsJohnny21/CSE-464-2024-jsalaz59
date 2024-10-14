@@ -11,7 +11,7 @@ public class Playground_Test {
         Playground p = new Playground();
 
         assertDoesNotThrow(() -> {
-            p.main(null);
+            Playground.main(null);
         });
     }
 
