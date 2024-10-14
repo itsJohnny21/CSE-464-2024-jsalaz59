@@ -580,7 +580,6 @@ public class Graph_Node_Test {
         g.addEdge("n4", "n1");
         g.addEdge("n5", "n1");
         g.addEdge("n4", "n5");
-        g.outputGraph("./heyooo", Format.DOT);
 
         n1.disconnectFromGraph();
 
