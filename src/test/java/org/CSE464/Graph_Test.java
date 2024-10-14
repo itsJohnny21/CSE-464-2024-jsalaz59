@@ -1,6 +1,7 @@
 package org.CSE464;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -223,7 +224,9 @@ public class Graph_Test {
             for (Node node : g.getNodes().values()) {
                 assertNotNull(node.getAttribute("label"), "Label was not parsed.");
             }
-            g.outputGraph("filepath", Format.PNG);
+
+            Path outputPath = Paths.get(tmpPath.toString(), "output.png");
+            g.outputGraph(outputPath.toString(), Format.PNG);
             int expectedNumNodes = 999;
             int actualNumNodes = g.getNumberOfNodes();
             assertEquals(expectedNumNodes, actualNumNodes, "Incorrect node count.");
@@ -466,6 +469,21 @@ public class Graph_Test {
                 assertTrue(g.toString().contains(attribute));
                 assertTrue(g.toString().contains(value));
             }
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void Graph_Can_Output_To_RAWDOT() {
+        try {
+            Graph g = Graph.parseDOT(Utils.getDOTFilepathFromTestDirectory(nodesX_Y_ZLabeled));
+
+            String path = Path.of(tmpPath.toString(), String.format("tmp_file%s", Format.RAWDOT.extension)).toString();
+            String dotContent = g.outputGraph(path, Format.RAWDOT);
+            assertNotNull(dotContent);
+            assertFalse(dotContent.isEmpty());
+
         } catch (Exception e) {
             fail(e.getMessage());
         }
