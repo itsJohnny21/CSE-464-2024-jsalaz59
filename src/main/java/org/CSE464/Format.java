@@ -8,7 +8,9 @@ package org.CSE464;
  */
 public enum Format {
     BMP("-Tbmp", ".bmp"), DOT("-Tdot", ".dot"), JPEG("-Tjpg", ".jpg"), JSON("-Tjson", ".json"), PDF("-Tpdf", ".pdf"),
-    PICT("-Tpict", ".pict"), PLAINTEXT("-Tplain", ".txt"), PNG("-Tpng", ".png"), SVG("-Tsvg", ".svg");
+    PICT("-Tpct", ".pct"), PLAINTEXT("-Tplain", ".txt"), PNG("-Tpng", ".png"), SVG("-Tsvg", ".svg"),
+    RAWDOT("-Tdot", ".dot");
+    ;
 
     protected final String value;
     protected final String extension;
