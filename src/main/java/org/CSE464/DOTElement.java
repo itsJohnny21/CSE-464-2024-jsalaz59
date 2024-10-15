@@ -38,12 +38,18 @@ public abstract class DOTElement {
         attributes.remove(attribute);
     }
 
-    @Override
-    public String toString() {
+    public String toDot() {
         String attrsString = "[" + attributes.entrySet().stream()
                 .map(e -> String.format("%s=\"%s\"", e.getKey(), e.getValue())).collect(Collectors.joining(" ")) + "]";
 
-        String toString = String.format("%s %s %s", getClass().getSimpleName(), ID, attrsString);
+        String dotString = String.format("%s %s;", ID, attrsString);
+        return dotString;
+    }
+
+    @Override
+    public String toString() {
+        String toString = String.format("%s %s", this.getClass().getSimpleName(), this.toDot());
         return toString;
     }
+
 }
