@@ -20,7 +20,8 @@ public class Logo {
             n.setAttribute(Node.Attribute.FONTNAME, "San Francisco"); // Change the font name of the node
         }
 
-        g.outputGraph("./assets/icons/logo", Format.SVG); // Output the logo as SVG
+        g.outputGraph("./assets/icons/logo", Format.SVG, "-Kfdp", "-n"); // Output the logo as SVG using -Kfdp engine to render
+        g.outputGraph("./assets/graphs/logo", Format.RAWDOT); // Output the logo as RAWDOT
     }
 
     public static void setNodeAttributes(Node n, String label, double xPos, double yPos, double radius) {
@@ -32,7 +33,7 @@ public class Logo {
 
     public static Graph intersectStrings(String s1, String s2, String intersectionCharacter, double radius,
             double angle) throws Exception {
-        Graph g = new Graph();
+        Graph g = new Graph("MasterGraph");
         int intersectionIndex1 = s1.indexOf(intersectionCharacter); // Index of intersetion character for string1
         int intersectionIndex2 = s2.indexOf(intersectionCharacter); // Index of intersetion character for string2
 
