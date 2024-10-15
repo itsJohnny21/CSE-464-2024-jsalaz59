@@ -720,4 +720,32 @@ public class Graph_Node_Test {
             Node.class.getMethod("setGraph", Graph.class);
         });
     }
+
+    @Test
+    public void Node_Can_Not_Connect_To_Another_Node_That_Does_Not_Belong_To_A_Graph() {
+        Node n1 = g.addNode("n1");
+        Node n2 = g.addNode("n2");
+
+        n2.removeFromGraph();
+
+        assertThrows(NullPointerException.class, () -> {
+            n1.connectTo(n2);
+        });
+    }
+
+    @Test
+    public void Nodes_From_Different_Graphs_Cannot_Be_Connected() {
+        Node n1 = g.addNode("n1");
+        Graph g2 = new Graph();
+        Node n2 = g2.addNode("n2");
+
+        assertThrows(DifferingGraphsException.class, () -> {
+            n1.connectTo(n2);
+        });
+
+        assertThrows(DifferingGraphsException.class, () -> {
+            n2.connectTo(n1);
+        });
+
+    }
 }
