@@ -7,10 +7,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -283,7 +286,8 @@ public class Graph extends DOTElement {
      * 
      * <p> For more information, see the Graphviz-Java documentation:</p> <a href="https://github.com/nidi3/graphviz-java">Graphviz-Java By Nidi3</a>
     **/
-    public String outputGraph(String filepath, Format format) throws IOException, InterruptedException {
+    public String outputGraph(String filepath, Format format, String... options)
+            throws IOException, InterruptedException {
         String dotContent = toDot();
 
         if (!filepath.endsWith(format.extension)) {
@@ -296,7 +300,15 @@ public class Graph extends DOTElement {
             }
         } else {
 
-            ProcessBuilder processBuilder = new ProcessBuilder("dot", "-Kfdp", "-n", format.value, "-o", filepath);
+            List<String> command = new ArrayList<>();
+            command.add("dot");
+            command.addAll(Arrays.asList(options));
+            command.add(format.value);
+            command.add("-o");
+            command.add(filepath);
+
+            ProcessBuilder processBuilder = new ProcessBuilder(command);
+
             processBuilder.redirectErrorStream(true);
             Process process = processBuilder.start();
 
@@ -348,12 +360,6 @@ public class Graph extends DOTElement {
                 edgesSection);
 
         return dotContent;
-    }
-
-    @Override
-    public String toString() {
-        String toString = String.format("%s %s", this.getClass().getSimpleName(), super.toDot());
-        return toString;
     }
 
     public String describe() {
