@@ -217,6 +217,19 @@ public class Graph_Node_Test {
     }
 
     @Test
+    public void Graph_Will_Not_Add_A_Single_Node_If_Duplicate_Node_ID_Is_Provided_When_Adding_Multiple_Nodes() {
+        String[] nodeIDs = new String[] { "n1", "n1", "n3" };
+
+        assertThrows(DuplicateNodeIDException.class, () -> {
+            g.addNodes(nodeIDs);
+        });
+
+        int expectedNumberOfNodes = 0;
+        int actualNumberOfNodes = g.getNumberOfNodes();
+        assertEquals(expectedNumberOfNodes, actualNumberOfNodes);
+    }
+
+    @Test
     public void Graph_Will_Not_Add_A_Single_Node_If_Node_Already_Exists_When_Adding_Multiple_Nodes() {
         String[] nodeIDs = new String[] { "n1", "3badID", "n3" };
 
@@ -581,7 +594,7 @@ public class Graph_Node_Test {
         g.addEdge("n5", "n1");
         g.addEdge("n4", "n5");
 
-        n1.disconnectFromGraph();
+        n1.removeFromGraph();
 
         int expectedNumberOfNodes = 4;
         int actualNumberOfNodes = g.getNumberOfNodes();
@@ -692,7 +705,7 @@ public class Graph_Node_Test {
         g.removeNode("n1");
 
         assertThrows(NullPointerException.class, () -> {
-            n1.disconnectFromGraph();
+            n1.removeFromGraph();
         });
 
         int expectedNumberOfNodes = 0;
