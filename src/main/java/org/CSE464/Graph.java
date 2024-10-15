@@ -54,7 +54,7 @@ public class Graph extends DOTElement {
             MutableGraph mutableGraph = new Parser().read(new File(filepath));
             String graphID = mutableGraph.name().toString();
 
-            Graph graph = new Graph(graphID);
+            Graph graph = graphID.isEmpty() ? new Graph() : new Graph(graphID);
             mutableGraph.graphAttrs().forEach(a -> {
                 graph.setAttribute(a.getKey(), a.getValue().toString());
             });
@@ -423,6 +423,22 @@ public class Graph extends DOTElement {
         }
 
         public Edge connectTo(Node toNode) {
+            if (this.graph == null) {
+                throw new NullPointerException(String.format(
+                        "Error: Attempt to connect node '%s' to node '%s' failed. Node '%s' does not belong to a graph.",
+                        this.ID, toNode.ID, this.ID));
+            } else if (toNode.graph == null) {
+                throw new NullPointerException(String.format(
+                        "Error: Attempt to connect node '%s' to node '%s' failed. Node '%s' does not belong to a graph.",
+                        this.ID, toNode.ID, toNode.ID));
+            }
+
+            if (!this.graph.equals(toNode.graph)) {
+                throw new DifferingGraphsException(String.format(
+                        "Error: Attempt to connect node '%s' from graph '%s' to node '%s' from graph '%s' failed. The nodes belong to different graphs.",
+                        this.ID, this.graph.ID, toNode.ID, toNode.graph.ID));
+            }
+
             return graph.addEdge(this.ID, toNode.ID);
         }
 
@@ -431,11 +447,11 @@ public class Graph extends DOTElement {
         }
 
         public Edge connectFrom(Node fromNode) {
-            return graph.addEdge(fromNode.ID, this.ID);
+            return fromNode.connectTo(this);
         }
 
         public Edge from(Node fromNode) {
-            return graph.getEdge(fromNode.ID, this.ID);
+            return fromNode.to(this);
         }
 
         public void disconnectTo(Node toNode) {
@@ -443,7 +459,7 @@ public class Graph extends DOTElement {
         }
 
         public void disconnectFrom(Node fromNode) {
-            graph.removeEdge(fromNode.ID, this.ID);
+            fromNode.disconnectTo(this);
         }
 
         public void removeFromGraph() {
