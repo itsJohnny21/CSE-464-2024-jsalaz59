@@ -2,6 +2,7 @@ package org.CSE464;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -89,8 +90,13 @@ public class DOTElement_Test {
             String value = entry.getValue();
             e.setAttribute(attribute, value);
 
+            assertNotNull(e.toString());
             assertTrue(e.toString().contains(attribute));
             assertTrue(e.toString().contains(value));
+
+            assertNotNull(e.toDot());
+            assertTrue(e.toDot().contains(attribute));
+            assertTrue(e.toDot().contains(value));
         }
     }
 
