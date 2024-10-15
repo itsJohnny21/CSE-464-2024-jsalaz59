@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import guru.nidi.graphviz.model.LinkTarget;
 import guru.nidi.graphviz.model.MutableGraph;
@@ -38,6 +39,12 @@ public class Graph extends DOTElement {
 
     public Graph(String ID) {
         super(ID);
+        if (!ID.matches(ID_REGEX)) {
+            throw new InvalidIDException(String.format(
+                    "Error: Attempt to create a '%s' using ID '%s' failed. The ID does not satisfy the ID regex.",
+                    getClass(), ID));
+        }
+
         this.nodes = new LinkedHashMap<>();
         this.edges = new LinkedHashMap<>();
     }
@@ -108,6 +115,8 @@ public class Graph extends DOTElement {
     }
 
     public Node[] addNodes(String... nodeIDs) {
+        Set<String> uniqueNodeIDs = new HashSet<>();
+
         for (String nodeID : nodeIDs) {
             if (!nodeID.matches(ID_REGEX)) {
                 throw new InvalidIDException(
@@ -119,6 +128,13 @@ public class Graph extends DOTElement {
                 throw new NodeAlreadyExistsException(String
                         .format("Error: Attempt to add multiple nodes failed. Node '%s' already exists.", nodeID));
             }
+
+            if (uniqueNodeIDs.contains(nodeID)) {
+                throw new DuplicateNodeIDException(String.format(
+                        "Error: Attempt to add multiple nodes failed. Duplicate node id '%s' was provided.", nodeID));
+            }
+
+            uniqueNodeIDs.add(nodeID);
         }
 
         Node[] newNodes = new Node[nodeIDs.length];
@@ -301,54 +317,45 @@ public class Graph extends DOTElement {
         return dotContent;
     }
 
-    // ! Not tested
-    public String toDot() throws IOException {
-        StringBuilder nodesSection = new StringBuilder();
-        StringBuilder edgesSection = new StringBuilder();
+    public String getAttribute(Attribute attribute) {
+        return getAttribute(attribute.value);
+    }
 
-        StringBuilder graphAttrs = new StringBuilder();
-        for (Entry<String, String> entry : attributes.entrySet()) {
-            if (!entry.getValue().isEmpty()) {
-                graphAttrs.append(String.format("\n\t%s=\"%s\";\n", entry.getKey(), entry.getValue()));
-            }
-        }
+    public void setAttribute(Attribute attribute, String value) {
+        setAttribute(attribute.value, value);
+    }
 
-        for (Node node : nodes.values()) {
-            StringBuilder nodeAttrs = new StringBuilder();
-            for (Entry<String, String> entry : node.attributes.entrySet()) {
-                if (!entry.getValue().isEmpty()) {
-                    nodeAttrs.append(String.format("%s=\"%s\" ", entry.getKey(), entry.getValue()));
-                }
-            }
-            nodesSection.append(String.format("\t%s [%s];\n", node.ID, nodeAttrs.toString().trim()));
+    public void removeAttribute(Attribute attribute) {
+        removeAttribute(attribute.value);
+    }
 
-            if (!node.to.isEmpty()) {
-                for (Node toNode : node.to.values()) {
-                    Edge edge = getEdge(node.ID, toNode.ID);
-                    StringBuilder edgeAttrs = new StringBuilder();
-                    for (Entry<String, String> entry : edge.attributes.entrySet()) {
-                        if (!entry.getValue().isEmpty()) {
-                            edgeAttrs.append(String.format("%s=\"%s\" ", entry.getKey(), entry.getValue()));
-                        }
-                    }
-                    edgesSection.append(String.format("\t%s [%s];\n", edge.ID, edgeAttrs.toString().trim()));
-                }
-            }
-        }
+    @Override
+    public String toDot() {
+        String attrsString = attributes.isEmpty() ? ""
+                : "\t" + attributes.entrySet().stream().map(e -> String.format("%s=\"%s\";", e.getKey(), e.getValue()))
+                        .collect(Collectors.joining("\n\t"));
 
-        String dotContent = String.format("digraph%s{%s\n%s\n%s}", ID != null ? String.format(" %s ", ID) : " ",
-                graphAttrs.toString(), nodesSection.toString(), edgesSection.toString());
+        String nodesSection = nodes.isEmpty() ? ""
+                : (attributes.isEmpty() ? "" : "\n\n") + nodes.values().stream()
+                        .map(n -> String.format("\t%s", n.toDot())).collect(Collectors.joining("\n"));
+
+        String edgesSection = edges.isEmpty() ? ""
+                : "\n\n" + edges.values().stream().map(e -> String.format("\t%s", e.toDot()))
+                        .collect(Collectors.joining("\n"));
+
+        String dotContent = String.format("digraph%s{\n%s%s%s\n}",
+                (ID == null || ID.isEmpty()) ? " " : String.format(" %s ", ID), attrsString, nodesSection,
+                edgesSection);
 
         return dotContent;
     }
 
-    // ! Not tested
     @Override
     public String toString() {
-        return String.format("%s %s %s", super.toString(), nodes, edges);
+        String toString = String.format("%s %s", this.getClass().getSimpleName(), super.toDot());
+        return toString;
     }
 
-    // ! Not tested
     public String describe() {
         return String
                 .format("Graph: " + ID + "\nNumber of nodes: " + getNumberOfNodes() + "\nNodes: " + getNodeNames()
@@ -359,7 +366,7 @@ public class Graph extends DOTElement {
     /**
      * Enum representing the attributes of a graph in Graphviz.
      *
-     * <p> For more information, see the Graphviz documentation:</p> <a href="https://graphviz.org/docs/edges/">Graphviz Graph Attributes</a>
+     * <p> For more information, see the Graphviz documentation:</p> <a href=https://graphviz.org/docs/graph/">Graphviz Graph Attributes</a>
      */
     public enum Attribute {
         _BACKGROUND("_background"), BB("bb"), BEAUTIFY("beautify"), BGCOLOR("bgcolor"), CENTER("center"),
@@ -439,8 +446,20 @@ public class Graph extends DOTElement {
             graph.removeEdge(fromNode.ID, this.ID);
         }
 
-        public void disconnectFromGraph() {
+        public void removeFromGraph() {
             graph.removeNode(ID);
+        }
+
+        public String getAttribute(Attribute attribute) {
+            return getAttribute(attribute.value);
+        }
+
+        public void setAttribute(Attribute attribute, String value) {
+            setAttribute(attribute.value, value);
+        }
+
+        public void removeAttribute(Attribute attribute) {
+            removeAttribute(attribute.value);
         }
 
         @Override
@@ -492,6 +511,18 @@ public class Graph extends DOTElement {
 
         public void removeFromGraph() {
             fromNode.graph.removeEdge(fromNode.ID, toNode.ID);
+        }
+
+        public String getAttribute(Attribute attribute) {
+            return getAttribute(attribute.value);
+        }
+
+        public void setAttribute(Attribute attribute, String value) {
+            setAttribute(attribute.value, value);
+        }
+
+        public void removeAttribute(Attribute attribute) {
+            removeAttribute(attribute.value);
         }
 
         @Override
