@@ -6,9 +6,8 @@ package org.CSE464;
  * <p>For more information, see the Graphviz documentation:</p> <a href="https://graphviz.org/docs/outputs/">Graphviz Output Formats</a>
  */
 public enum Format {
-    BMP("-Tbmp", ".bmp"), DOT("-Tdot", ".dot"), JPEG("-Tjpg", ".jpg"), JSON("-Tjson", ".json"), PDF("-Tpdf", ".pdf"),
-    PICT("-Tpct", ".pct"), PLAINTEXT("-Tplain", ".txt"), PNG("-Tpng", ".png"), SVG("-Tsvg", ".svg"),
-    RAWDOT("-Tdot", ".dot");
+    DOT("-Tdot", ".dot"), JPEG("-Tjpg", ".jpg"), JSON("-Tjson", ".json"), PDF("-Tpdf", ".pdf"), PICT("-Tpct", ".pct"),
+    PLAINTEXT("-Tplain", ".txt"), PNG("-Tpng", ".png"), SVG("-Tsvg", ".svg"), RAWDOT("-Tdot", ".dot");
     ;
 
     protected final String value;
