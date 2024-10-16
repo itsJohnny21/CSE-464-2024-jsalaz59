@@ -1,5 +1,6 @@
 package org.CSE464;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -370,6 +371,11 @@ public class Graph_Edge_Test {
     public void All_Edge_Attributes_Work() {
         Edge e = g.addEdge("n1", "n2");
         for (Edge.Attribute attribute : Edge.Attribute.values()) {
+            assertDoesNotThrow(() -> {
+                e.setAttribute(attribute, "some value");
+                e.getAttribute(attribute);
+                e.removeAttribute(attribute);
+            });
             e.setAttribute(attribute.getValue(), "some value");
         }
 

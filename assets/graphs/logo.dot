@@ -1,0 +1,24 @@
+digraph MasterGraph {
+	bgcolor="gray84:gray94";
+
+	0 [pos="0.0,0.0" width="0.5" label="G" fontname="San Francisco" height="0.5"];
+	1 [pos="1.4142135623730951,1.414213562373095" width="0.5" label="r" fontname="San Francisco" height="0.5"];
+	2 [color="red" pos="2.8284271247461903,2.82842712474619" width="0.5" label="a" fontname="San Francisco" height="0.5"];
+	3 [pos="4.242640687119286,4.242640687119285" width="0.5" label="p" fontname="San Francisco" height="0.5"];
+	4 [pos="5.656854249492381,5.65685424949238" width="0.5" label="h" fontname="San Francisco" height="0.5"];
+	5 [pos="1.4142135623730954,4.242640687119285" width="0.5" label="M" fontname="San Francisco" height="0.5"];
+	7 [pos="4.242640687119286,1.4142135623730947" width="0.5" label="s" fontname="San Francisco" height="0.5"];
+	8 [pos="5.656854249492381,-4.440892098500626E-16" width="0.5" label="t" fontname="San Francisco" height="0.5"];
+	9 [pos="7.0710678118654755,-1.4142135623730956" width="0.5" label="e" fontname="San Francisco" height="0.5"];
+	10 [pos="8.485281374238571,-2.8284271247461907" width="0.5" label="r" fontname="San Francisco" height="0.5"];
+
+	0 -> 1 [];
+	1 -> 2 [];
+	2 -> 3 [];
+	3 -> 4 [];
+	5 -> 2 [];
+	2 -> 7 [];
+	7 -> 8 [];
+	8 -> 9 [];
+	9 -> 10 [];
+}

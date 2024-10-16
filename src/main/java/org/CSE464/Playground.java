@@ -1,129 +1,99 @@
 package org.CSE464;
 
+import org.CSE464.Graph.Edge;
+import org.CSE464.Graph.Node;
+
 public class Playground {
+
     public static void main(String[] args) throws Exception {
-        // Graph g = new Graph();
-        // g.setAttribute(Graph.Attribute._BACKGROUND.value, "red");
-        // Node n1 = g.addNode("n1");
-        // n1.setAttribute("label", "n1");
-        // n1.setAttribute("color", "blue");
+        String s1 = "Graph";
+        String s2 = "Master";
+        String intersectionCharacter = "a";
+        double radius = 0.5;
+        double angle = Math.PI / 4;
 
-        // Edge e = g.addEdge("n1", "n2");
-        // e.setAttribute("label", "4");
-        // e.setAttribute("color", "red");
+        Graph g = intersectStrings(s1, s2, intersectionCharacter, radius, angle);
+        g.setAttribute(Graph.Attribute.BGCOLOR.value, "gray84:gray94");
 
-        // System.out.println(n1);
-        // System.out.println(e);
-        // System.out.println(g);
-        // System.out.println(g.describe());
-        Graph g = Graph.parseDOT(
-                "/Users/jonisalazar/School/Fall 2024/CSE464/CSE-464-2024-jsalaz59/src/test/resources/DOT/valid/nodesX_Y_ZLabeled/nodesX_Y_ZLabeled.dot");
-        // g.addEdge("n1", "n2");
-        // g.removeNode("n1");
+        for (Edge e : g.getEdges().values()) {
+            e.setAttribute(Edge.Attribute.ARROWTAIL.value, "100");
+        }
 
-        // System.out.println(g.getNode("n2").from);
-        // g.addEdge("n1", "n2");
-        // g.addEdge("n1", "n1");
-        // Edge n2_n2 = g.addEdge("n2", "n2");
-        // n2_n2.setAttribute("arrowsize", "21");
-        // n2_n2.setAttribute("weight", "we\\\"ig\\\"ht=21");
-        // System.out.println(g.getNode("n2"));
-        // Node n2 = g.getNode("n2");
-        // n2.setAttribute("label", "n1");
+        for (Node n : g.getNodes().values()) {
+            String[] posVals = n.getAttribute(Node.Attribute.POS.value).split(",");
+            double xPos = Double.parseDouble(posVals[0]) + 10;
+            double yPos = Double.parseDouble(posVals[1]) + 10;
 
-        // System.out.println(n2_n2);
-        System.out.println(g.describe());
+            n.setAttribute(Node.Attribute.POS.value, String.format("%s,%s", xPos, yPos));
+            n.setAttribute(Node.Attribute.FONTNAME.value, "San Francisco");
 
-        // g.outputGraph(
-        //         "/Users/jonisalazar/School/Fall 2024/CSE464/CSE-464-2024-jsalaz59/src/main/resources/idkbruvvv2.png",
-        //         Format.DOT);
+        }
 
-        // Graph g = Graph.parseDOTFile(
-        //         "/Users/jonisalazar/School/Fall 2024/CSE464/CSE-464-2024-jsalaz59/src/main/resources/idkbruvvv.dot");
+        g.outputGraph("./assets/icons/logo2", Format.SVG);
+    }
 
-        // // Node node = g.addNode("t1");
-        // // Node n1 = g.getNode("n1");
-        // System.out.println(g);
-        // Node n2 = g.getNode("n2");
-        // Node n4 = g.getNode("n4");
+    public static void setNodeAttributes(Node n, String label, double xPos, double yPos, double radius) {
+        n.setAttribute(Node.Attribute.LABEL.value, label);
+        n.setAttribute(Node.Attribute.POS.value, String.format("%s,%s", xPos, yPos));
+        n.setAttribute(Node.Attribute.WIDTH.value, String.format("%s", radius));
+        n.setAttribute(Node.Attribute.HEIGHT.value, String.format("%s", radius));
+    }
 
-        // n4.setAttribute("shape", "Mcircle");
-        // n4.setAttribute(Node.Attribute.AREA, "100");
-        // n4.setAttribute("style", "filled");
-        // n4.setAttribute("fillcolor", "green");
-        // n4.setAttribute("label", "breh");
+    public static Graph intersectStrings(String s1, String s2, String intersectionCharacter, double radius,
+            double angle) throws Exception {
+        Graph g = new Graph();
+        int intersectionIndex1 = s1.indexOf(intersectionCharacter);
+        int intersectionIndex2 = s2.indexOf(intersectionCharacter);
 
-        // n4.to(n4).setAttribute("arrowsize", "2");
-        // n4.to.forEach((k, v) -> {
-        //     n4.to(v).setAttribute(Edge.Attribute.COLOR, "pink");
-        // });
+        if (intersectionIndex1 == -1 || intersectionIndex2 == -2) {
+            throw new RuntimeException("Strings do not share the intersection character");
+        }
 
-        // g.setAttribute("bg", "red");
-        // // g.setAttribute("Graph.Attribute.BGCOLOR", "red");
-        // // n2.connectTo(n4);
-        // // n4.to(n2).setAttribute("arrowsize", "10"); //! change the names to make them more intuitive such as node1.to(node2);
-        // g.outputGraph(
-        //         "/Users/jonisalazar/School/Fall 2024/CSE464/CSE-464-2024-jsalaz59/src/main/resources/idkbruvvv2.dot",
-        //         Format.DOT);
-        // System.out.println(g);
-        // g.removeNode("n1");
+        double prevXPos = 0;
+        double prevYPos = 0;
 
-        // System.out.println(n1.graph);
-        // g.addEdge("fromID", "toID");
-        // System.out.println(g);
+        Node prevNode = g.addNode("0");
+        setNodeAttributes(prevNode, String.valueOf(s1.charAt(0)), prevXPos, prevYPos, radius);
 
-        // g.removeNode("n1");
-        // System.out.println(g);
+        for (int i = 1; i < s1.length(); i++) {
+            Node nextNode = g.addNode(String.format("%d", g.getNumberOfNodes()));
 
-        // HashMap<String, Graph> edges = new HashMap<>();
-        // HashSet<Graph> toEdges = new HashSet<>();
+            prevXPos += Math.cos(angle) * 4 * radius;
+            prevYPos += Math.sin(angle) * 4 * radius;
 
-        // Graph g = new Graph();
+            setNodeAttributes(nextNode, String.valueOf(s1.charAt(i)), prevXPos, prevYPos, radius);
+            prevNode.connectTo(nextNode);
+            prevNode = nextNode;
+        }
 
-        // edges.put("1", g);
-        // toEdges.add(g);
+        Node pivotNode = g.getNode(String.format("%d", intersectionIndex1));
+        pivotNode.setAttribute(Node.Attribute.COLOR.value, "red");
 
-        // System.out.println(edges.size());
-        // System.out.println(toEdges.size());
+        int intersectionIndex = s2.indexOf(intersectionCharacter);
+        String[] pivotNodePosString = pivotNode.getAttribute(Node.Attribute.POS.value).split(",");
+        double pivotNodeXPos = Double.parseDouble(pivotNodePosString[0]);
+        double pivotNodeYPos = Double.parseDouble(pivotNodePosString[1]);
 
-        // destroy(g);
+        prevXPos = pivotNodeXPos + Math.cos(angle + Math.PI / 2) * 4 * radius * intersectionIndex;
+        prevYPos = pivotNodeYPos + Math.sin(angle + Math.PI / 2) * 4 * radius * intersectionIndex;
+        prevNode = intersectionIndex == 0 ? pivotNode : g.addNode(String.format("%d", s1.length()));
 
-        // System.out.println(edges.size());
-        // System.out.println(toEdges.size());
+        if (!prevNode.equals(pivotNode)) {
+            setNodeAttributes(prevNode, String.valueOf(s2.charAt(0)), prevXPos, prevYPos, radius);
+        }
 
-        // String curDir = System.getProperty("user.dir");
-        // System.out.printf("curDir: %s\n", curDir);
+        for (int i = 1; i < s2.length(); i++) {
+            Node nextNode = intersectionIndex == i ? pivotNode
+                    : g.addNode(String.format("%d", g.getNumberOfNodes() + 1));
 
-        // boolean exists = Files.exists(Path.of("./src/main/resources/idkbruvvv.dot"));
-        // System.out.printf("exists: %s\n", exists);
+            prevXPos += -Math.cos(angle + Math.PI / 2) * 4 * radius;
+            prevYPos += -Math.sin(angle + Math.PI / 2) * 4 * radius;
 
-        // Graph gm = new Graph();
-        // Node n1 = gm.addNode("n1");
-        // gm.addNodeLabel(n1.getID(), "hello");
+            setNodeAttributes(nextNode, String.valueOf(s2.charAt(i)), prevXPos, prevYPos, radius);
+            prevNode.connectTo(nextNode);
+            prevNode = nextNode;
+        }
 
-        // Node[] ns = gm.addNodes("n3", "n4");
-
-        // for (Node n : ns) {
-        //     gm.addNodeLabel(n.getID(), "world!");
-        //     System.out.println(n);
-        // }
-
-        // gm.addEdge("n1", "n2");
-        // gm.addEdge("n1", "n3");
-
-        // gm.addEdge("n2", "n1");
-
-        // gm.addEdge("n3", "n2");
-        // gm.addEdge("n3", "n4");
-
-        // gm.addEdge("n4", "n2");
-        // Edge e4_1 = gm.addEdge("n4", "n4");
-
-        // gm.addEdgeLabel(e4_1.getFromNode().getID(), e4_1.getFromNode().getID(), "yessirr2");
-
-        // System.out.println(gm);
-
-        // gm.outputGraph("./idkbruvvv", Format.DOT);
-
+        return g;
     }
 }

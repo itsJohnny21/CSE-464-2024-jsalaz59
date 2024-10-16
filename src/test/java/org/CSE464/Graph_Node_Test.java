@@ -1,5 +1,6 @@
 package org.CSE464;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -214,6 +215,19 @@ public class Graph_Node_Test {
         }
 
         assertEquals(Set.of(nodeIDs), uniqueNodeIDs);
+    }
+
+    @Test
+    public void Graph_Will_Not_Add_A_Single_Node_If_Duplicate_Node_ID_Is_Provided_When_Adding_Multiple_Nodes() {
+        String[] nodeIDs = new String[] { "n1", "n1", "n3" };
+
+        assertThrows(DuplicateNodeIDException.class, () -> {
+            g.addNodes(nodeIDs);
+        });
+
+        int expectedNumberOfNodes = 0;
+        int actualNumberOfNodes = g.getNumberOfNodes();
+        assertEquals(expectedNumberOfNodes, actualNumberOfNodes);
     }
 
     @Test
@@ -580,9 +594,8 @@ public class Graph_Node_Test {
         g.addEdge("n4", "n1");
         g.addEdge("n5", "n1");
         g.addEdge("n4", "n5");
-        g.outputGraph("./heyooo", Format.DOT);
 
-        n1.disconnectFromGraph();
+        n1.removeFromGraph();
 
         int expectedNumberOfNodes = 4;
         int actualNumberOfNodes = g.getNumberOfNodes();
@@ -627,6 +640,11 @@ public class Graph_Node_Test {
     public void All_Node_Attributes_Work() {
         Node n1 = g.addNode("n1");
         for (Node.Attribute attribute : Node.Attribute.values()) {
+            assertDoesNotThrow(() -> {
+                n1.setAttribute(attribute, "some value");
+                n1.getAttribute(attribute);
+                n1.removeAttribute(attribute);
+            });
             n1.setAttribute(attribute.getValue(), "some value");
         }
 
@@ -693,7 +711,7 @@ public class Graph_Node_Test {
         g.removeNode("n1");
 
         assertThrows(NullPointerException.class, () -> {
-            n1.disconnectFromGraph();
+            n1.removeFromGraph();
         });
 
         int expectedNumberOfNodes = 0;
@@ -707,5 +725,33 @@ public class Graph_Node_Test {
         assertThrows(NoSuchMethodException.class, () -> {
             Node.class.getMethod("setGraph", Graph.class);
         });
+    }
+
+    @Test
+    public void Node_Can_Not_Connect_To_Another_Node_That_Does_Not_Belong_To_A_Graph() {
+        Node n1 = g.addNode("n1");
+        Node n2 = g.addNode("n2");
+
+        n2.removeFromGraph();
+
+        assertThrows(NullPointerException.class, () -> {
+            n1.connectTo(n2);
+        });
+    }
+
+    @Test
+    public void Nodes_From_Different_Graphs_Cannot_Be_Connected() {
+        Node n1 = g.addNode("n1");
+        Graph g2 = new Graph();
+        Node n2 = g2.addNode("n2");
+
+        assertThrows(DifferingGraphsException.class, () -> {
+            n1.connectTo(n2);
+        });
+
+        assertThrows(DifferingGraphsException.class, () -> {
+            n2.connectTo(n1);
+        });
+
     }
 }
