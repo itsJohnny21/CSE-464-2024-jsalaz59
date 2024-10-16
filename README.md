@@ -4,6 +4,23 @@ Created by me, [Johnny Salazar](https://github.com/itsJohnny21/itsJohnny21), for
 
 <img src="./assets/icons/logo.svg" width="250"/>
 
+## FOR GRADERS ONLY
+
+When I first started on this project, I basically piggy-backed off of the [Nidi3 Graphviz-Java tool](https://github.com/nidi3/graphviz-java) by essentially creating a class that extended Nidi3's MutableGraph class. During testing, I realized that I was really only testing Nidi3's implementation and not my own, and it did not feel right. The project is supposed to help me learn and gain hands-on experience in providing tests for something I've created. That's why I then decided to create my own Graph class from scratch. The MutableGraph from Nidi3 is still used but only for parsing purposes (I could have created my own parser but that would've taken forever).
+
+When creating my own Graph class, I actually implemented all features into a single [commit](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/5aff7f33336eb0855351c98a046bec7215281423) (since the features were small and related to each other). The methods were still untested, and so another [commit](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/8242c87ed85042c2bd22a0b19b2abd95931041ec) was made after implementing tests for these features. During the implementation of these tests, I found myself having to improve my code in different ways such as [improving the outputGraph method](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/145d98d98868637a6ca56c4d4cc0b8f6ee657112), [improving the ID regex for edge cases](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/6c8a43f93c63bf484a531acb92efcfdd5de81666), [creating a superclass for Graph Node and Edge](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/a973ccf164dbd4234de62b214d54fab48eb58f35), [adding an exception for parse failure](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/680cef368c3f76b5c9c118000ea4f0b3fa4ba291), and [much more](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commits/master/).
+
+I do apologize for not creating separate commits for each feautre. I did however put a lot of time and effor into this project, and I hope that I don't get deducted points for this.
+
+As for the branches, I did create [four different branches](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/branches) (excluding the [master branch](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/tree/master)). The first branch called [JGraphT](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/tree/JGraphT) used the [JGraphT tools](https://github.com/jgrapht/jgrapht) to parse a DOT file. After struggling with these tools, I decided to look for alternative methods of parsing a DOT file and came across [Nidi3's tools](https://github.com/nidi3/graphviz-java). I then created a separate branch called [Guru-Nidi-DOT-Parser](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/tree/Guru-Nidi-DOT-Parser) that piggy-backed off of these tools. I then decided that I should create my own Graph class from scratch and thus I create a separate branch called [Graph-Redo](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/tree/Graph-Redo). After fully implementing this branch (including testing), I then felt that I was ready to create the README.md which would serve as the documentation for this project. I created a new branch called [documentation](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/tree/documentation) just for this purpose. Now I'm fully finished with this project (although there is still plenty of room for improvement), and I am ready for the part 2.
+
+During the completion of this project, I made the following merges:
+
+- [Documentation Merge Request](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/2735147fefcf4d9cb053b338945adee278e344d5)
+- [Graph From Scratch Merge Request](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/5467c5f25098615fa6c5604b4f89a5c33394ffec)
+- [Nidi3 Merge Request](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/947ddc1df629d2beeab807810425d117e1e6b31a)
+- [JGrapthT Merge Request](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/2d74485941bc2400d8fb22f315648fd2b2246c24)
+
 ## Dependencies
 
 This project is powered by Maven. To install the necessary dependencies, simply run the `mvn package` command. This will install the following:
