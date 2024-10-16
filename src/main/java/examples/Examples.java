@@ -56,6 +56,7 @@ public class Examples {
         Graph g = new Graph("Master");
         int n = 5;
 
+        // Create the complete digraph of size 5
         for (int i = 0; i < n; i++) {
             g.addNode(String.valueOf(i));
         }
