@@ -80,10 +80,7 @@ public class Graph_Node_Test {
     @Test
     public void Graph_Can_Create_Node_With_HTML_As_ID() {
 
-        String html = "<a href='https://github.com/itsJohnny21/CSE-464-2024-jsalaz59'>Johnny</a>";
-
-        String nodeID = html;
-        System.out.println(html);
+        String nodeID = "<a href='https://github.com/itsJohnny21/CSE-464-2024-jsalaz59'>Johnny</a>";
         Node node = g.addNode(nodeID);
 
         assertNotNull(node);
@@ -93,10 +90,7 @@ public class Graph_Node_Test {
     @Test
     public void Graph_Can_Create_Node_With_Quoted_String_As_ID() {
 
-        String html = "\"no pain no gain\"";
-
-        String nodeID = html;
-        System.out.println(html);
+        String nodeID = "\"no pain no gain\"";
         Node node = g.addNode(nodeID);
 
         assertNotNull(node);
