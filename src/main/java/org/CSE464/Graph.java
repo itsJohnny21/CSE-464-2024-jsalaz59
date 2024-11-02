@@ -272,19 +272,23 @@ public class Graph extends DOTElement {
         while (!queue.isEmpty()) {
             Node fromNode = queue.poll();
 
+            if (fromNode.equals(dstNode)) {
+                return buildPath(srcNode, dstNode, prev);
+            }
+
             for (Node toNode : fromNode.to.values()) {
                 if (!visited.contains(toNode)) {
                     queue.add(toNode);
-                    visited.add(toNode);
                     prev.put(toNode, fromNode);
+                    visited.add(toNode);
                 }
             }
         }
 
-        if (!visited.contains(dstNode)) {
-            return null;
-        }
+        return null;
+    }
 
+    Path buildPath(Node srcNode, Node dstNode, HashMap<Node, Node> prev) {
         Node currentNode = dstNode;
         LinkedList<Edge> edges = new LinkedList<>();
 
