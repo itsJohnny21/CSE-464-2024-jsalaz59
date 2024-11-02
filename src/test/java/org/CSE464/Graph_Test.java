@@ -122,7 +122,7 @@ public class Graph_Test {
             Graph g = Graph.parseDOT(Utils.getDOTFilepathFromTestDirectory(nodesX_Y_ZLabeled));
             assertNotNull(g, "Parsing error.");
 
-            for (Node node : g.getNodes().values()) {
+            for (Node node : g.getNodes()) {
                 assertNotNull(node.getAttribute("label"), "Label was not parsed.");
             }
 
@@ -174,6 +174,7 @@ public class Graph_Test {
             assertTrue(Files.exists(outputPath));
             Files.deleteIfExists(outputPath);
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             fail(e.getMessage());
         }
     }
@@ -187,6 +188,7 @@ public class Graph_Test {
             assertTrue(Files.exists(outputPath));
             Files.deleteIfExists(outputPath);
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             fail(e.getMessage());
         }
     }
@@ -222,7 +224,7 @@ public class Graph_Test {
         try {
             Graph g = Graph.parseDOT(Utils.getDOTFilepathFromTestDirectory(veryLargeGraph));
             assertNotNull(g, "Parsing error.");
-            for (Node node : g.getNodes().values()) {
+            for (Node node : g.getNodes()) {
                 assertNotNull(node.getAttribute("label"), "Label was not parsed.");
             }
 
@@ -237,6 +239,7 @@ public class Graph_Test {
             assertEquals(expectedNumEdges, actualNumEdges, "Incorrect edge count.");
         } catch (Exception e) {
             fail(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
@@ -443,6 +446,7 @@ public class Graph_Test {
             }
 
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             fail(e.getMessage());
         }
     }
