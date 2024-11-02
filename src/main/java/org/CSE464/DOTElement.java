@@ -38,6 +38,10 @@ public abstract class DOTElement {
         attributes.remove(attribute);
     }
 
+    public void clearAttributes() {
+        attributes.clear();
+    }
+
     public String toDot() {
         String attrsString = "[" + attributes.entrySet().stream()
                 .map(e -> String.format("%s=\"%s\"", e.getKey(), e.getValue())).collect(Collectors.joining(" ")) + "]";
