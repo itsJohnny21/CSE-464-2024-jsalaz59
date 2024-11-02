@@ -1,0 +1,31 @@
+digraph {
+	a [];
+	c [];
+	g [];
+	k [];
+	b [];
+	j [];
+	e [];
+	d [];
+	h [];
+	i [];
+	f [];
+
+	a -> c [];
+	k -> g [color="purple"];
+	k -> b [];
+	j -> a [];
+	j -> e [color="purple"];
+	j -> d [];
+	j -> h [];
+	i -> e [];
+	f -> b [];
+	e -> k [color="purple"];
+	e -> c [];
+	h -> h [];
+	h -> i [];
+	c -> b [];
+	c -> e [];
+	c -> j [];
+	c -> i [];
+}
