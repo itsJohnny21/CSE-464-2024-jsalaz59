@@ -202,7 +202,7 @@ public class Graph_Node_Test {
         assertEquals(expectedNumberOfNodes, actualNumberOfNodes);
 
         Set<String> uniqueNodeIDs = new HashSet<>();
-        for (Node node : g.getNodes().values()) {
+        for (Node node : g.getNodes()) {
             String nodeIDsGrouped = String.join(" ", nodeIDs);
             assertTrue(nodeIDsGrouped.contains(node.getID()));
             uniqueNodeIDs.add(node.getID());
@@ -599,7 +599,7 @@ public class Graph_Node_Test {
         int actualNumberOfEdges = g.getNumberOfEdges();
         assertEquals(expectedNumberOfEdges, actualNumberOfEdges);
 
-        for (Node node : g.getNodes().values()) {
+        for (Node node : g.getNodes()) {
             assertFalse(node.getTo().containsKey(n1.getID()));
             assertFalse(node.getFrom().containsKey(n1.getID()));
         }
