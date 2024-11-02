@@ -13,9 +13,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Stack;
 import java.util.stream.Collectors;
 
 import guru.nidi.graphviz.model.LinkTarget;
@@ -23,12 +25,9 @@ import guru.nidi.graphviz.model.MutableGraph;
 import guru.nidi.graphviz.model.MutableNode;
 import guru.nidi.graphviz.parse.Parser;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode(callSuper = false)
 public class Graph extends DOTElement {
-
     private static final String DIRECTED_SIGN = "->";
     private static final String UNDIRECTED_SIGN = "--";
     private final LinkedHashMap<String, Node> nodes;
@@ -255,6 +254,60 @@ public class Graph extends DOTElement {
         return edges.get(edgeID);
     }
 
+    public Path graphSearch(String srcID, String dstID) {
+        Node srcNode = getNode(srcID);
+        Node dstNode = getNode(dstID);
+
+        return graphSearch(srcNode, dstNode);
+    }
+
+    public Path graphSearch(Node srcNode, Node dstNode) {
+        HashSet<Node> visited = new HashSet<>();
+        Stack<Node> stack = new Stack<>();
+        HashMap<Node, Node> prev = new HashMap<>();
+
+        stack.add(srcNode);
+        visited.add(srcNode);
+
+        while (!stack.isEmpty()) {
+            Node fromNode = stack.pop();
+
+            if (fromNode.equals(dstNode)) {
+                return buildPath(srcNode, dstNode, prev);
+            }
+
+            if (!visited.contains(fromNode)) {
+                visited.add(fromNode);
+            }
+
+            for (Node toNode : fromNode.to.values()) {
+                if (!visited.contains(toNode)) {
+                    stack.add(toNode);
+                    prev.put(toNode, fromNode);
+                    visited.add(toNode);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private Path buildPath(Node srcNode, Node dstNode, HashMap<Node, Node> prev) {
+        Node currentNode = dstNode;
+        LinkedList<Edge> edges = new LinkedList<>();
+
+        while (prev.containsKey(currentNode)) {
+            Node prevNode = prev.get(currentNode);
+            Edge edge = prevNode.to(currentNode);
+            edges.addFirst(edge);
+
+            currentNode = prevNode;
+        }
+
+        Path path = new Path(edges);
+        return path;
+    }
+
     public int getNumberOfNodes() {
         return nodes.size();
     }
@@ -281,6 +334,10 @@ public class Graph extends DOTElement {
         return nodeLabels;
     }
 
+    public String outputGraph(String filepath, Format format) throws IOException, InterruptedException {
+        return outputGraph(filepath, format, "");
+    }
+
     /**
      * Parsing made possible using Nidi3's Graphviz-Java.
      * 
@@ -301,11 +358,13 @@ public class Graph extends DOTElement {
         } else {
 
             List<String> command = new ArrayList<>();
-            command.add("dot");
-            command.addAll(Arrays.asList(options));
-            command.add(format.value);
-            command.add("-o");
-            command.add(filepath);
+            if (options != null) {
+                command.add("dot");
+                command.addAll(Arrays.asList(options));
+                command.add(format.value);
+                command.add("-o");
+                command.add(filepath);
+            }
 
             ProcessBuilder processBuilder = new ProcessBuilder(command);
 
@@ -415,9 +474,30 @@ public class Graph extends DOTElement {
     }
 
     @Data
-    @EqualsAndHashCode(callSuper = false)
-    public final class Node extends DOTElement {
+    public final class Path {
+        private final String ID;
+        protected final LinkedList<Edge> edges;
 
+        public Path(LinkedList<Edge> edges) {
+            this.ID = edges.stream().map(e -> e.fromNode.ID).collect(Collectors.joining(" -> "))
+                    + String.format(" -> %s", edges.getLast().toNode.ID);
+            this.edges = edges;
+        }
+
+        public void setAttributes(Edge.Attribute attribute, String value) {
+            for (Edge edge : edges) {
+                edge.setAttribute(attribute, value);
+            }
+        }
+
+        @Override
+        public String toString() {
+            return this.ID;
+        }
+    }
+
+    @Data
+    public final class Node extends DOTElement {
         protected Graph graph;
         protected final HashMap<String, Node> from;
         protected final HashMap<String, Node> to;
@@ -494,6 +574,11 @@ public class Graph extends DOTElement {
             return super.toString();
         }
 
+        @Override
+        public int hashCode() {
+            return super.hashCode();
+        }
+
         /**
          * Enum representing the attributes of a node in Graphviz.
          *
@@ -524,9 +609,7 @@ public class Graph extends DOTElement {
     }
 
     @Data
-    @EqualsAndHashCode(callSuper = false)
     public final class Edge extends DOTElement {
-
         protected final Node fromNode;
         protected final Node toNode;
 
