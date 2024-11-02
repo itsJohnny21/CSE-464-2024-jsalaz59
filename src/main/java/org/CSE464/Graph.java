@@ -369,6 +369,11 @@ public class Graph extends DOTElement {
                 + "\nNode labels: " + getNodeLabels();
     }
 
+    @Override
+    public String toString() {
+        return super.toString();
+    }
+
     /**
      * Enum representing the attributes of a graph in Graphviz.
      *
