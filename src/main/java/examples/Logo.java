@@ -16,7 +16,7 @@ public class Logo {
         Graph g = intersectStrings(s1, s2, intersectionCharacter, radius, angle); // Returns a graph where the string of nodes sharing an intersection character are display as two strings of nodes, one for each string provided
         g.setAttribute(Graph.Attribute.BGCOLOR, "gray84:gray94"); // Color of the background
 
-        for (Node n : g.getNodes().values()) {
+        for (Node n : g.getNodes()) {
             n.setAttribute(Node.Attribute.FONTNAME, "San Francisco"); // Change the font name of the node
         }
 
