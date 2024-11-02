@@ -474,6 +474,7 @@ def main():
     # # Generated
     # dot.generate_file(filename="selfLoopEdges", graph_options="d", node_options="4", edge_options="16", with_answers=True)
     # dot.generate_file(filename="veryLargeGraph", graph_options="d", node_options="999al", edge_options="999l", with_answers=True)
+    # dot.generate_file(filename="mediumGraph", graph_options="d", node_options="15al", edge_options="7l", with_answers=True)
     
     
 main()
