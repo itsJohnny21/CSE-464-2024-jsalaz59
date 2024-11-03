@@ -17,9 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Queue;
 import java.util.Set;
-import java.util.Stack;
 import java.util.stream.Collectors;
 
 import guru.nidi.graphviz.model.LinkTarget;
@@ -279,20 +277,17 @@ public class Graph extends DOTElement {
         }
 
         Node[] nodes = new Node[nodeIDs.length];
+        nodes[0] = nodeExists(nodeIDs[0]) ? getNode(nodeIDs[0]) : addNode(nodeIDs[0]);
+
         Edge[] edges = new Edge[nodeIDs.length - 1];
 
         for (int i = 0; i < nodeIDs.length - 1; i++) {
-
             String fromNodeID = nodeIDs[i];
             String toNodeID = nodeIDs[i + 1];
 
             Edge edge = edgeExists(fromNodeID, toNodeID) ? getEdge(fromNodeID, toNodeID)
                     : addEdge(fromNodeID, toNodeID);
             edges[i] = edge;
-
-            if (i == 0) {
-                nodes[i] = edge.fromNode;
-            }
 
             nodes[i + 1] = edge.toNode;
         }
@@ -301,15 +296,42 @@ public class Graph extends DOTElement {
         return path;
     }
 
+    public boolean pathExists(String... nodeIDs) {
+        return getPath(nodeIDs) != null;
+    }
+
     public Path getPath(String... nodeIDs) {
         if (nodeIDs.length == 0) {
             return null;
         }
 
-        String srcID = nodeIDs[0];
-        String dstID = nodeIDs[nodeIDs.length - 1];
+        if (!nodeExists(nodeIDs[0])) {
+            return null;
+        }
 
-        return graphSearch(srcID, dstID, Algorithm.DFS);
+        Node currentNode = getNode(nodeIDs[0]);
+
+        Node[] nodes = new Node[nodeIDs.length];
+        nodes[0] = currentNode;
+        Edge[] edges = new Edge[nodeIDs.length - 1];
+
+        for (int i = 1; i < nodeIDs.length; i++) {
+            String nextNodeID = nodeIDs[i];
+            Node nextNode = currentNode.to.get(nextNodeID);
+
+            if (nextNode == null) {
+                return null;
+            }
+
+            Edge edge = currentNode.to(nextNode);
+            currentNode = nextNode;
+
+            edges[i - 1] = edge;
+            nodes[i] = currentNode;
+        }
+
+        Path path = new Path(nodes, edges);
+        return path;
     }
 
     public void removePath(String... nodeIDs) {
@@ -329,60 +351,49 @@ public class Graph extends DOTElement {
         Node srcNode = getNode(srcID);
         Node dstNode = getNode(dstID);
 
-        return algorithm.equals(Algorithm.BFS) ? graphSearchBFS(srcNode, dstNode) : graphSearchDFS(srcNode, dstNode);
+        return graphSearchHelper(srcNode, dstNode, algorithm);
     }
 
-    public Path graphSearchBFS(Node srcNode, Node dstNode) {
-        System.out.println("BFS!!!");
-        HashSet<Node> visited = new HashSet<>();
-        Queue<Node> queue = new LinkedList<>();
-        HashMap<Node, Node> prev = new HashMap<>();
+    public interface Container {
+        public Node get();
 
-        queue.add(srcNode);
-        visited.add(srcNode);
+        public boolean add(Node node);
 
-        while (!queue.isEmpty()) {
-            Node fromNode = queue.poll();
+        public boolean isEmpty();
+    }
 
-            if (fromNode.equals(dstNode)) {
-                return buildPath(srcNode, dstNode, prev);
-            }
-
-            for (Node toNode : fromNode.to.values()) {
-                if (!visited.contains(toNode)) {
-                    queue.add(toNode);
-                    prev.put(toNode, fromNode);
-                    visited.add(toNode);
-                }
-            }
+    public class Queue extends LinkedList<Node> implements Container {
+        @Override
+        public Node get() {
+            return pollFirst();
         }
-
-        return null;
     }
 
-    public Path graphSearchDFS(Node srcNode, Node dstNode) {
-        System.out.println("DFS!!!");
+    public class Stack extends LinkedList<Node> implements Container {
+        @Override
+        public Node get() {
+            return pollLast();
+        }
+    }
+
+    private Path graphSearchHelper(Node srcNode, Node dstNode, Algorithm algorithm) {
         HashSet<Node> visited = new HashSet<>();
-        Stack<Node> stack = new Stack<>();
+        Container container = algorithm == Algorithm.BFS ? new Queue() : new Stack();
         HashMap<Node, Node> prev = new HashMap<>();
 
-        stack.add(srcNode);
+        container.add(srcNode);
         visited.add(srcNode);
 
-        while (!stack.isEmpty()) {
-            Node fromNode = stack.pop();
+        while (!container.isEmpty()) {
+            Node fromNode = container.get();
 
             if (fromNode.equals(dstNode)) {
                 return buildPath(srcNode, dstNode, prev);
             }
 
-            if (!visited.contains(fromNode)) {
-                visited.add(fromNode);
-            }
-
             for (Node toNode : fromNode.to.values()) {
                 if (!visited.contains(toNode)) {
-                    stack.add(toNode);
+                    container.add(toNode);
                     prev.put(toNode, fromNode);
                     visited.add(toNode);
                 }
@@ -532,7 +543,7 @@ public class Graph extends DOTElement {
 
     @Override
     public String toString() {
-        return super.toString();
+        return String.format("%s, Nodes=%s, Edges=%s", ID, nodes.values(), edges.values());
     }
 
     public enum Algorithm {
@@ -585,7 +596,7 @@ public class Graph extends DOTElement {
         private final Node[] nodes;
         private final Edge[] edges;
 
-        public Path(Node[] nodes, Edge[] edges) {
+        private Path(Node[] nodes, Edge[] edges) {
             this.ID = Graph.createPathID(Arrays.stream(nodes).map(node -> node.ID).toArray(String[]::new));
             this.nodes = nodes;
             this.edges = edges;
@@ -600,6 +611,18 @@ public class Graph extends DOTElement {
         public void setAttributes(Node.Attribute attribute, String value) {
             for (Node node : nodes) {
                 node.setAttribute(attribute, value);
+            }
+        }
+
+        public void removeAttributes(Edge.Attribute attribute) {
+            for (Edge edge : edges) {
+                edge.removeAttribute(attribute);
+            }
+        }
+
+        public void removeAttributes(Node.Attribute attribute) {
+            for (Node node : nodes) {
+                node.removeAttribute(attribute);
             }
         }
 
@@ -684,7 +707,7 @@ public class Graph extends DOTElement {
 
         @Override
         public String toString() {
-            return super.toString();
+            return ID;
         }
 
         @Override
@@ -750,7 +773,7 @@ public class Graph extends DOTElement {
 
         @Override
         public String toString() {
-            return super.toString();
+            return ID;
         }
 
         /**
