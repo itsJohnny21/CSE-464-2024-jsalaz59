@@ -543,4 +543,11 @@ public class Graph_Test {
             fail(e.getMessage());
         }
     }
+
+    @Test
+    public void Graph_To_String_Works_Properly() {
+        Graph g = new Graph();
+        g.addEdge("n1", "n2");
+        assertNotNull(g.toString());
+    }
 }

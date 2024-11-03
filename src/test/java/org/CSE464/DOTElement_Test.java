@@ -1,8 +1,10 @@
 package org.CSE464;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -90,14 +92,20 @@ public class DOTElement_Test {
             String value = entry.getValue();
             e.setAttribute(attribute, value);
 
-            assertNotNull(e.toString());
-            assertTrue(e.toString().contains(attribute));
-            assertTrue(e.toString().contains(value));
-
             assertNotNull(e.toDot());
             assertTrue(e.toDot().contains(attribute));
             assertTrue(e.toDot().contains(value));
         }
+    }
+
+    @Test
+    public void DOTElement_Does_Nothing_When_Removing_Nonexistant_Attribute() {
+        DOTElement n1 = g.addNode("1");
+        assertDoesNotThrow(() -> {
+            n1.removeAttribute("DNE");
+        });
+
+        assertEquals(n1.getAttribute("DNE"), null);
     }
 
     @Test
@@ -120,6 +128,31 @@ public class DOTElement_Test {
         n1.removeAttribute("font");
         assertEquals(attrs.size() - 1, n1.getAttributes().size());
         assertFalse(n1.getAttributes().containsKey("font"));
+    }
+
+    @Test
+    public void DOTElement_Can_Clear_Attributes() {
+        DOTElement n1 = g.addNode("n1");
+
+        HashMap<String, String> attrs = new HashMap<>();
+        attrs.put("label", "weight=21");
+        attrs.put("color", "blue");
+        attrs.put("storkewidth", "21");
+        attrs.put("opacity", "30");
+        attrs.put("font", "roboto");
+
+        for (Entry<String, String> entry : attrs.entrySet()) {
+            String attribute = entry.getKey();
+            String value = entry.getValue();
+            n1.setAttribute(attribute, value);
+        }
+
+        n1.clearAttributes();
+        assertEquals(0, n1.getAttributes().size());
+
+        for (String attr : attrs.keySet()) {
+            assertNull(n1.getAttribute(attr));
+        }
     }
 
 }

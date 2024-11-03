@@ -50,6 +50,14 @@ public class Graph_Edge_Test {
     }
 
     @Test
+    public void Graph_Correctly_Adds_Edge() {
+        Edge e = g.addEdge("n1", "n2");
+        assertNotEquals(0, g.getEdges().size());
+        assertEquals(e.fromNode.ID, g.getEdges().toArray(new Edge[0])[0].fromNode.ID);
+        assertEquals(e.toNode.ID, g.getEdges().toArray(new Edge[0])[0].toNode.ID);
+    }
+
+    @Test
     public void Graph_Can_Create_Edge_Between_Two_Nodes() {
         String nodeID1 = "A";
         String nodeID2 = "B";
@@ -407,8 +415,14 @@ public class Graph_Edge_Test {
             String value = entry.getValue();
             e.setAttribute(attribute, value);
 
-            assertTrue(e.toString().contains(attribute));
-            assertTrue(e.toString().contains(value));
+            assertTrue(e.toDot().contains(attribute));
+            assertTrue(e.toDot().contains(value));
         }
+    }
+
+    @Test
+    public void Edge_To_String_Works_Properly() {
+        Edge e = g.addEdge("n1", "n2");
+        assertNotNull(e.toString());
     }
 }

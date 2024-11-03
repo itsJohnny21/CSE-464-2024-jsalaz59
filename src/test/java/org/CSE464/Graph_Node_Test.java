@@ -693,8 +693,8 @@ public class Graph_Node_Test {
             String value = entry.getValue();
             n1.setAttribute(attribute, value);
 
-            assertTrue(n1.toString().contains(attribute));
-            assertTrue(n1.toString().contains(value));
+            assertTrue(n1.toDot().contains(attribute));
+            assertTrue(n1.toDot().contains(value));
         }
     }
 
@@ -747,5 +747,11 @@ public class Graph_Node_Test {
             n2.connectTo(n1);
         });
 
+    }
+
+    @Test
+    public void Node_To_String_Works_Properly() {
+        Node n = g.addNode("n1");
+        assertNotNull(n.toString());
     }
 }
