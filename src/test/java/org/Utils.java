@@ -12,7 +12,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class Utils {
@@ -96,5 +98,23 @@ public class Utils {
         }
 
         throw new Exception("DOT file not found.");
+    }
+
+    public static <T> List<List<T>> generatePowerSet(List<T> nodes) {
+        List<List<T>> powerSet = new ArrayList<>();
+        int setSize = nodes.size();
+        int powerSetSize = (int) Math.pow(2, setSize);
+
+        for (int i = 0; i < powerSetSize; i++) {
+            List<T> subset = new ArrayList<>();
+            for (int j = 0; j < setSize; j++) {
+                if ((i & (1 << j)) != 0) {
+                    subset.add(nodes.get(j));
+                }
+            }
+            powerSet.add(subset);
+        }
+
+        return powerSet;
     }
 }
