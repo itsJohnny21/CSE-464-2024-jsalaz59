@@ -38,10 +38,11 @@ A `DOTElement` is an abstract class that serves the purpose of allowing its chil
 
 ### Setting an attribute
 
-To give a `DOTElement` an attribute, you can do so by calling the `setAttribute` method that takes in an attribute (String) and value (String) as its arguments. The attribute and value will then be stored in a HashMap for quick access. The following is an example of setting some attributes for each type of `DOTElement`:
+To give a `DOTElement` an attribute, you can do so by calling the `setAttribute` method that takes in an attribute (String) and value (String) as its arguments. The attribute and value will then be stored in a HashMap for quick access. The following is an example of setting some attributes for a `Graph` (a specific type of `DOTElement`):
 
 ```java
 Graph g = new Graph();
+
 g.setAttribute("custom_attribute", "some value");
 g.setAttribute(Graph.Attribute.BGCOLOR, "red"); // Setting the "bgcolor" attribute to "red"
 // g.setAttribute("bgcolor", "red"); // Equivalent way to set the same attribute
@@ -53,10 +54,9 @@ To get an attribute from a `DOTElement`, you can use the `getAttribute`, which t
 
 ```java
 Graph g = new Graph();
+
 g.setAttribute("custom_attribute", "some value");
 g.setAttribute(Graph.Attribute.BGCOLOR, "red");
-// g.setAttribute("bgcolor", "red"); // Equivalent way to set the same attribute
-
 g.getAttribute(Graph.Attribute.BGCOLOR); // Retrieve attribute value is "red"
 ```
 
@@ -66,14 +66,15 @@ Removing an attribute from a `DOTElement` can be achieved using the `removeAttri
 
 ```java
 Graph g = new Graph();
+
 g.setAttribute("custom_attribute", "some value");
 g.setAttribute(Graph.Attribute.BGCOLOR, "red");
-// g.setAttribute("bgcolor", "red"); // Equivalent way to set the same attribute
-
 g.removeAttribute(Graph.Attribute.BGCOLOR); // Attribute "bgcolor" removed
 ```
 
-### Graph Attributes
+**_Note that the attribute methods apply to `Graph`, `Node` and `Edge` objects since all these classes are children of the `DOTElement` class._**
+
+### Graph attributes
 
 A `Graph` can be given attributes to store data and change its appearance.
 
@@ -183,7 +184,7 @@ This list of attributes was acquired from the official [Graphviz Graph Attribute
 - VORO_MARGIN
 - XDOTVERSION
 
-### Node Attributes
+### Node attributes
 
 A `Node` can be given attributes to store data and change its appearance.
 
@@ -239,7 +240,7 @@ This list of attributes was acquired from the official [Graphviz Node Attributes
 - XLP
 - Z
 
-### Edge Attributes
+### Edge attributes
 
 A `Edge` can be given attributes to store data and change its appearance.
 
@@ -314,19 +315,19 @@ This list of attributes was acquired from the official [Graphviz Edge Attributes
 
 ### Custom attributes
 
-Each class `Graph`, `Node`, and `Edge` has its own nested Attribute enums and purely exists for convenience. The attribute methods can either take in an appropriate Attribute enum value, or it can take any string (as long it matches the [ID regex](#id-regex)). This means you can add custom attributes if needed.
+Each class `Graph`, `Node`, and `Edge` has its own nested attribute enums and purely exists for convenience. The attribute methods can either take in an appropriate attribute enum value, or it can take any string (as long it matches the [ID regex](#id-regex)). This means you can add custom attributes if needed.
 
 ## ID regex
 
-A valid ID is required for many operations such as creating a `Graph` with a custom ID, creating a `Node`, setting an [Attribute](#attribute) for a `DOTElement`, etc. An ID is considered valid if it matches the ID regex which can be found as a final static variable in the `DotElement` class. This ID regex was acquired from the official [Graphviz Grammar page](https://graphviz.org/doc/info/lang.html).
+A valid ID is required for many operations such as creating a `Graph` with a custom ID, creating a `Node`, setting an [Attribute](#attribute) for a `DOTElement`, etc. An ID is considered valid if it matches the ID regex which can be found in the `DotElement` class. This ID regex was acquired from the official [Graphviz Grammar page](https://graphviz.org/doc/info/lang.html).
 
-### Valid ID
+### Valid ID examples
 
 - a1 (letters followed by digits are allowed)
 - \_a (underscore is allowed)
 - 1 (digit can be the first character if the ID only contains digits)
 
-### Invalid ID
+### Invalid ID examples
 
 - node A (whitespace is not allowed)
 - node! ("!" is not allowed)
@@ -416,7 +417,7 @@ digraph Master {
             margin-left: 20px;
         "
         >
-    <p>Visualized</p>
+    <p>Result</p>
     <img src="./assets/graphs/nodeAddition.svg" />
     </div>
 </div>
@@ -439,7 +440,7 @@ This method is useful to check if a `Node` exists before removing a `Node`.
 
 ### Add multiple nodes
 
-For pure convenience, a `Graph` allows you to add multiple `Node`s. This can be achieved using the `addNodes` method which takes in an array of IDs.
+For pure convenience, a `Graph` allows you to add multiple `Node` objects. This can be achieved using the `addNodes` method which takes in an array of IDs.
 
 ```java
 Graph g = new Graph("Master");
@@ -481,7 +482,7 @@ digraph Master {
             margin-left: 20px;
         "
         >
-    <p>Visualized</p>
+    <p>Result</p>
     <img src="./assets/graphs/multNodeAddition.svg" />
     </div>
 </div>
@@ -533,7 +534,7 @@ g.removeNode("4");
 // n4.removeFromGraph(); // An alternative method for removing a node
 ```
 
-A total of five `Node`s were created with IDs corresponding to their number in the creation process. After the complete digraph of size five was fully created, the `Node` with ID "4" `Node` was removed.
+A total of five `Node` objects were created with IDs corresponding to their number in the creation process. After the complete digraph of size five was fully created, the `Node` with ID "4" `Node` was removed.
 
 <div style="display: flex; justify-content: center;">
     <div style="display: flex; flex-direction: column; align-items: center;">
@@ -550,7 +551,7 @@ Note that another way to remove a `Node` is by calling the `Node`'s `removeFromG
 
 ### Add an edge
 
-The `Graph` object has another nested class called `Edge` that represents an directed edge between two `Node`s in the `Graph`. Similarly to a `Node `, there are no public constructors. The `Graph`'s `addEdge` method can be used to create an `Edge` between two `Node`s. Simply provide the IDs of the two `Node`s to do so.
+The `Graph` object has another nested class called `Edge` that represents an directed edge between two `Node` objects in the `Graph`. Similarly to a `Node`, there are no public constructors. The `Graph`'s `addEdge` method can be used to create an `Edge` between two `Node` objects. Simply provide the IDs of the two `Node` objects to do so.
 
 ```java
 Graph g = new Graph("Master");
@@ -563,7 +564,7 @@ Edge e1 = g.addEdge("n1", "n2"); // Add a directed edge between "n1" and "n2"
 **_Note: If an edge already existed between nodes "n1" and "n2", then this method will throw a `EdgeAlreadyExists` exception._**
 **_Note: If using connectTo or connectFrom, both nodes have to be from the same graph, otherwise a `DifferingGraphsException` will be thrown._**
 
-Notice that prior to execution of this method, no `Node` with ID "n2" existed. The `Graph` automatically created this `Node` to make it even easier to create `Graph`s. If you want to check if a `Node` exists, you can use the `nodeExists` method. After creating the `Edge`, it will have an ID "n1 -> n2". This `Edge` ID is automatically created by the static method `createEdgeID` from its `Graph`. This ID is final and will be used to represent an edge when converting the Graph into a DOT file. If we were to convert `g2` into a DOT file, it would look like:
+Notice that prior to execution of this method, no `Node` with ID "n2" existed. The `Graph` automatically created this `Node` to make it even easier to create `Graph` objects. If you want to check if a `Node` exists, you can use the `nodeExists` method. After creating the `Edge`, it will have an ID "n1 -> n2". This `Edge` ID is automatically created by the static method `createEdgeID` from its `Graph`. This ID is final and will be used to represent an edge when converting the Graph into a DOT file. If we were to convert `g2` into a DOT file, it would look like:
 
 <div style="display: flex; flex-direction: row">
     <div
@@ -591,7 +592,7 @@ digraph Master {
             margin-left: 20px;
         "
         >
-    <p>Visualized</p>
+    <p>Result</p>
     <img src="./assets/graphs/edgeAddition.svg" />
     </div>
 </div>
@@ -602,7 +603,7 @@ Another way to add an `Edge` is by using a `Node`'s `connectTo` method. The `Nod
 
 ### Check edge existance
 
-To check if an `Edge` exsits between two `Node`s, you can use the `edgeExists` method provided by the `Graph`. Remember, order matters since all `Edge`s are directed edges.
+To check if an `Edge` exsits between two `Node` objects, you can use the `edgeExists` method provided by the `Graph`. Remember, order matters since all `Edge` objects are directed edges.
 
 ```java
 Graph g = new Graph("Master");
@@ -616,7 +617,7 @@ This method is useful to check if a `Edge` exists before removing it.
 
 ### Get an edge
 
-A `Graph` allows you to retrieve an `Edge` through the `getEdge` method which requires the IDs of the `Node`s associated with that `Edge` in the correct order.
+A `Graph` allows you to retrieve an `Edge` through the `getEdge` method which requires the IDs of the `Node` objects associated with that `Edge` in the correct order.
 
 ```java
 Graph g = new Graph("Master");
@@ -629,7 +630,7 @@ This method is useful for getting an `Edge` that you don't have a direct referen
 
 ### Remove an edge
 
-To remove an `Edge` from a `Graph`, you can simply use the `removeEdge` method provided by its `Graph`. This method requires the IDs of the two `Node`s connected by the `Edge`. The first parameter is the ID of the source `Node`, and the second parameter is the ID of the destination `Node`. **The order matters!** An example of removing an `Edge` from a complete digraph of size three is provided:
+To remove an `Edge` from a `Graph`, you can simply use the `removeEdge` method provided by its `Graph`. This method requires the IDs of the two `Node` objects connected by the `Edge`. The first parameter is the ID of the source `Node`, and the second parameter is the ID of the destination `Node`. **The order matters!** An example of removing an `Edge` from a complete digraph of size three is provided:
 
 ```java
 Graph g = new Graph("Master");
@@ -653,16 +654,16 @@ for (int i = 0; i < n; i++) {
 g.removeEdge("2", "0");
 ```
 
-A total of three `Node`s were created with IDs corresponding to their number in the creation process. After the complete digraph of size five was complete, the `Edge` "2 -> 0" was removed.
+A total of three `Node` objects were created with IDs corresponding to their number in the creation process. After the complete digraph of size five was complete, the `Edge` "2 -> 0" was removed.
 
 <div style="display: flex; justify-content: center;">
     <div style="display: flex; flex-direction: column; align-items: center;">
         <p>Before</p>
-        <img src="./assets/graphs/complete5_before_edge_removal.svg" alt="Before" style="width: 60%;"/>
+        <img src="./assets/graphs/complete5_before_node_removal.svg" alt="Before" style="width: 60%;"/>
     </div>
     <div style="display: flex; flex-direction: column; align-items: center;">
         <p>After</p>
-        <img src="./assets/graphs/complete5_after_edge_removal.svg" alt="After" style="width: 60%;"/>
+        <img src="./assets/graphs/complete5_after_node_removal.svg" alt="After" style="width: 60%;"/>
     </div>
 </div>
 
@@ -694,10 +695,13 @@ digraph Master {
         n2 [];
         n3 [];
         n4 [];
+        n5 [];<br>
+        n4 -> n5 [];
 }
 </prev>
-    </div>
-    <div
+
+</div>
+<div
         style="
             display: flex;
             flex-direction: column;
@@ -705,14 +709,15 @@ digraph Master {
             margin-left: 20px;
         "
         >
-    <p>Visualized</p>
-    <img src="./assets/graphs/getNumberOfNodes.svg" />
-    </div>
+<p>Result</p>
+<img src="./assets/graphs/getNumberOfNodes.svg" />
+</div>
+
 </div>
 
 ### Get node names
 
-For convenience, a `Graph` lets you get the IDs of its nodes by calling the `getNodeNames` method. This effectively returns the [ID](#ir-regex) of the `Node`s in the nodes HashMap.
+For convenience, a `Graph` lets you get the IDs of its nodes by calling the `getNodeNames` method. This effectively returns the [ID](#ir-regex) of the `Node` objects in the nodes HashMap.
 
 ```java
 Graph g = new Graph("Master");
@@ -736,7 +741,6 @@ digraph Master {
         n1 [];
         n2 [];
         n3 [];
-        n4 [];
 }
 </prev>
     </div>
@@ -748,14 +752,14 @@ digraph Master {
             margin-left: 20px;
         "
         >
-    <p>Visualized</p>
+    <p>Result</p>
     <img src="./assets/graphs/getNodeNames.svg" />
     </div>
 </div>
 
 ### Get node labels
 
-For convenience, a `Graph` lets you get the labels of its `Node`s by calling the `getNodeLabels` method. This returns all the labels of the `Node`s in the nodes HashMap.
+For convenience, a `Graph` lets you get the labels of its `Node` objects by calling the `getNodeLabels` method. This returns all the labels of the `Node` objectss in the nodes HashMap.
 
 ```java
 Graph g = new Graph("Master");
@@ -780,10 +784,8 @@ System.out.println(g.getNodeLabels()); // [n1=n1 label, n2=n2 label]
     <p>DOT</p>
 <pre>
 digraph Master {
-        n1 [];
-        n2 [];
-        n3 [];
-        n4 [];
+        n1 [label="n1 label"];
+        n2 [label="n2 label"];
 }
 </prev>
     </div>
@@ -795,7 +797,7 @@ digraph Master {
             margin-left: 20px;
         "
         >
-    <p>Visualized</p>
+    <p>Result</p>
     <img src="./assets/graphs/getNodeLabels.svg" />
     </div>
 </div>
@@ -830,7 +832,10 @@ digraph Master {
         n1 [];
         n2 [];
         n3 [];
-        n4 [];
+        root [];<br>
+        root -> n1 [];
+        root -> n2 [];
+        root -> n3 [];
 }
 </prev>
     </div>
@@ -842,7 +847,7 @@ digraph Master {
             margin-left: 20px;
         "
         >
-    <p>Visualized</p>
+    <p>Result</p>
     <img src="./assets/graphs/getNumberOfEdges.svg" />
     </div>
 </div>
@@ -880,7 +885,12 @@ digraph Master {
         n1 [];
         n2 [];
         n3 [];
-        n4 [];
+        root [];
+        n4 [];<br>
+        root -> n1 [];
+        root -> n2 [];
+        root -> n3 [];
+        n2 -> n4 [];
 }
 </prev>
     </div>
@@ -892,14 +902,14 @@ digraph Master {
             margin-left: 20px;
         "
         >
-    <p>Visualized</p>
+    <p>Result</p>
     <img src="./assets/graphs/getEdgeDirections.svg" />
     </div>
 </div>
 
 ### Convert to DOT
 
-Any `Graph` can be converted to an equivalent DOT graph. To do this, you can call the `toDot` method (no arguments). The DOT graph will be a digraph with a name equal to the ID of the `Graph` object. Its `Node`s, `Edge`s, and all associated attributes will be be layed out in sections. As an example, we'll create a complete digraph of size three with attributes and convert it to a DOT graph.
+Any `Graph` can be converted to an equivalent DOT graph. To do this, you can call the `toDot` method (no arguments). The DOT graph will be a digraph with a name equal to the ID of the `Graph` object. Its `Node` objects, `Edge` objects, and all associated attributes will be be layed out in sections. As an example, we'll create a complete digraph of size three with attributes and convert it to a DOT graph.
 
 ```java
 Graph g = new Graph("Master");
@@ -932,14 +942,21 @@ System.out.println(g.toDot());
 
 The equivalent DOT graph is the following:
 
-```dot
+<div style="display: flex; flex-direction: row">
+    <div
+    style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-right: 20px;
+    "
+    >
+<pre>
 digraph Master {
-        bgcolor="pink";
-
+        bgcolor="pink";<br>
         0 [color="red" label="I am node 0"];
         1 [color="yellow" label="I am node 1"];
-        2 [color="orange" label="I am node 2"];
-
+        2 [color="orange" label="I am node 2"];<br>
         0 -> 1 [fillcolor="teal" color="red" label="0 -> 1"];
         0 -> 2 [fillcolor="teal" color="red" label="0 -> 2"];
         1 -> 0 [fillcolor="grey" color="yellow" label="1 -> 0"];
@@ -947,19 +964,21 @@ digraph Master {
         2 -> 0 [fillcolor="blue" color="orange" label="2 -> 0"];
         2 -> 1 [fillcolor="blue" color="orange" label="2 -> 1"];
 }
-```
+</prev>
+    </div>
+</div>
 
 Notice that the sections are displayed in the following order:
 
 1. `Graph` attributes
-2. `Node`s and their attributes
-3. `Edge`s and their attributes
+2. `Node` objects and their attributes
+3. `Edge` objects and their attributes
 
 ### Output graph
 
 A `Graph` can also be converted to a wide variety of formats using the `outputGraph` method which takes in a filepath (String) and a [Format](#format) enum value. If the filepath provided does not end in the extension of the `Format`, it will be automatically added. For example, if the filepath is "mygraph" and the format is `Format.DOT`, the new filepath will be "filepath.dot".
 
-The list of output formats was acquired from the official [Graphviz Output Formats page](https://graphviz.org/docs/outputs/). [Graphviz Output Formats page](https://graphviz.org/docs/outputs/).
+The list of output formats was acquired from the official [Graphviz Output Formats page](https://graphviz.org/docs/outputs/).
 
 An example of converting a graph to a JSON value is provided:
 
@@ -996,11 +1015,58 @@ g.outputGraph("./assets/graphs/outputGraphToJSON", Format.JSON); // New filepath
 
 A `Node` can only be created from a `Graph` object via the `addNode` method. It also needs to reference its `Graph` in order to call the appropriate methods. For example, calling the `connectTo` method calls its `Graph`'s `addEdge` method. All of the methods provided by `Node` (excluding the [Attribute](#attribute) methods) follow this design pattern to ensure that it's strictly the `Graph` that manages the nodes and edge operations. The methods provided by `Node` are purely for convenience and are by no means necessary for the functionality of Graph.
 
-A `Node` also stores its 'to' and 'from' `Edge`s for efficient `Node` and `Edge` operations. A 'to' `Edge` reefers to an `Edge` where the `Node` itself is the source `Node`. In contrast, a 'from' `Edge` refers to an `Edge` where the `Node` itself is a destination `Node`.
+A `Node` also stores its 'to' and 'from' `Edge` objects for efficient `Node` and `Edge` operations. A 'to' `Edge` of a `Node` refers to an `Edge` where the `Node` itself is the source `Node`. In contrast, a 'from' `Edge` refers to an `Edge` where the `Node` itself is a destination `Node`.
+
+In case there is any confusion, some examples are provided:
+
+<div style="display: flex; flex-direction: row">
+    <div
+    style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-right: 20px;
+    "
+    >
+    <p>DOT</p>
+<pre>
+digraph Master {
+        n1 [];
+        n2 [];
+        n3 [];
+        root [];
+        n4 [];<br>
+        root -> n1 [];
+        root -> n2 [];
+        root -> n3 [];
+        n2 -> n4 [];
+}
+</prev>
+    </div>
+    <div
+        style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-left: 20px;
+        "
+        >
+    <p>Result</p>
+    <img src="./assets/graphs/getEdgeDirections.svg" />
+    </div>
+</div>
+
+In this example, the 'to' edges of the node with ID 'n2' are:
+
+- 'n2 -> n4'
+
+The 'from' edges of the node with ID 'n2' are:
+
+- 'root -> n2'
 
 ### Connect to another node
 
-You can connect one `Node` to another by calling the `connectTo` method. This method takes in the destination `Node` and these two `Node`s **must** share the same graph. Under the hood, this method is calling its graph's `addEdge` method, and creates an `Edge` in the format: "calling node -> parameter node".
+You can connect one `Node` to another by calling the `connectTo` method. This method takes in the destination `Node` and these two `Node` objects **must** share the same graph. Under the hood, this method is calling its graph's `addEdge` method, and creates an `Edge` in the format: "calling node -> parameter node".
 
 ```java
 Graph g = new Graph("Master");
@@ -1021,7 +1087,6 @@ n1.connectTo(n2); // Edge created: "n1 -> n2"
         margin-right: 20px;
     "
     >
-    <p>DOT</p>
 <pre>
 digraph Master {
         n1 [];
@@ -1032,7 +1097,7 @@ digraph Master {
 
 ### Connect from another node
 
-The `connectFrom` method is similar to `connectTo` in that you provide a another `Node`, and an `Edge` is created between the two `Node`s. For this method, you specify the source `Node` to create the `Edge`: "parameter node -> calling node".
+The `connectFrom` method is similar to `connectTo` in that you provide a another `Node`, and an `Edge` is created between the two `Node` objects. For this method, you specify the source `Node` to create the `Edge`: "parameter node -> calling node".
 
 ```java
 Graph g = new Graph("Master");
@@ -1053,7 +1118,6 @@ n1.connectFrom(n2); // Edge created: "n2 -> n1"
         margin-right: 20px;
     "
     >
-    <p>DOT</p>
 <pre>
 digraph Master {
         n1 [];
@@ -1064,7 +1128,7 @@ digraph Master {
 
 ### Get a 'to' edge
 
-A `Node` allows you to access its 'to' `Edge`s using the `to` method that accepts a `Node` object. A 'to' `Edge` refers to an `Edge` where the other `Node` is the destination `Node`.
+A `Node` allows you to access its 'to' `Edge` objects using the `to` method that accepts a `Node` object. A 'to' `Edge` refers to an `Edge` where the other `Node` is the destination `Node`.
 
 ```java
 Graph g = new Graph("Master");
@@ -1079,7 +1143,7 @@ Edge edge = n1.to(n2); // Retrieve the edge "n1 -> n2"
 
 ### Get a 'from' edge
 
-A `Node` allows you to access its 'from' `Edge`s using the `from` method that accepts a `Node` object. A 'from' `Edge` refers to an `Edge` where the other `Node` is the source `Node`.
+A `Node` allows you to access its 'from' `Edge` objects using the `from` method that accepts a `Node` object. A 'from' `Edge` refers to an `Edge` where the other `Node` is the source `Node`.
 
 ```java
 Graph g = new Graph("Master");
@@ -1159,7 +1223,7 @@ This list of valid formats was acquired from the official [Graphviz Output Forma
 - SVG
 - RAWDOT
 
-## Example
+## Examples
 
 Below are some examples demonstrating the capabilities of this tool.
 

@@ -299,23 +299,25 @@ public class Examples {
 
     public static void setAttribute() {
         Graph g = new Graph();
+
         g.setAttribute("custom_attribute", "some value");
         g.setAttribute(Graph.Attribute.BGCOLOR, "red"); // Setting the "bgcolor" attribute to "red"
+        // g.setAttribute("bgcolor", "red"); // Equivalent way to set the same attribute
     }
 
     public static void getAttribute() {
         Graph g = new Graph();
+
         g.setAttribute("custom_attribute", "some value");
         g.setAttribute(Graph.Attribute.BGCOLOR, "red");
-
         g.getAttribute(Graph.Attribute.BGCOLOR); // Retrieve attribute value is "red"
     }
 
     public static void removeAttribute() {
         Graph g = new Graph();
+
         g.setAttribute("custom_attribute", "some value");
         g.setAttribute(Graph.Attribute.BGCOLOR, "red");
-
         g.removeAttribute(Graph.Attribute.BGCOLOR); // Attribute "bgcolor" removed
     }
 
@@ -324,7 +326,7 @@ public class Examples {
         // getNumberOfEdges();
         // getNodeNames();
         // getNodeLabels();
-        // getEdgeDirections();
+        getEdgeDirections();
         // outputGraph();
         // connectTo();
         // connectFrom();
@@ -333,8 +335,8 @@ public class Examples {
         // from();
         // disconnectTo();
         // disconnectFrom();
-        removeFromGraphNode();
-        removeFromGraphEdge();
+        // removeFromGraphNode();
+        // removeFromGraphEdge();
 
     }
 }
