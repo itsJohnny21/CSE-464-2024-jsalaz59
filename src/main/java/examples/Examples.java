@@ -2,8 +2,10 @@ package examples;
 
 import org.CSE464.Format;
 import org.CSE464.Graph;
+import org.CSE464.Graph.Algorithm;
 import org.CSE464.Graph.Edge;
 import org.CSE464.Graph.Node;
+import org.CSE464.Graph.Path;
 
 public class Examples {
 
@@ -272,6 +274,10 @@ public class Examples {
         n1.connectTo(n2);
 
         n1.disconnectTo(n2); // Removes the edge "n1 -> n2"
+
+        String methodName = new Exception().getStackTrace()[0].getMethodName();
+        String dotContent = g.outputGraph(String.format("./assets/graphs/%s", methodName), Format.SVG);
+        System.out.println(dotContent);
     }
 
     public static void disconnectFrom() throws Exception {
@@ -281,13 +287,23 @@ public class Examples {
         n1.connectTo(n2);
 
         n2.disconnectFrom(n1); // Removes the edge "n1 -> n2"
+
+        String methodName = new Exception().getStackTrace()[0].getMethodName();
+        String dotContent = g.outputGraph(String.format("./assets/graphs/%s", methodName), Format.SVG);
+        System.out.println(dotContent);
     }
 
     public static void removeFromGraphNode() throws Exception {
+        String methodName = new Exception().getStackTrace()[0].getMethodName();
+
         Graph g = new Graph("Master");
         Node n1 = g.addNode("n1");
+        g.outputGraph(String.format("./assets/graphs/%s_Before", methodName), Format.SVG);
 
         n1.removeFromGraph(); // Removes the node with "n1"
+
+        String dotContent = g.outputGraph(String.format("./assets/graphs/%s_After", methodName), Format.SVG);
+        System.out.println(dotContent);
     }
 
     public static void removeFromGraphEdge() throws Exception {
@@ -295,6 +311,10 @@ public class Examples {
         Edge e1 = g.addEdge("n1", "n2");
 
         e1.removeFromGraph(); // Removes the edge "n1 -> n2"
+
+        String methodName = new Exception().getStackTrace()[0].getMethodName();
+        String dotContent = g.outputGraph(String.format("./assets/graphs/%s", methodName), Format.SVG);
+        System.out.println(dotContent);
     }
 
     public static void setAttribute() {
@@ -321,12 +341,141 @@ public class Examples {
         g.removeAttribute(Graph.Attribute.BGCOLOR); // Attribute "bgcolor" removed
     }
 
+    public static void pathSetAttributes() throws Exception {
+        Graph g = new Graph();
+
+        Path p = g.addPath("n1", "n2", "n3"); // Create the path n1 -> n2 -> n3
+        Path p2 = g.addPath("a1", "n2", "a3"); // Create the path a1 -> n2 -> a3
+
+        p2.setAttributes(Edge.Attribute.COLOR, "red"); // Set the color attribute of each edge in path p2 to "red"
+        p2.setAttributes(Node.Attribute.COLOR, "purple"); // Set the color attribute of each node in path p2 to "purple"
+
+        String methodName = new Exception().getStackTrace()[0].getMethodName();
+        String dotContent = g.outputGraph(String.format("./assets/graphs/%s", methodName), Format.SVG);
+        System.out.println(dotContent);
+    }
+
+    public static void pathRemoveAttributes() throws Exception {
+        Graph g = new Graph();
+
+        Path p = g.addPath("n1", "n2", "n3"); // Create the path n1 -> n2 -> n3
+        Path p2 = g.addPath("a1", "n2", "a3"); // Create the path a1 -> n2 -> a3
+
+        p2.setAttributes(Edge.Attribute.COLOR, "red"); // Set the color attribute of each edge in path p2 to "red"
+        p2.setAttributes(Node.Attribute.COLOR, "purple"); // Set the color attribute of each node in path p2 to "purple"
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        p2.removeAttributes(Edge.Attribute.COLOR); // Remove the color attribute of each edge path p
+
+        String methodName = new Exception().getStackTrace()[0].getMethodName();
+        String dotContent = g.outputGraph(String.format("./assets/graphs/%s", methodName), Format.SVG);
+        System.out.println(dotContent);
+    }
+
+    public static void addPath() throws Exception {
+        Graph g = new Graph();
+
+        Path p = g.addPath("n1", "n2", "n3"); // Create the path n1 -> n2 -> n3
+
+        String methodName = new Exception().getStackTrace()[0].getMethodName();
+        String dotContent = g.outputGraph(String.format("./assets/graphs/%s", methodName), Format.SVG);
+        System.out.println(dotContent);
+    }
+
+    public static void getPath() throws Exception {
+        Graph g = new Graph();
+        g.addEdge("n1", "n2");
+        g.addEdge("n2", "n3");
+
+        Path p = g.getPath("n1", "n2", "n3"); // Get the path n1 -> n2 -> n3
+
+        String methodName = new Exception().getStackTrace()[0].getMethodName();
+        String dotContent = g.outputGraph(String.format("./assets/graphs/%s", methodName), Format.SVG);
+        System.out.println(dotContent);
+    }
+
+    public static void graphSearch() throws Exception {
+        Graph g = new Graph();
+        g.addPath("root", "1", "11", "111"); // Add the path root -> 1 -> 11 -> 111
+        g.addPath("1", "11", "112"); // Add the path 1 -> 11 -> 112
+        g.addPath("1", "12", "121"); // Add the path 1 -> 12 -> 121
+        g.addPath("1", "12", "122"); // Add the path 1 -> 12 -> 122
+
+        g.addPath("root", "2", "21", "211"); // Add the path root -> 2 -> 21 -> 211
+        g.addPath("2", "21", "212"); // Add the path 2 -> 21 -> 212
+        g.addPath("2", "22", "221"); // Add the path 2 -> 22 -> 221
+        g.addPath("2", "22", "222"); // Add the path 2 -> 22 -> 222
+
+        g.addPath("root", "3", "31", "311"); // Add the path root -> 3 -> 31 -> 311
+        g.addPath("3", "31", "312"); // Add the path 3 -> 31 -> 312
+        g.addPath("3", "32", "321"); // Add the path 3 -> 32 -> 321
+        g.addPath("3", "32", "322"); // Add the path 3 -> 32 -> 322
+
+        g.addPath("root", "222"); // Add the path root -> 222
+
+        Path p = g.graphSearch("root", "222", Algorithm.DFS); // Search for the shortest path with root as source node and 222 as destination node
+
+        if (p != null) {
+            p.setAttributes(Node.Attribute.COLOR, "red"); // Set the color attribute of the nodes in this path to "red"
+            p.setAttributes(Edge.Attribute.COLOR, "red"); // Set the color attribute of the edges in this path to "red"
+        }
+
+        String methodName = new Exception().getStackTrace()[0].getMethodName();
+        String dotContent = g.outputGraph(String.format("./assets/graphs/%s", methodName), Format.SVG);
+        System.out.println(dotContent);
+    }
+
+    public static void highlightPathsConnected3() throws Exception {
+        Graph g = Graph.parseDOT("src/test/resources/Search/Connected3Graph.dot");
+        Path p = g.getPath("n1", "n2", "n3", "n1");
+        p.setAttributes(Edge.Attribute.COLOR, "red");
+        p.setAttributes(Node.Attribute.COLOR, "red");
+
+        p = g.getPath("n1", "n3", "n2", "n1");
+        p.setAttributes(Edge.Attribute.COLOR, "blue");
+        p.setAttributes(Node.Attribute.COLOR, "blue");
+
+        p = g.getPath("n1", "n1");
+        p.setAttributes(Edge.Attribute.COLOR, "purple");
+        p.setAttributes(Node.Attribute.COLOR, "purple");
+
+        p = g.getPath("n2", "n2");
+        p.setAttributes(Edge.Attribute.COLOR, "yellow");
+        p.setAttributes(Node.Attribute.COLOR, "yellow");
+
+        p = g.getPath("n3", "n3");
+        p.setAttributes(Edge.Attribute.COLOR, "pink");
+        p.setAttributes(Node.Attribute.COLOR, "pink");
+
+        String methodName = new Exception().getStackTrace()[0].getMethodName();
+        String dotContent = g.outputGraph(String.format("./assets/graphs/%s", methodName), Format.SVG);
+        System.out.println(dotContent);
+    }
+
+    public static void removePath() throws Exception {
+        String methodName = new Exception().getStackTrace()[0].getMethodName();
+        Graph g = new Graph();
+        g.addPath("n1", "n2", "n3");
+        g.outputGraph(String.format("./assets/graphs/%s_Before", methodName), Format.SVG);
+
+        g.removePath("n2", "n3");
+        g.outputGraph(String.format("./assets/graphs/%s_After", methodName), Format.SVG);
+    }
+
+    public static void pathExists() {
+        Graph g = new Graph();
+        g.addPath("n1", "n2", "n3");
+
+        System.out.println(g.pathExists("n1", "n3")); // False since there is no path n1 -> n3
+    }
+
     public static void main(String[] args) throws Exception {
         // getNumberOfNodes();
         // getNumberOfEdges();
         // getNodeNames();
         // getNodeLabels();
-        getEdgeDirections();
+        // getEdgeDirections();
         // outputGraph();
         // connectTo();
         // connectFrom();
@@ -337,6 +486,11 @@ public class Examples {
         // disconnectFrom();
         // removeFromGraphNode();
         // removeFromGraphEdge();
-
+        // pathRemoveAttributes();
+        // getPath();
+        // graphSearch();
+        // highlightPathsConnected3();
+        // removePath();
+        pathExists();
     }
 }

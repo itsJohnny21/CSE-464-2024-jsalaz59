@@ -1,25 +1,8 @@
-# uGraphMaster - A Graph Manager Powered by Graphviz
+# GraphMaster - A Graph Manager Powered by Graphviz
 
 Created by me, [Johnny Salazar](https://github.com/itsJohnny21/itsJohnny21), for my CSE 467 (Software QA and Testing) course, taught by professor [Xusheng Xiao](https://xusheng-xiao.github.io/).
 
 <img src="./assets/icons/logo.svg" width="250"/>
-
-## FOR GRADERS ONLY
-
-When I first started on this project, I basically piggy-backed off of the [Nidi3 Graphviz-Java tool](https://github.com/nidi3/graphviz-java) by essentially creating a class that extended Nidi3's MutableGraph class. During testing, I realized that I was really only testing Nidi3's implementation and not my own, and it did not feel right. The project is supposed to help me learn and gain hands-on experience in providing tests for something I've created. That's why I then decided to create my own Graph class from scratch. The MutableGraph from Nidi3 is still used but only for parsing purposes (I could have created my own parser but that would've taken forever).
-
-When creating my own Graph class, I actually implemented all features into a single [commit](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/5aff7f33336eb0855351c98a046bec7215281423) (since the features were small and related to each other). The methods were still untested, and so another [commit](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/8242c87ed85042c2bd22a0b19b2abd95931041ec) was made after implementing tests for these features. During the implementation of these tests, I found myself having to improve my code in different ways such as [improving the outputGraph method](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/145d98d98868637a6ca56c4d4cc0b8f6ee657112), [improving the ID regex for edge cases](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/6c8a43f93c63bf484a531acb92efcfdd5de81666), [creating a superclass for Graph Node and Edge](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/a973ccf164dbd4234de62b214d54fab48eb58f35), [adding an exception for parse failure](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/680cef368c3f76b5c9c118000ea4f0b3fa4ba291), and [much more](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commits/master/).
-
-I do apologize for not creating separate commits for each feautre. I did however put a lot of time and effor into this project, and I hope that I don't get deducted points for this.
-
-As for the branches, I did create [four different branches](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/branches) (excluding the [master branch](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/tree/master)). The first branch called [JGraphT](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/tree/JGraphT) used the [JGraphT tools](https://github.com/jgrapht/jgrapht) to parse a DOT file. After struggling with these tools, I decided to look for alternative methods of parsing a DOT file and came across [Nidi3&#39;s tools](https://github.com/nidi3/graphviz-java). I then created a separate branch called [Guru-Nidi-DOT-Parser](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/tree/Guru-Nidi-DOT-Parser) that piggy-backed off of these tools. I then decided that I should create my own Graph class from scratch and thus I create a separate branch called [Graph-Redo](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/tree/Graph-Redo). After fully implementing this branch (including testing), I then felt that I was ready to create the README.md which would serve as the documentation for this project. I created a new branch called [documentation](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/tree/documentation) just for this purpose. Now I'm fully finished with this project (although there is still plenty of room for improvement), and I am ready for the part 2.
-
-During the completion of this project, I made the following merges:
-
-- [Documentation Merge Request](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/2735147fefcf4d9cb053b338945adee278e344d5)
-- [Graph From Scratch Merge Request](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/5467c5f25098615fa6c5604b4f89a5c33394ffec)
-- [Nidi3 Merge Request](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/947ddc1df629d2beeab807810425d117e1e6b31a)
-- [JGrapthT Merge Request](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/2d74485941bc2400d8fb22f315648fd2b2246c24)
 
 ## Dependencies
 
@@ -701,19 +684,6 @@ digraph Master {
 </prev>
 
 </div>
-<div
-        style="
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-left: 20px;
-        "
-        >
-<p>Result</p>
-<img src="./assets/graphs/getNumberOfNodes.svg" />
-</div>
-
-</div>
 
 ### Get node names
 
@@ -1087,12 +1057,25 @@ n1.connectTo(n2); // Edge created: "n1 -> n2"
         margin-right: 20px;
     "
     >
+    <p>DOT</p>
 <pre>
 digraph Master {
         n1 [];
         n2 [];<br>
         n1 -> n2 [];
 }
+</prev>
+</div>
+<div
+        style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-left: 20px;
+        "
+        >
+<p>Result</p>
+<img src="./assets/graphs/connectTo.svg" />
 </div>
 
 ### Connect from another node
@@ -1118,12 +1101,25 @@ n1.connectFrom(n2); // Edge created: "n2 -> n1"
         margin-right: 20px;
     "
     >
+    <p>DOT</p>
 <pre>
 digraph Master {
         n1 [];
         n2 [];<br>
         n2 -> n1 [];
 }
+</prev>
+</div>
+<div
+        style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-left: 20px;
+        "
+        >
+<p>Result</p>
+<img src="./assets/graphs/connectFrom.svg" />
 </div>
 
 ### Get a 'to' edge
@@ -1167,6 +1163,35 @@ n1.connectTo(n2);
 n1.disconnectTo(n2); // Removes the edge "n1 -> n2"
 ```
 
+<div style="display: flex; flex-direction: row">
+    <div
+    style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-right: 20px;
+    "
+    >
+    <p>DOT</p>
+<pre>
+digraph Master {
+        n1 [];
+        n2 [];
+}
+</prev>
+</div>
+<div
+        style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-left: 20px;
+        "
+        >
+<p>Result</p>
+<img src="./assets/graphs/disconnectTo.svg" />
+</div>
+
 ### Disconnect from a 'from' node
 
 If an `Edge` "n1 -> n2" exists, then the `Node` with ID "n2" can disconnect from "n1", removing the `Edge` "n1 -> n2". To do this, you can call the `disconnectFrom` method provided by the `Node`. The method takes in a reference to the other `Node` as an argument.
@@ -1180,6 +1205,35 @@ n1.connectTo(n2);
 n2.disconnectFrom(n1); // Removes the edge "n1 -> n2"
 ```
 
+<div style="display: flex; flex-direction: row">
+    <div
+    style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-right: 20px;
+    "
+    >
+    <p>DOT</p>
+<pre>
+digraph Master {
+        n1 [];
+        n2 [];
+}
+</prev>
+</div>
+<div
+        style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-left: 20px;
+        "
+        >
+<p>Result</p>
+<img src="./assets/graphs/disconnectTo.svg" />
+</div>
+
 ### Remove from graph
 
 A `Node` can remove itself from a `Graph` using the `removeFromGraph` method, which takes no arguments. As a result, the node's `Graph` reference will be set to null since it is no longer part of that `Graph`.
@@ -1190,6 +1244,34 @@ Node n1 = g.addNode("n1");
 
 n1.removeFromGraph(); // Removes the node with "n1"
 ```
+
+<div style="display: flex; flex-direction: row">
+    <div
+    style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-right: 20px;
+    "
+    >
+    <p>DOT</p>
+<pre>
+digraph Master {
+    <br>
+}
+</prev>
+</div>
+<div
+        style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-left: 20px;
+        "
+        >
+<p>Result</p>
+<img src="./assets/graphs/removeFromGraphNode_After.svg" />
+</div>
 
 ## Edge
 
@@ -1205,6 +1287,328 @@ Edge e1 = g.addEdge("n1", "n2");
 
 e1.removeFromGraph(); // Removes the edge "n1 -> n2"
 ```
+
+<div style="display: flex; flex-direction: row">
+    <div
+    style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-right: 20px;
+    "
+    >
+    <p>DOT</p>
+<pre>
+digraph Master {
+        n1 [];
+        n2 [];
+}
+</prev>
+</div>
+<div
+        style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-left: 20px;
+        "
+        >
+<p>Result</p>
+<img src="./assets/graphs/removeFromGraphEdge.svg" />
+</div>
+
+## Path
+
+A `Path` object represents a valid path in a `Graph`, and consists of two lists. The first list contains the `Node` objects of the path in order. The second list contains the `Edge` objects in the path. Note that a `Path` object will have one less many `Edge` objects than `Node` objects.
+
+`Path` objects can only be created from a `Graph` object via the `addPath`, `getPath`, and `graphSearch` methods. This ensures that every `Path` is directly tied to a `Graph`.
+
+### Add a path
+
+The `addPath` provided by a `Graph` lets you easily add a path by providing the IDs of the `Node` objects. A `Path` object will be returned by this method after successfully adding nodes and edges in the path provided in the call's argument.
+
+```java
+Graph g = new Graph();
+
+Path p = g.addPath("n1", "n2", "n3"); // Create the path n1 -> n2 -> n3
+```
+
+<div style="display: flex; flex-direction: row">
+    <div
+    style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-right: 20px;
+    "
+    >
+    <p>DOT</p>
+<pre>
+digraph {
+        n1 [];
+        n2 [];
+        n3 [];<br>
+        n1 -> n2 [];
+        n2 -> n3 [];
+}
+</prev>
+</div>
+<div
+        style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-left: 20px;
+        "
+        >
+<p>Result</p>
+<img src="./assets/graphs/addPath.svg" />
+</div>
+
+**_Note that if any of the provided IDs are not associated with any node in the `Graph`, then if the ID is a valid one, a `Node` with that ID will be created and added to the `Graph` automatically. If the ID is invalid however, a `InvalidIDException` will be thrown._**
+
+### Get a path
+
+In case you need to get a specific path from a `Graph`, you can use the `Graph` object's `getPath` method to retrieve this path. The method returns the corresponding `Path` object if the path exists, otherwise it returns null.
+
+<div style="display: flex; flex-direction: row">
+    <div
+    style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-right: 20px;
+    "
+    >
+    <p>DOT</p>
+<pre>
+digraph {
+        n1 [];
+        n2 [];
+        n3 [];<br>
+        n1 -> n2 [];
+        n2 -> n3 [];
+}
+</prev>
+</div>
+<div
+        style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-left: 20px;
+        "
+        >
+<p>Result</p>
+<img src="./assets/graphs/getPath.svg" />
+</div>
+
+### Search for a path
+
+A `Graph` allows you to search for a path between a source `Node` and destination `Node` by calling the `graphSerach` method. The IDs of these nodes must be passed into the method and the type of algorithm to be used in the search process, either Depth First Search (DFS) or Breadth First Search (BFS), must also be specified. Either algorithm is guaranteed to return a path if the path exists in the graph, but only BFS guarantees that the shortest path will be returned. If a path is successfully found, a corresponding `Path` object will be returned, otherwise null will be returned.
+
+<div style="display: flex; flex-direction: row">
+    <div
+    style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-right: 20px;
+    "
+    >
+    <p>DOT</p>
+<pre>
+digraph {
+        root [color="red"];
+        1 [];
+        11 [];
+        111 [];
+        112 [];
+        12 [];
+        121 [];
+        122 [];
+        2 [];
+        21 [];
+        211 [];
+        212 [];
+        22 [];
+        221 [];
+        222 [color="red"];
+        3 [];
+        31 [];
+        311 [];
+        312 [];
+        32 [];
+        321 [];
+        322 [];<br>
+        root -> 1 [];
+        1 -> 11 [];
+        11 -> 111 [];
+        11 -> 112 [];
+        1 -> 12 [];
+        12 -> 121 [];
+        12 -> 122 [];
+        root -> 2 [];
+        2 -> 21 [];
+        21 -> 211 [];
+        21 -> 212 [];
+        2 -> 22 [];
+        22 -> 221 [];
+        22 -> 222 [];
+        root -> 3 [];
+        3 -> 31 [];
+        31 -> 311 [];
+        31 -> 312 [];
+        3 -> 32 [];
+        32 -> 321 [];
+        32 -> 322 [];
+        root -> 222 [color="red"];
+}
+</prev>
+</div>
+<div
+        style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-left: 20px;
+        "
+        >
+<p>Result</p>
+<img src="./assets/graphs/graphSearch.svg" />
+</div>
+
+### Check if path exists
+
+For convenience, a `Graph` allows you to check if a `Path` exists using the `pathExists` method. Pass in the IDs of the nodes in the path (in order), and the method should return true or false depending on whether the path exists in the `Graph` or not.
+
+```java
+Graph g = new Graph();
+g.addPath("n1", "n2", "n3");
+
+System.out.println(g.pathExists("n1", "n3")); // False since there is no path n1 -> n3
+```
+
+### Remove a path
+
+A `Path` can be removed from a `Graph` via the the `Graph` object's `removePath` method. By passing in the IDs of the nodes in the order of the `Path`, this method will first check if the `Path` exists, and remove all `Edge` objects associated with that `Path`. If the `Path` does not exist, no `Edge` objects will be removed and a `PathDoesNotExist` exception will be thrown.
+
+<div style="display: flex; justify-content: center;">
+    <div style="display: flex; flex-direction: column; align-items: center;">
+        <p>Before</p>
+        <img src="./assets/graphs/removePath_Before.svg" alt="Before" style="width: 60%;"/>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center;">
+        <p>After</p>
+        <img src="./assets/graphs/removePath_After.svg" alt="After" style="width: 60%;"/>
+    </div>
+</div>
+
+### Setting attributes
+
+A `Path` can easily modify the attributes of its `Node` and `Edge` objects via the `setAttributes` method. Since it might be common to change all attributes of the nodes and edges in a path, this `setAttributes` method does exactly that.
+
+```java
+Graph g = new Graph();
+
+Path p = g.addPath("n1", "n2", "n3"); // Create the path n1 -> n2 -> n3
+Path p2 = g.addPath("a1", "n2", "a3"); // Create the path a1 -> n2 -> a3
+
+p2.setAttributes(Edge.Attribute.COLOR, "red"); // Set the color attribute of each edge in path p2 to "red"
+p2.setAttributes(Node.Attribute.COLOR, "purple"); // Set the color attribute of each node in path p2 to "purple"
+```
+
+<div style="display: flex; flex-direction: row">
+    <div
+    style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-right: 20px;
+    "
+    >
+    <p>DOT</p>
+<pre>
+digraph {
+        n1 [];
+        n2 [color="purple"];
+        n3 [];
+        a1 [color="purple"];
+        a3 [color="purple"];<br>
+        n1 -> n2 [];
+        n2 -> n3 [];
+        a1 -> n2 [color="red"];
+        n2 -> a3 [color="red"];
+}
+</prev>
+    </div>
+    <div
+        style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-left: 20px;
+        "
+        >
+    <p>Result</p>
+    <img src="./assets/graphs/pathSetAttributes.svg" />
+    </div>
+</div>
+
+### Removing attributes
+
+Since a `Path` can modify the attributes of its `Node` and `Edge` objects, it also needs to be able to remove these attributes. This is where the `removeAttributes` method comes into play.
+
+```java
+Graph g = new Graph();
+
+Path p = g.addPath("n1", "n2", "n3"); // Create the path n1 -> n2 -> n3
+Path p2 = g.addPath("a1", "n2", "a3"); // Create the path a1 -> n2 -> a3
+
+p2.setAttributes(Edge.Attribute.COLOR, "red"); // Set the color attribute of each edge in path p2 to "red"
+p2.setAttributes(Node.Attribute.COLOR, "purple"); // Set the color attribute of each node in path p2 to "purple"
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+p2.removeAttributes(Edge.Attribute.COLOR); // Remove the color attribute of each edge path p
+```
+
+<div style="display: flex; flex-direction: row">
+    <div
+    style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-right: 20px;
+    "
+    >
+    <p>DOT</p>
+<pre>
+digraph {
+        n1 [];
+        n2 [color="purple"];
+        n3 [];
+        a1 [color="purple"];
+        a3 [color="purple"];<br>
+        n1 -> n2 [];
+        n2 -> n3 [];
+        a1 -> n2 [];
+        n2 -> a3 [];
+}
+</prev>
+    </div>
+    <div
+        style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-left: 20px;
+        "
+        >
+    <p>Result</p>
+    <img src="./assets/graphs/pathRemoveAttributes.svg" />
+    </div>
+</div>
 
 ## Format
 
@@ -1320,3 +1724,69 @@ public class Logo {
     }
 }
 ```
+
+### Fully connected graph of size 3 (highlighted)
+
+```java
+Graph g = Graph.parseDOT("src/test/resources/Search/Connected3Graph.dot");
+Path p = g.getPath("n1", "n2", "n3", "n1");
+p.setAttributes(Edge.Attribute.COLOR, "red");
+p.setAttributes(Node.Attribute.COLOR, "red");
+
+p = g.getPath("n1", "n3", "n2", "n1");
+p.setAttributes(Edge.Attribute.COLOR, "blue");
+p.setAttributes(Node.Attribute.COLOR, "blue");
+
+p = g.getPath("n1", "n1");
+p.setAttributes(Edge.Attribute.COLOR, "purple");
+p.setAttributes(Node.Attribute.COLOR, "purple");
+
+p = g.getPath("n2", "n2");
+p.setAttributes(Edge.Attribute.COLOR, "yellow");
+p.setAttributes(Node.Attribute.COLOR, "yellow");
+
+p = g.getPath("n3", "n3");
+p.setAttributes(Edge.Attribute.COLOR, "pink");
+p.setAttributes(Node.Attribute.COLOR, "pink");
+
+String methodName = new Exception().getStackTrace()[0].getMethodName();
+String dotContent = g.outputGraph(String.format("./assets/graphs/%s", methodName), Format.SVG);
+System.out.println(dotContent);
+```
+
+<div style="display: flex; flex-direction: row">
+    <div
+    style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-right: 20px;
+    "
+    >
+<pre>
+digraph g {
+        n3 [color="pink"];
+        n1 [color="purple"];
+        n2 [color="yellow"];<br>
+        n3 -> n1 [color="red"];
+        n3 -> n2 [color="blue"];
+        n3 -> n3 [color="pink"];
+        n2 -> n1 [color="blue"];
+        n2 -> n2 [color="yellow"];
+        n2 -> n3 [color="red"];
+        n1 -> n1 [color="purple"];
+        n1 -> n2 [color="red"];
+        n1 -> n3 [color="blue"];
+}
+</prev>
+</div>
+<div
+        style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-left: 20px;
+        "
+        >
+<img src="./assets/graphs/highlightPathsConnected3.svg" />
+</div>
