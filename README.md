@@ -4,6 +4,27 @@ Created by me, [Johnny Salazar](https://github.com/itsJohnny21/itsJohnny21), for
 
 <img src="./assets/icons/logo.svg" width="250"/>
 
+## FOR GRADERS ONLY
+
+The `Path` class was added to represent a valid path in a `Graph` and the following methods were added:
+
+- `Graph.addPath` for adding paths in a `Graph`
+- `getPath` for getting a specific path if exists in a `Graph`
+- `pathExists` for checking if a path exists i a `Graph`
+- `graphSearch` for searching for a `Path` in a `Graph` by specifying the source node ID and destination node ID
+- `removePath` for removing a `Path` in a graph (removes `Edge` objects only)
+
+I know that the main feature of Project Part 2 was the `graphSearch` method, but I felt that it was necessarry to add these other methods to make the overall Graph Master library to feel complete and useful. Test cases for each of these methods has also been provided to ensure that the methods are correctly implemented.
+
+The following branches were made during this process:
+
+- The [bfs branch](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/tree/bfs) was created first.
+- The [dfs branch](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/tree/dfs) was created next.
+- The bfs and dfs branches were merged onto the [master branch](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/tree/master), resulting in a [merge conflict](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/9e9ecab1743e7ed6f289ab5b9eae686e925f3893), which had to be resolved.
+- The master branch was then updated to include testing and fix bugs in the code.
+
+On top of this, the [Java Continuous Integration workflow](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/be699c01175952c582f2d1fde3248b6b3165802a) was added to automate the testing process with maven.
+
 ## Dependencies
 
 This project is powered by Maven. To install the necessary dependencies, simply run the `mvn package` command. This will install the following:
@@ -682,8 +703,6 @@ digraph Master {
         n4 -> n5 [];
 }
 </prev>
-
-</div>
 
 ### Get node names
 
