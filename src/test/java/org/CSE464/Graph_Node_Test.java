@@ -750,6 +750,53 @@ public class Graph_Node_Test {
     }
 
     @Test
+    public void Given_Invalid_Node_IDs_When_Removing_Multiple_Nodes_Removes_None() {
+        g.addNode("n1");
+        g.addNode("n2");
+        g.addNode("n3");
+        g.addEdge("n1", "n3");
+
+        assertThrows(InvalidIDException.class, () -> {
+            g.removeNodes("n1 !-+:'", "n2", "n3");
+        });
+
+        assertEquals(3, g.getNumberOfNodes());
+        assertEquals(1, g.getNumberOfEdges());
+    }
+
+    @Test
+    public void Given_Nonexistant_Node_IDs_When_Removing_Multiple_Nodes_Removes_None() {
+        g.addNode("n1");
+        g.addNode("n2");
+        g.addNode("n3");
+        g.addEdge("n1", "n3");
+
+        assertThrows(NodeDoesNotExistException.class, () -> {
+            g.removeNodes("n0", "n2", "n3");
+        });
+
+        assertEquals(3, g.getNumberOfNodes());
+        assertEquals(1, g.getNumberOfEdges());
+    }
+
+    @Test
+    public void Given_Valid_Node_IDs_When_Removing_Multiple_Nodes_Removes_Nodes() {
+        g.addNode("n1");
+        g.addNode("n2");
+        g.addNode("n3");
+        g.addEdge("n1", "n3");
+
+        g.addNode("a1");
+        g.addNode("a2");
+        g.addEdge("a1", "a2");
+
+        g.removeNodes("n1", "n2", "n3");
+
+        assertEquals(2, g.getNumberOfNodes());
+        assertEquals(1, g.getNumberOfEdges());
+    }
+
+    @Test
     public void Node_To_String_Works_Properly() {
         Node n = g.addNode("n1");
         assertNotNull(n.toString());

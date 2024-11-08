@@ -247,18 +247,6 @@ public class Graph extends DOTElement {
         }
 
         return String.join(String.format(" %s ", DIRECTED_SIGN), nodeIDs);
-
-        // Edge[] edges = new Edge[nodeIDs.length - 1];
-        // StringBuilder sb = new StringBuilder();
-        // String rootID = edges[0].fromNode.ID;
-        // sb.append(rootID);
-
-        // for (Edge edge : edges) {
-        // String toID = edge.toNode.ID;
-        // sb.append(String.format(" %s %s", DIRECTED_SIGN, toID));
-        // }
-
-        // return sb.toString();
     }
 
     public Edge getEdge(String fromID, String toID) {
@@ -447,6 +435,24 @@ public class Graph extends DOTElement {
         }
 
         return nodeLabels;
+    }
+
+    public void removeNodes(String... nodeIDs) {
+        for (String nodeID : nodeIDs) {
+            if (!nodeID.matches(ID_REGEX)) {
+                throw new InvalidIDException(
+                        String.format("Error: Attempted to remove node with id '%s'. The id is invalid.", nodeID));
+            }
+
+            if (!nodeExists(nodeID)) {
+                throw new NodeDoesNotExistException(
+                        String.format("Error: Attempted to remove node with id '%s'. Node does not exist.", nodeID));
+            }
+        }
+
+        for (String nodeID : nodeIDs) {
+            removeNode(nodeID);
+        }
     }
 
     public String outputGraph(String filepath, Format format) throws IOException, InterruptedException {
