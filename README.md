@@ -20,12 +20,12 @@ While these additional methods were not required for Project Part 2, I felt that
 ### APIs to support adding and removing nodes and edges
 
 - [removeNode](#remove-a-node)
-- [removeNodes](<#remove-multiple-nodes-(NEW)>)
+- [removeNodes](#remove-multiple-nodes-NEW)
 - [removeEdge](#remove-an-edge)
 
 ### Graph search API
 
-- [graphSearch](<#search-for-a-path-(NEW)>)
+- [graphSearch](#search-for-a-path-NEW)
 
 ### Continuous Integration Support
 
@@ -1019,7 +1019,7 @@ for (int i = 0; i < n; i++) {
 g.outputGraph("./assets/graphs/outputGraphToJSON", Format.JSON); // New filepath is ./assets/graphs/outputGraphToJSON.json
 ```
 
-### Add a path (NEW)
+### Add a path NEW
 
 The `addPath` provided by a `Graph` lets you easily add a path by providing the IDs of the `Node` objects. A `Path` object will be returned by this method after successfully adding nodes and edges in the path.
 
@@ -1063,7 +1063,7 @@ digraph {
 
 **_Note that if any of the provided IDs are not associated with any node in the `Graph`, then if the ID is a valid one, a `Node` with that ID will be created and added to the `Graph` automatically. However, if the ID is invalid, a `InvalidIDException` will be thrown._**
 
-### Get a path (NEW)
+### Get a path NEW
 
 In case you need to get a specific path from a `Graph`, you can use the `Graph` object's `getPath` method to retrieve this path. The method returns the corresponding `Path` object if the path exists, otherwise it returns null.
 
@@ -1099,7 +1099,7 @@ digraph {
 <img src="./assets/graphs/getPath.svg" style="height: 250px; width: 250px;" />
 </div>
 
-### Search for a path (NEW)
+### Search for a path NEW
 
 A `Graph` allows you to search for a path between a source `Node` and destination `Node` by calling the `graphSerach` method. The IDs of these nodes must be passed into the method and the type of algorithm to be used in the search process, either Depth First Search (DFS) or Breadth First Search (BFS), must also be specified. Either algorithm is guaranteed to return a path if the path exists in the graph, but only BFS guarantees the shortest path. If a path is successfully found, a corresponding `Path` object will be returned, otherwise null will be returned.
 
@@ -1174,7 +1174,7 @@ digraph {
 <img src="./assets/graphs/graphSearch.svg" style="height: 350px; width: 450px;" />
 </div>
 
-### Check if path exists (NEW)
+### Check if path exists NEW
 
 For convenience, a `Graph` allows you to check if a `Path` exists using the `pathExists` method. By passing in the IDs of the nodes in the path (in order), the method will return true if the path exists, otherwise false.
 
@@ -1185,7 +1185,7 @@ g.addPath("n1", "n2", "n3");
 System.out.println(g.pathExists("n1", "n3")); // False since there is no path n1 -> n3
 ```
 
-### Remove a path (NEW)
+### Remove a path NEW
 
 A `Path` can be removed from a `Graph` via the `removePath` method. By passing in the IDs of the nodes in the order of the `Path`, this method will first check if the `Path` exists, then subsequently remove all `Edge` objects associated with that `Path` if the path does exist. If the `Path` does not exist, no `Edge` objects will be removed and a `PathDoesNotExist` exception will be thrown.
 
@@ -1200,7 +1200,7 @@ A `Path` can be removed from a `Graph` via the `removePath` method. By passing i
     </div>
 </div>
 
-### Remove multiple nodes (NEW)
+### Remove multiple nodes NEW
 
 A `Graph` allows you to remove multiple nodes using the `removeNodes` method. The method requires an array of the node IDs to be removed from the graph.
 
@@ -1563,13 +1563,13 @@ digraph Master {
 <img src="./assets/graphs/removeFromGraphEdge.svg" style="height: 250px; width: 250px;" />
 </div>
 
-## Path (NEW)
+## Path NEW
 
 A `Path` object represents a valid path in a `Graph`, and consists of two lists. The first list contains the `Node` objects of the path in order. The second list contains the `Edge` objects in the path. Note that a `Path` object will have one less many `Edge` objects than `Node` objects.
 
 `Path` objects can only be created from a `Graph` object via the `addPath`, `getPath`, and `graphSearch` methods. This ensures that every `Path` is directly tied to a `Graph`.
 
-### Setting attributes (NEW)
+### Setting attributes NEW
 
 A `Path` can easily modify the attributes of its `Node` and `Edge` objects via the `setAttributes` method. Since it might be common to change all attributes of the nodes and edges in a path, this `setAttributes` method does exactly that.
 
@@ -1620,7 +1620,7 @@ digraph {
     </div>
 </div>
 
-### Removing attributes (NEW)
+### Removing attributes NEW
 
 Since a `Path` can modify the attributes of its `Node` and `Edge` objects, it also needs to be able to remove these attributes. This is where the `removeAttributes` method comes into play.
 
@@ -1790,7 +1790,7 @@ public class Logo {
 }
 ```
 
-### Fully connected graph of size 3 (highlighted) (NEW)
+### Fully connected graph of size 3 (highlighted) NEW
 
 ```java
 Graph g = Graph.parseDOT("src/test/resources/Search/Connected3Graph.dot");
