@@ -425,7 +425,7 @@ digraph Master {
         "
         >
     <p>Result</p>
-    <img src="./assets/graphs/nodeAddition.svg" style="width: 80%;" />
+    <img src="./assets/graphs/nodeAddition.svg" style="width: 100px;" />
     </div>
 </div>
 
@@ -490,7 +490,7 @@ digraph Master {
         "
         >
     <p>Result</p>
-    <img src="./assets/graphs/multNodeAddition.svg" style="width: 80%;" />
+    <img src="./assets/graphs/multNodeAddition.svg" style="width: 100px;" />
     </div>
 </div>
 
@@ -600,7 +600,7 @@ digraph Master {
         "
         >
     <p>Result</p>
-    <img src="./assets/graphs/edgeAddition.svg" style="width: 80%;" />
+    <img src="./assets/graphs/edgeAddition.svg" style="width: 100px;" />
     </div>
 </div>
 
@@ -745,7 +745,7 @@ digraph Master {
         "
         >
     <p>Result</p>
-    <img src="./assets/graphs/getNodeNames.svg" style="width: 80%;" />
+    <img src="./assets/graphs/getNodeNames.svg" style="width: 100px;" />
     </div>
 </div>
 
@@ -790,7 +790,7 @@ digraph Master {
         "
         >
     <p>Result</p>
-    <img src="./assets/graphs/getNodeLabels.svg" style="width: 80%;" />
+    <img src="./assets/graphs/getNodeLabels.svg" style="width: 100px;" />
     </div>
 </div>
 
@@ -840,7 +840,7 @@ digraph Master {
         "
         >
     <p>Result</p>
-    <img src="./assets/graphs/getNumberOfEdges.svg" style="width: 80%;" />
+    <img src="./assets/graphs/getNumberOfEdges.svg" style="width: 100px;" />
     </div>
 </div>
 
@@ -895,7 +895,7 @@ digraph Master {
         "
         >
     <p>Result</p>
-    <img src="./assets/graphs/getEdgeDirections.svg" style="width: 80%;" />
+    <img src="./assets/graphs/getEdgeDirections.svg" style="width: 100px;" />
     </div>
 </div>
 
@@ -1044,7 +1044,7 @@ digraph Master {
         "
         >
     <p>Result</p>
-    <img src="./assets/graphs/getEdgeDirections.svg" style="width: 80%;" />
+    <img src="./assets/graphs/getEdgeDirections.svg" style="width: 100px;" />
     </div>
 </div>
 
@@ -1097,7 +1097,7 @@ digraph Master {
         "
         >
 <p>Result</p>
-<img src="./assets/graphs/connectTo.svg" style="width: 80%;" />
+<img src="./assets/graphs/connectTo.svg" style="width: 100px;" />
 </div>
 
 ### Connect from another node
@@ -1141,7 +1141,7 @@ digraph Master {
         "
         >
 <p>Result</p>
-<img src="./assets/graphs/connectFrom.svg" style="width: 80%;" />
+<img src="./assets/graphs/connectFrom.svg" style="width: 100px;" />
 </div>
 
 ### Get a 'to' edge
@@ -1211,7 +1211,7 @@ digraph Master {
         "
         >
 <p>Result</p>
-<img src="./assets/graphs/disconnectTo.svg" style="width: 80%;" />
+<img src="./assets/graphs/disconnectTo.svg" style="width: 100px;" />
 </div>
 
 ### Disconnect from a 'from' node
@@ -1253,7 +1253,7 @@ digraph Master {
         "
         >
 <p>Result</p>
-<img src="./assets/graphs/disconnectTo.svg" style="width: 80%;" />
+<img src="./assets/graphs/disconnectTo.svg" style="width: 100px;" />
 </div>
 
 ### Remove from graph
@@ -1292,7 +1292,7 @@ digraph Master {
         "
         >
 <p>Result</p>
-<img src="./assets/graphs/removeFromGraphNode_After.svg" style="width: 80%;" />
+<img src="./assets/graphs/removeFromGraphNode_After.svg" style="width: 100px;" />
 </div>
 
 ## Edge
@@ -1336,7 +1336,7 @@ digraph Master {
         "
         >
 <p>Result</p>
-<img src="./assets/graphs/removeFromGraphEdge.svg" style="width: 80%;" />
+<img src="./assets/graphs/removeFromGraphEdge.svg" style="width: 100px;" />
 </div>
 
 ## Path
@@ -1384,7 +1384,7 @@ digraph {
         "
         >
 <p>Result</p>
-<img src="./assets/graphs/addPath.svg" style="width: 80%;" />
+<img src="./assets/graphs/addPath.svg" style="width: 100px;" />
 </div>
 
 **_Note that if any of the provided IDs are not associated with any node in the `Graph`, then if the ID is a valid one, a `Node` with that ID will be created and added to the `Graph` automatically. If the ID is invalid however, a `InvalidIDException` will be thrown._**
@@ -1422,7 +1422,7 @@ digraph {
         "
         >
 <p>Result</p>
-<img src="./assets/graphs/getPath.svg" style="width: 80%;" />
+<img src="./assets/graphs/getPath.svg" style="width: 100px;" />
 </div>
 
 ### Search for a path
@@ -1497,7 +1497,7 @@ digraph {
         "
         >
 <p>Result</p>
-<img src="./assets/graphs/graphSearch.svg" style="width: 80%;" />
+<img src="./assets/graphs/graphSearch.svg" style="width: 100px;" />
 </div>
 
 ### Check if path exists
@@ -1573,7 +1573,7 @@ digraph {
         "
         >
     <p>Result</p>
-    <img src="./assets/graphs/pathSetAttributes.svg" style="width: 80%;" />
+    <img src="./assets/graphs/pathSetAttributes.svg" style="width: 100px;" />
     </div>
 </div>
 
@@ -1628,7 +1628,7 @@ digraph {
         "
         >
     <p>Result</p>
-    <img src="./assets/graphs/pathRemoveAttributes.svg" style="width: 80%;" />
+    <img src="./assets/graphs/pathRemoveAttributes.svg" style="width: 100px;" />
     </div>
 </div>
 
@@ -1810,5 +1810,5 @@ digraph g {
             margin-left: 20px;
         "
         >
-<img src="./assets/graphs/highlightPathsConnected3.svg" style="width: 80%;" />
+<img src="./assets/graphs/highlightPathsConnected3.svg" style="width: 100px;" />
 </div>
