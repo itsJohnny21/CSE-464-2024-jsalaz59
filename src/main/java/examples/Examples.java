@@ -455,6 +455,7 @@ public class Examples {
 
     public static void removePath() throws Exception {
         String methodName = new Exception().getStackTrace()[0].getMethodName();
+
         Graph g = new Graph();
         g.addPath("n1", "n2", "n3");
         g.outputGraph(String.format("./assets/graphs/%s_Before", methodName), Format.SVG);
@@ -468,6 +469,19 @@ public class Examples {
         g.addPath("n1", "n2", "n3");
 
         System.out.println(g.pathExists("n1", "n3")); // False since there is no path n1 -> n3
+    }
+
+    public static void removeNodes() throws Exception {
+        String methodName = new Exception().getStackTrace()[0].getMethodName();
+
+        Graph g = new Graph();
+        g.addNodes("n1", "n2", "n3");
+        g.addEdge("n1", "n2");
+        g.addEdge("n1", "n3");
+        g.outputGraph(String.format("./assets/graphs/%s_Before", methodName), Format.SVG);
+
+        g.removeNodes("n2", "n3"); // Removes nodes n2 and n3 AND their associated edges
+        g.outputGraph(String.format("./assets/graphs/%s_After", methodName), Format.SVG);
     }
 
     public static void main(String[] args) throws Exception {
@@ -491,6 +505,7 @@ public class Examples {
         // graphSearch();
         // highlightPathsConnected3();
         // removePath();
-        pathExists();
+        // pathExists();
+        removeNodes();
     }
 }
