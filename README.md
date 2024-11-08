@@ -15,7 +15,25 @@ Created by me, [Johnny Salazar](https://github.com/itsJohnny21/itsJohnny21), for
 - A `graphSearch` method for `Graph` was added to make it easy to searche for a `Path` in a `Graph` by specifying the source node ID, the destination node ID, and the algorithm type (either DFS or BFS)
 - A `removePath` for `Graph` was added to make it easy to remove a `Path` in a graph
 
-While the main focus of Project Part 2 was the `graphSearch` method, I felt that it was necessarry to add these other methods to make the overall Graph Master library to feel complete. Test cases for each of these methods have been included to ensure that the methods are correctly implemented.
+While these additional methods were not required for Project Part 2, I felt that it was necessarry to add these methods to make the Graph Master library feel complete. Test cases for each of these methods have also been included to ensure that the methods are correctly implemented.
+
+### APIs to support adding and removing nodes and edges
+
+- [removeNode](#remove-a-node)
+- [removeNodes](<#remove-multiple-nodes-(NEW)>)
+- [removeEdge](#remove-an-edge)
+
+### Graph search API
+
+- [graphSearch](<#search-for-a-path-(NEW)>)
+
+### Continuous Integration Support
+
+The [Java Continuous Integration workflow](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/be699c01175952c582f2d1fde3248b6b3165802a) was added to automate the testing process with maven.
+
+<img src="./assets/development/CI_screenshot.png" style="height: 250px;">
+
+### Branches added
 
 The following branches were made during Project Part 2:
 
@@ -23,8 +41,6 @@ The following branches were made during Project Part 2:
 - The [dfs branch](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/tree/dfs) was created next.
 - The bfs and dfs branches were merged onto the [master branch](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/tree/master), resulting in a [merge conflict](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/92468c2aaba0d9343f17324d726dd2f380c60331), which had to be resolved.
 - The master branch was then updated to include testing and fix bugs in the code.
-
-On top of this, the [Java Continuous Integration workflow](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/be699c01175952c582f2d1fde3248b6b3165802a) was added to automate the testing process with maven.
 
 _Thank you and have a great day. Cheers._
 
@@ -1183,6 +1199,33 @@ A `Path` can be removed from a `Graph` via the `removePath` method. By passing i
         <img src="./assets/graphs/removePath_After.svg" alt="After" style="height: 250px; width: 250px;"/>
     </div>
 </div>
+
+### Remove multiple nodes (NEW)
+
+A `Graph` allows you to remove multiple nodes using the `removeNodes` method. The method requires an array of the node IDs to be removed from the graph.
+
+```java
+Graph g = new Graph();
+g.addNodes("n1", "n2", "n3");
+g.addEdge("n1", "n2");
+g.addEdge("n1", "n3");
+
+g.removeNodes("n2", "n3"); // Removes nodes n2 and n3 AND their associated edges
+```
+
+<div style="display: flex; justify-content: center;">
+    <div style="display: flex; flex-direction: column; align-items: center;">
+        <p>Before</p>
+        <img src="./assets/graphs/removeNodes_Before.svg" alt="Before" style="height: 200px; width: 200px;"/>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center;">
+        <p>After</p>
+        <img src="./assets/graphs/removeNodes_After.svg" alt="After" style="height: 200px; width: 200px;"/>
+    </div>
+</div>
+
+**_Note: If a node ID is not valid, a `InvalidIDException` will be thrown._**
+**_Note: If a node ID is not assoicated with the graph, a `NodeDoesNotExistException` will be thrown._**
 
 ## Node
 
