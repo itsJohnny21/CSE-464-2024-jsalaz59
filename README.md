@@ -6,24 +6,27 @@ Created by me, [Johnny Salazar](https://github.com/itsJohnny21/itsJohnny21), for
 
 ## FOR GRADERS ONLY
 
-The `Path` class was added to represent a valid path in a `Graph` and the following methods were added:
+### What's new in Project Part 2?
 
-- `Graph.addPath` for adding paths in a `Graph`
-- `getPath` for getting a specific path if exists in a `Graph`
-- `pathExists` for checking if a path exists i a `Graph`
-- `graphSearch` for searching for a `Path` in a `Graph` by specifying the source node ID and destination node ID
-- `removePath` for removing a `Path` in a graph (removes `Edge` objects only)
+- A `Path` class was added to represent a valid path in a `Graph`
+- A `addPath` method for `Graph` was added to make it easy to add paths to a `Graph`
+- A `getPath` method for `Graph` was added to make it easy to get a specific path in a `Graph`
+- A `pathExists` method for `Graph` was added to make it easy to check if a path exists in a `Graph`
+- A `graphSearch` method for `Graph` was added to make it easy to searche for a `Path` in a `Graph` by specifying the source node ID, the destination node ID, and the algorithm type (either DFS or BFS)
+- A `removePath` for `Graph` was added to make it easy to remove a `Path` in a graph
 
-I know that the main feature of Project Part 2 was the `graphSearch` method, but I felt that it was necessarry to add these other methods to make the overall Graph Master library to feel complete and useful. Test cases for each of these methods has also been provided to ensure that the methods are correctly implemented.
+While the main focus of Project Part 2 was the `graphSearch` method, I felt that it was necessarry to add these other methods to make the overall Graph Master library to feel complete. Test cases for each of these methods have been included to ensure that the methods are correctly implemented.
 
-The following branches were made during this process:
+The following branches were made during Project Part 2:
 
 - The [bfs branch](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/tree/bfs) was created first.
 - The [dfs branch](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/tree/dfs) was created next.
-- The bfs and dfs branches were merged onto the [master branch](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/tree/master), resulting in a [merge conflict](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/9e9ecab1743e7ed6f289ab5b9eae686e925f3893), which had to be resolved.
+- The bfs and dfs branches were merged onto the [master branch](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/tree/master), resulting in a [merge conflict](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/92468c2aaba0d9343f17324d726dd2f380c60331), which had to be resolved.
 - The master branch was then updated to include testing and fix bugs in the code.
 
 On top of this, the [Java Continuous Integration workflow](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/be699c01175952c582f2d1fde3248b6b3165802a) was added to automate the testing process with maven.
+
+_Thank you and have a great day. Cheers._
 
 ## Dependencies
 
@@ -476,7 +479,7 @@ digraph Master {
         n3 [];
         n4 [];
 }
-</prev>
+</pre>
     </div>
     <div
         style="
@@ -543,11 +546,11 @@ A total of five `Node` objects were created with IDs corresponding to their numb
 <div style="display: flex; justify-content: center;">
     <div style="display: flex; flex-direction: column; align-items: center;">
         <p>Before</p>
-        <img src="./assets/graphs/complete5_before_node_removal.svg" alt="Before" style="width: 60%;"/>
+        <img src="./assets/graphs/complete5_before_node_removal.svg" alt="Before" style="width: 50%;"/>
     </div>
     <div style="display: flex; flex-direction: column; align-items: center;">
         <p>After</p>
-        <img src="./assets/graphs/complete5_after_node_removal.svg" alt="After" style="width: 60%;"/>
+        <img src="./assets/graphs/complete5_after_node_removal.svg" alt="After" style="width: 50%;"/>
     </div>
 </div>
 
@@ -586,7 +589,7 @@ digraph Master {
         n2 [];<br>
         n1 -> n2 [];
 }
-</prev>
+</pre>
     </div>
     <div
         style="
@@ -663,11 +666,11 @@ A total of three `Node` objects were created with IDs corresponding to their num
 <div style="display: flex; justify-content: center;">
     <div style="display: flex; flex-direction: column; align-items: center;">
         <p>Before</p>
-        <img src="./assets/graphs/complete5_before_node_removal.svg" alt="Before" style="width: 60%;"/>
+        <img src="./assets/graphs/complete5_before_node_removal.svg" alt="Before" style="width: 50%;"/>
     </div>
     <div style="display: flex; flex-direction: column; align-items: center;">
         <p>After</p>
-        <img src="./assets/graphs/complete5_after_node_removal.svg" alt="After" style="width: 60%;"/>
+        <img src="./assets/graphs/complete5_after_node_removal.svg" alt="After" style="width: 50%;"/>
     </div>
 </div>
 
@@ -702,7 +705,7 @@ digraph Master {
         n5 [];<br>
         n4 -> n5 [];
 }
-</prev>
+</pre>
 
 ### Get node names
 
@@ -731,7 +734,7 @@ digraph Master {
         n2 [];
         n3 [];
 }
-</prev>
+</pre>
     </div>
     <div
         style="
@@ -776,7 +779,7 @@ digraph Master {
         n1 [label="n1 label"];
         n2 [label="n2 label"];
 }
-</prev>
+</pre>
     </div>
     <div
         style="
@@ -826,7 +829,7 @@ digraph Master {
         root -> n2 [];
         root -> n3 [];
 }
-</prev>
+</pre>
     </div>
     <div
         style="
@@ -881,7 +884,7 @@ digraph Master {
         root -> n3 [];
         n2 -> n4 [];
 }
-</prev>
+</pre>
     </div>
     <div
         style="
@@ -953,7 +956,7 @@ digraph Master {
         2 -> 0 [fillcolor="blue" color="orange" label="2 -> 0"];
         2 -> 1 [fillcolor="blue" color="orange" label="2 -> 1"];
 }
-</prev>
+</pre>
     </div>
 </div>
 
@@ -1030,7 +1033,7 @@ digraph Master {
         root -> n3 [];
         n2 -> n4 [];
 }
-</prev>
+</pre>
     </div>
     <div
         style="
@@ -1083,7 +1086,7 @@ digraph Master {
         n2 [];<br>
         n1 -> n2 [];
 }
-</prev>
+</pre>
 </div>
 <div
         style="
@@ -1127,7 +1130,7 @@ digraph Master {
         n2 [];<br>
         n2 -> n1 [];
 }
-</prev>
+</pre>
 </div>
 <div
         style="
@@ -1197,7 +1200,7 @@ digraph Master {
         n1 [];
         n2 [];
 }
-</prev>
+</pre>
 </div>
 <div
         style="
@@ -1239,7 +1242,7 @@ digraph Master {
         n1 [];
         n2 [];
 }
-</prev>
+</pre>
 </div>
 <div
         style="
@@ -1278,7 +1281,7 @@ n1.removeFromGraph(); // Removes the node with "n1"
 digraph Master {
     <br>
 }
-</prev>
+</pre>
 </div>
 <div
         style="
@@ -1322,7 +1325,7 @@ digraph Master {
         n1 [];
         n2 [];
 }
-</prev>
+</pre>
 </div>
 <div
         style="
@@ -1370,7 +1373,7 @@ digraph {
         n1 -> n2 [];
         n2 -> n3 [];
 }
-</prev>
+</pre>
 </div>
 <div
         style="
@@ -1408,7 +1411,7 @@ digraph {
         n1 -> n2 [];
         n2 -> n3 [];
 }
-</prev>
+</pre>
 </div>
 <div
         style="
@@ -1483,7 +1486,7 @@ digraph {
         32 -> 322 [];
         root -> 222 [color="red"];
 }
-</prev>
+</pre>
 </div>
 <div
         style="
@@ -1515,11 +1518,11 @@ A `Path` can be removed from a `Graph` via the the `Graph` object's `removePath`
 <div style="display: flex; justify-content: center;">
     <div style="display: flex; flex-direction: column; align-items: center;">
         <p>Before</p>
-        <img src="./assets/graphs/removePath_Before.svg" alt="Before" style="width: 60%;"/>
+        <img src="./assets/graphs/removePath_Before.svg" alt="Before" style="width: 50%;"/>
     </div>
     <div style="display: flex; flex-direction: column; align-items: center;">
         <p>After</p>
-        <img src="./assets/graphs/removePath_After.svg" alt="After" style="width: 60%;"/>
+        <img src="./assets/graphs/removePath_After.svg" alt="After" style="width: 50%;"/>
     </div>
 </div>
 
@@ -1559,7 +1562,7 @@ digraph {
         a1 -> n2 [color="red"];
         n2 -> a3 [color="red"];
 }
-</prev>
+</pre>
     </div>
     <div
         style="
@@ -1614,7 +1617,7 @@ digraph {
         a1 -> n2 [];
         n2 -> a3 [];
 }
-</prev>
+</pre>
     </div>
     <div
         style="
@@ -1697,21 +1700,21 @@ public class Logo {
             throw new RuntimeException("Strings do not share the intersection character");
         }
 
-        double prevXPos = 0; // Initial position for x
-        double prevYPos = 0; // Initial position for y
+        double preXPos = 0; // Initial position for x
+        double preYPos = 0; // Initial position for y
 
-        Node prevNode = g.addNode("0"); // Create the first node with id '0'
-        setNodeAttributes(prevNode, String.valueOf(s1.charAt(0)), prevXPos, prevYPos, radius); // Set the attributes of the first node
+        Node preNode = g.addNode("0"); // Create the first node with id '0'
+        setNodeAttributes(preNode, String.valueOf(s1.charAt(0)), preXPos, preYPos, radius); // Set the attributes of the first node
 
         for (int i = 1; i < s1.length(); i++) {
-            Node nextNode = g.addNode(String.format("%d", g.getNumberOfNodes())); // Next node that will be connected as prevNode -> nextNode
+            Node nextNode = g.addNode(String.format("%d", g.getNumberOfNodes())); // Next node that will be connected as preNode -> nextNode
 
-            prevXPos += Math.cos(angle) * 4 * radius; // Update the x position
-            prevYPos += Math.sin(angle) * 4 * radius; // Update the y position
+            preXPos += Math.cos(angle) * 4 * radius; // Update the x position
+            preYPos += Math.sin(angle) * 4 * radius; // Update the y position
 
-            setNodeAttributes(nextNode, String.valueOf(s1.charAt(i)), prevXPos, prevYPos, radius); // Set the attributes of nextNode
-            prevNode.connectTo(nextNode); // Create the edge
-            prevNode = nextNode; // Update the prevNode
+            setNodeAttributes(nextNode, String.valueOf(s1.charAt(i)), preXPos, preYPos, radius); // Set the attributes of nextNode
+            preNode.connectTo(nextNode); // Create the edge
+            preNode = nextNode; // Update the preNode
         }
 
         Node pivotNode = g.getNode(String.format("%d", intersectionIndex1)); // Pivot node where the intersection is made
@@ -1721,22 +1724,22 @@ public class Logo {
         double pivotNodeXPos = Double.parseDouble(pivotNodePosString[0]); // Store the x position of the pivot node
         double pivotNodeYPos = Double.parseDouble(pivotNodePosString[1]); // Store the y position of the pivot node
 
-        prevXPos = pivotNodeXPos + Math.cos(angle + Math.PI / 2) * 4 * radius * intersectionIndex2; // Update the x position so that it is at it's appropriate location. It will be length of string 2 minus intersection index 2 positions away in the x direction
-        prevYPos = pivotNodeYPos + Math.sin(angle + Math.PI / 2) * 4 * radius * intersectionIndex2; // Update the y position so that it is at it's appropriate location. It will be length of string 2 minus intersection index 2 positions away in the y direction
-        prevNode = intersectionIndex2 == 0 ? pivotNode : g.addNode(String.format("%d", s1.length())); // Check if the first character of string 2 is the intersection character and make it the pivot node if so
+        preXPos = pivotNodeXPos + Math.cos(angle + Math.PI / 2) * 4 * radius * intersectionIndex2; // Update the x position so that it is at it's appropriate location. It will be length of string 2 minus intersection index 2 positions away in the x direction
+        preYPos = pivotNodeYPos + Math.sin(angle + Math.PI / 2) * 4 * radius * intersectionIndex2; // Update the y position so that it is at it's appropriate location. It will be length of string 2 minus intersection index 2 positions away in the y direction
+        preNode = intersectionIndex2 == 0 ? pivotNode : g.addNode(String.format("%d", s1.length())); // Check if the first character of string 2 is the intersection character and make it the pivot node if so
 
-        setNodeAttributes(prevNode, String.valueOf(s2.charAt(0)), prevXPos, prevYPos, radius); // Set attributes of prevNode
+        setNodeAttributes(preNode, String.valueOf(s2.charAt(0)), preXPos, preYPos, radius); // Set attributes of preNode
 
         for (int i = 1; i < s2.length(); i++) {
             Node nextNode = intersectionIndex2 == i ? pivotNode
                     : g.addNode(String.format("%d", g.getNumberOfNodes() + 1)); // Check if the next node is the pivot node
 
-            prevXPos += -Math.cos(angle + Math.PI / 2) * 4 * radius; // Update the x position
-            prevYPos += -Math.sin(angle + Math.PI / 2) * 4 * radius; // Update the y position
+            preXPos += -Math.cos(angle + Math.PI / 2) * 4 * radius; // Update the x position
+            preYPos += -Math.sin(angle + Math.PI / 2) * 4 * radius; // Update the y position
 
-            setNodeAttributes(nextNode, String.valueOf(s2.charAt(i)), prevXPos, prevYPos, radius); // Set attributes of nextNode
-            prevNode.connectTo(nextNode); // Create the edge prevNode -> nextNode
-            prevNode = nextNode; // Update the prevNode
+            setNodeAttributes(nextNode, String.valueOf(s2.charAt(i)), preXPos, preYPos, radius); // Set attributes of nextNode
+            preNode.connectTo(nextNode); // Create the edge preNode -> nextNode
+            preNode = nextNode; // Update the preNode
         }
 
         return g; // Return graph containing the intersected string of nodes
@@ -1797,7 +1800,7 @@ digraph g {
         n1 -> n2 [color="red"];
         n1 -> n3 [color="blue"];
 }
-</prev>
+</pre>
 </div>
 <div
         style="
