@@ -1,16 +1,16 @@
 package org.CSE464;
 
-import org.CSE464.Graph.Algorithm;
-import org.CSE464.Graph.Path;
-
 public class Playground {
 
     public static void main(String[] args) throws Exception {
-        Graph g = Graph.parseDOT("/Users/jonisalazar/School/Fall 2024/CSE464/CSE-464-2024-jsalaz59/mediumGraph.dot");
+        Graph g = Graph.parseDOT(
+                "/Users/jonisalazar/School/Fall 2024/CSE464/CSE-464-2024-jsalaz59/src/test/resources/Search/mediumGraph.dot");
+
         System.out.println(g);
-        Path idk = g.graphSearch("j", "i", Algorithm.BFS);
+        // System.out.println(g);
+        // Path idk = g.graphSearch("j", "i", Algorithm.BFS);
         // Path idk = g.getPath("j", "d", "h", "i");
-        System.out.println(idk);
+        // System.out.println(idk);
         //     Path p1 = g.addPath("j", "d", "h");
         //     p1.setAttributes(Edge.Attribute.COLOR, "green");
         //     Path p2 = g.addPath("j", "d", "h");
