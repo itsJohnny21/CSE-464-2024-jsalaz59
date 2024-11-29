@@ -1,0 +1,103 @@
+BFS
+[b]
+[b, c]
+[b, c, d]
+[b, c, d, f]
+[b, c, d, f, h]
+[b, c, d, f, h, e]
+[b, c, d, f, h, e, g]
+[b, c, d, f, h, e, g, i]
+[b, c, d, f, h, e, g, i, a]
+b -> d -> e -> a
+DFS
+[b]
+[b, f]
+[b, f, g]
+[b, f, g, c]
+[b, f, g, c, h]
+[b, f, g, c, h, i]
+[b, f, g, c, h, i, d]
+[b, f, g, c, h, i, d, e]
+[b, f, g, c, h, i, d, e, a]
+b -> d -> e -> a
+BFS
+[b]
+[b, f]
+[b, f, h]
+[b, f, h, d]
+[b, f, h, d, c]
+[b, f, h, d, c, g]
+[b, f, h, d, c, g, i]
+[b, f, h, d, c, g, i, e]
+[b, f, h, d, c, g, i, e, a]
+b -> d -> e -> a
+DFS
+[b]
+[b, d]
+[b, d, e]
+[b, d, e, a]
+b -> d -> e -> a
+BFS
+[b]
+[b, c]
+[b, c, h]
+[b, c, h, f]
+[b, c, h, f, d]
+[b, c, h, f, d, i]
+[b, c, h, f, d, i, g]
+[b, c, h, f, d, i, g, e]
+[b, c, h, f, d, i, g, e, a]
+b -> d -> e -> a
+DFS
+[b]
+[b, c]
+[b, c, f]
+[b, c, f, g]
+[b, c, f, g, d]
+[b, c, f, g, d, e]
+[b, c, f, g, d, e, a]
+b -> d -> e -> a
+BFS
+[b]
+[b, d]
+[b, d, h]
+[b, d, h, f]
+[b, d, h, f, c]
+[b, d, h, f, c, e]
+[b, d, h, f, c, e, i]
+[b, d, h, f, c, e, i, g]
+[b, d, h, f, c, e, i, g, a]
+b -> d -> e -> a
+DFS
+[b]
+[b, c]
+[b, c, f]
+[b, c, f, g]
+[b, c, f, g, h]
+[b, c, f, g, h, i]
+[b, c, f, g, h, i, d]
+[b, c, f, g, h, i, d, e]
+[b, c, f, g, h, i, d, e, a]
+b -> d -> e -> a
+BFS
+[b]
+[b, c]
+[b, c, h]
+[b, c, h, d]
+[b, c, h, d, f]
+[b, c, h, d, f, i]
+[b, c, h, d, f, i, e]
+[b, c, h, d, f, i, e, g]
+[b, c, h, d, f, i, e, g, a]
+b -> d -> e -> a
+DFS
+[b]
+[b, c]
+[b, c, h]
+[b, c, h, i]
+[b, c, h, i, f]
+[b, c, h, i, f, g]
+[b, c, h, i, f, g, d]
+[b, c, h, i, f, g, d, e]
+[b, c, h, i, f, g, d, e, a]
+b -> d -> e -> a

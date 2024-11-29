@@ -6,722 +6,43 @@ Created by me, [Johnny Salazar](https://github.com/itsJohnny21/itsJohnny21), for
 
 ## FOR GRADERS ONLY
 
-### What's new in Project Part 3?
+### What's new in Project Part 2?
 
-#### Refactorings
+- A `Path` class was added to represent a valid path in a `Graph`
+- A `addPath` method for `Graph` was added to make it easy to add paths to a `Graph`
+- A `getPath` method for `Graph` was added to make it easy to get a specific path in a `Graph`
+- A `pathExists` method for `Graph` was added to make it easy to check if a path exists in a `Graph`
+- A `graphSearch` method for `Graph` was added to make it easy to searche for a `Path` in a `Graph` by specifying the source node ID, the destination node ID, and the algorithm type (either DFS or BFS)
+- A `removePath` for `Graph` was added to make it easy to remove a `Path` in a graph
 
-The code based was `refactored` to `improve readability` and `remove duplicate code`. The following are the sections of code that were refactored:
+While these additional methods were not required for Project Part 2, I felt that it was necessarry to add these methods to make the Graph Master library feel complete. Test cases for each of these methods have also been included to ensure that the methods are correctly implemented.
 
-##### parseDot (BEFORE)
+### APIs to support adding and removing nodes and edges
 
-```java
-// BEFORE
-public static Graph parseDOT(String filepath) {
-    try {
-        MutableGraph mutableGraph = new Parser().read(new File(filepath));
-        String graphID = mutableGraph.name().toString();
+- [removeNode](#remove-a-node)
+- [removeNodes](#remove-multiple-nodes-NEW)
+- [removeEdge](#remove-an-edge)
 
-        Graph graph = graphID.isEmpty() ? new Graph() : new Graph(graphID);
-        mutableGraph.graphAttrs().forEach(a -> {
-            graph.setAttribute(a.getKey(), a.getValue().toString());
-        });
+### Graph search API
 
-        for (MutableNode node : mutableGraph.nodes()) {
-            String nodeID = node.name().toString();
-            Node nodeCopy;
+- [graphSearch](#search-for-a-path-NEW)
 
-            if (!graph.nodeExists(nodeID)) {
-                nodeCopy = graph.addNode(nodeID);
-            } else {
-                nodeCopy = graph.getNode(nodeID);
-            }
+### Continuous Integration Support
 
-            node.attrs().forEach(a -> {
-                nodeCopy.setAttribute(a.getKey(), a.getValue().toString());
-            });
-            node.links().forEach(l -> {
-                LinkTarget toNode = l.to();
-                String toNodeID = toNode.name().toString();
-                Node toNodeCopy;
+The [Java Continuous Integration workflow](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/be699c01175952c582f2d1fde3248b6b3165802a) was added to automate the testing process with maven.
 
-                if (!graph.nodeExists(toNodeID)) {
-                    toNodeCopy = graph.addNode(toNodeID);
-                } else {
-                    toNodeCopy = graph.getNode(toNodeID);
-                }
+<img src="./assets/development/CI_screenshot.png" style="height: 250px;">
 
-                Edge edge = graph.addEdge(nodeCopy.ID, toNodeCopy.ID);
+### Branches added
 
-                l.attrs().forEach(a -> {
-                    edge.setAttribute(a.getKey(), a.getValue().toString());
-                });
-            });
-        }
+The following branches were made during Project Part 2:
 
-        return graph;
-    } catch (guru.nidi.graphviz.parse.ParserException | IOException e) {
-        throw new ParseException(String.format("Error: Unable to parse graph: %s", e.getMessage()));
-    }
+- The [bfs branch](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/tree/bfs) was created first.
+- The [dfs branch](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/tree/dfs) was created next.
+- The bfs and dfs branches were merged onto the [master branch](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/tree/master), resulting in a [merge conflict](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/92468c2aaba0d9343f17324d726dd2f380c60331), which had to be resolved.
+- The master branch was then updated to include testing and fix bugs in the code.
 
-    #### Refactorings
-    }
-```
-
-##### parseDot (AFTER)
-
-```java
-// AFTER
-public static Graph parseDOT(String filepath) {
-    try {
-        MutableGraph mutableGraph = new Parser().read(new File(filepath));
-        String graphID = mutableGraph.name().toString();
-
-        Graph graph = graphID.isEmpty() ? new Graph() : new Graph(graphID);
-
-        //! Extract method
-        applyGraphAttributesFromDOT(graph, mutableGraph);
-
-        //! Extract variable
-        addNodesFromDOT(graph, mutableGraph);
-
-        //! Extract variable
-        addEdgesFromDOT(graph, mutableGraph);
-
-        return graph;
-    } catch (ParserException | IOException e) {
-        throw new ParseException(String.format("Error: Unable to parse graph: %s", e.getMessage()));
-    }
-}
-```
-
-##### Type of refactoring for parseDot
-
-For the `parseDot` refactoring, three methods were **extracted**:
-
-- `applyGraphAttributesFromDOT`: applies the attributes from a `MutableGraph` object (from Guru Nidi) to a `Graph` object
-- `addNodesFromDOT`: converts MutableNode objects (from Guru Nidi) to `Node` objects and adds it to a `Graph`
-- `addEdgesFromDOT`: converts Link objects (from Guru Nidi) to `Edge` objects and adds it to a `Graph`
-
-#### Refactorings
-
-These extractions improve readability and maintainability.
-
-##### removeNode (BEFORE)
-
-```java
-// BEFORE
-public void removeNode(String nodeID) {
-    if (!nodeExists(nodeID)) {
-        throw new NodeDoesNotExistException(
-                String.format("Error: Attempt to remove node '%s' failed. Node does not exist.", nodeID));
-    }
-
-    Node node = getNode(nodeID);
-
-    for (Iterator<Entry<String, Node>> it = node.to.entrySet().iterator(); it.hasNext();) {
-        Entry<String, Node> entry = it.next();
-        Node toNode = entry.getValue();
-        toNode.from.remove(node.ID);
-
-        String edgeID = Graph.createEdgeID(node.ID, toNode.ID);
-        edges.remove(edgeID);
-        it.remove();
-    }
-    for (Iterator<Entry<String, Node>> it = node.from.entrySet().iterator(); it.hasNext();) {
-        Entry<String, Node> entry = it.next();
-        Node fromNode = entry.getValue();
-        fromNode.to.remove(node.ID);
-
-        String edgeID = Graph.createEdgeID(fromNode.ID, node.ID);
-        edges.remove(edgeID);
-        it.remove();
-    }
-
-    nodes.remove(node.ID);
-    node.setGraph(null);
-
-    #### Refactorings
-}
-```
-
-##### removeNode (AFTER)
-
-```java
-// AFTER
-public void removeNode(String nodeID) {
-    if (!nodeExists(nodeID)) {
-        throw new NodeDoesNotExistException(
-            String.format("Error: Attempt to remove node '%s' failed. Node does not exist.", nodeID));
-    }
-
-    Node node = getNode(nodeID);
-
-    //! Extract method
-    node.clearTo();
-
-    //! Extract method
-    node.clearFrom();
-
-    nodes.remove(node.ID);
-    node.setGraph(null);
-}
-```
-
-##### Type of refactoring for removeNode
-
-For the `removeNode` refactoring, two methods were **extracted**:
-
-- `node.clearTo`: clears the list of nodes that a particular node is connected to
-- `node.clearFrom`: clears the list of nodes that a particular node is connected from
-
-#### Refactorings
-
-These extractions improve readability and maintainability.
-
-##### addEdge (BEFORE)
-
-```java
-// BEFORE
-public Edge addEdge(String fromID, String toID) {
-    if (edgeExists(fromID, toID)) {
-        throw new EdgeAlreadyExistsException(
-                String.format("Error: Edge with id '%s' already exists.", Graph.createEdgeID(fromID, toID)));
-    }
-
-    Node fromNode = nodeExists(fromID) ? getNode(fromID) : addNode(fromID);
-    Node toNode = nodeExists(toID) ? getNode(toID) : addNode(toID);
-
-    Edge edge = new Edge(fromNode, toNode);
-    fromNode.to.put(toNode.ID, toNode);
-    toNode.from.put(fromNode.ID, fromNode);
-    edges.put(edge.ID, edge);
-    return edge;
-
-    #### Refactorings
-}
-```
-
-##### addEdge (AFTER)
-
-```java
-// AFTER
-public Edge addEdge(String fromID, String toID) {
-    if (edgeExists(fromID, toID)) {
-        throw new EdgeAlreadyExistsException(
-                String.format("Error: Edge with id '%s' already exists.", Graph.createEdgeID(fromID, toID)));
-    }
-
-    //! Code reuse
-    Node fromNode = addOrGetNode(fromID);
-
-    //! Code reuse
-    Node toNode = addOrGetNode(toID);
-
-    Edge edge = new Edge(fromNode, toNode);
-
-    fromNode.to.put(toNode.ID, toNode);
-    toNode.from.put(fromNode.ID, fromNode);
-    edges.put(edge.ID, edge);
-    return edge;
-}
-```
-
-##### Type of refactoring for addEdge
-
-#### Refactorings
-
-For the `addEdge` refactoring, the `addOrGetNode` method was **reused**, resulting in fewer lines of code and improved maintainability.
-
-##### addPath (BEFORE)
-
-```java
-// BEFORE
-public Path addPath(String... nodeIDs) {
-    if (nodeIDs.length == 0) {
-        return null;
-    }
-
-    Node[] nodes = new Node[nodeIDs.length];
-    nodes[0] = nodeExists(nodeIDs[0]) ? getNode(nodeIDs[0]) : addNode(nodeIDs[0]);
-
-    Edge[] edges = new Edge[nodeIDs.length - 1];
-
-    for (int i = 0; i < nodeIDs.length - 1; i++) {
-        String fromNodeID = nodeIDs[i];
-        String toNodeID = nodeIDs[i + 1];
-
-        Edge edge = edgeExists(fromNodeID, toNodeID) ? getEdge(fromNodeID, toNodeID)
-                : addEdge(fromNodeID, toNodeID);
-        edges[i] = edge;
-
-        nodes[i + 1] = edge.toNode;
-    }
-
-    Path path = new Path(nodes, edges);
-    return path;
-
-    #### Refactorings
-}
-```
-
-##### addPath (AFTER)
-
-```java
-// AFTER
-public Path addPath(String... nodeIDs) {
-    if (nodeIDs.length == 0) {
-        return null;
-    }
-
-    //! Rename from nodes to nodesArray
-    Node[] nodesArray = new Node[nodeIDs.length];
-    nodesArray[0] = nodeExists(nodeIDs[0]) ? getNode(nodeIDs[0]) : addNode(nodeIDs[0]);
-
-    //! Rename from edges to edgesArray
-    Edge[] edgesArray = new Edge[nodeIDs.length - 1];
-
-    for (int i = 0; i < nodeIDs.length - 1; i++) {
-        String fromNodeID = nodeIDs[i];
-        String toNodeID = nodeIDs[i + 1];
-
-        Edge edge = edgeExists(fromNodeID, toNodeID) ? getEdge(fromNodeID, toNodeID)
-                : addEdge(fromNodeID, toNodeID);
-        edgesArray[i] = edge;
-
-        nodesArray[i + 1] = edge.toNode;
-    }
-
-    Path path = new Path(nodesArray, edgesArray);
-    return path;
-}
-```
-
-##### Type of refactoring for addPath
-
-#### Refactorings
-
-For the `addPath` refactoring, the `nodes` and `edges` variables were renamed to `nodesArray` and `edgesArray`. This was done to avoid hiding the `nodes` and `edges` attributes of a `Graph` and thus improves the code's readability (by avoiding confusion) reliability.
-
-##### outputGraph (BEFORE)
-
-```java
-// BEFORE
-public String outputGraph(String filepath, Format format, String... options)
-        throws IOException, InterruptedException {
-    String dotContent = toDot();
-
-    if (!filepath.endsWith(format.extension)) {
-        filepath += format.extension;
-    }
-
-    if (format.equals(Format.RAWDOT)) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filepath))) {
-            writer.write(dotContent);
-        }
-    } else {
-
-        List<String> command = new ArrayList<>();
-        command.add("dot");
-        command.add(format.value);
-        command.add("-o");
-        command.add(filepath);
-        command.addAll(Arrays.asList(options));
-
-        ProcessBuilder processBuilder = new ProcessBuilder(command);
-
-        processBuilder.redirectErrorStream(true);
-        Process process = processBuilder.start();
-
-        try (OutputStream outputStream = process.getOutputStream()) {
-            outputStream.write(dotContent.getBytes());
-            outputStream.flush();
-        }
-
-        int exitCode = process.waitFor();
-
-        if (exitCode != 0) {
-            InputStream inputStream = process.getInputStream();
-            String errorMessage = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-            throw new ParseException(errorMessage);
-        }
-    }
-
-    return dotContent;
-
-    #### Refactorings
-}
-```
-
-##### outputGraph (AFTER)
-
-```java
-// AFTER
-public String outputGraph(String filepath, Format format, String... options)
-        throws IOException, InterruptedException {
-    String dotContent = toDot();
-
-    if (!filepath.endsWith(format.extension)) {
-        filepath += format.extension;
-    }
-
-    //! Extract variable
-    boolean isRawDot = format.equals(Format.RAWDOT);
-
-    if (isRawDot) {
-        //! Extract method
-        writeToFile(dotContent, filepath);
-    } else {
-        //! Extract method
-        executeDotCommand(dotContent, filepath, format, options);
-    }
-
-    return dotContent;
-}
-```
-
-##### Type of refactoring for outputGraph
-
-For the `outputGraph` refactoring, the `isRawDot` variable was extracted and also the `writeToFile` and `executeDotCommand` methods were extracted:
-
-- `isRawDot`: true if the `format` argument is of the type `RAWDOT`, otherwise false
-- `writeToFile`: writes content to a file
-- `executeDotCommand`: executes a dot command
-
-These extractions improve readability and maintainability.
-
-#### More refactorings
-
-Note that additional refactorings were made but are not displayed in this section since the document only requires five refactorings to be shown and explained. The addition refactorings however have been commented and is shown in the following commit: [refactor](https:github.com)
-
-#### Template method
-
-The `graphSearchHelper` method was refactored to follow the Template Design Pattern. This new refactored method is called `graphSearchHelperTemplate` to differentiate itself. To achieve this, the following was performed:
-
-- The abstract class `GraphSearcher` was created. Its purpose is to provide a skeleton for the search algorithm.
-- The template method `search` for `GraphSearcher` was created and consists of the general steps for the search algorithm.
-- The abstract method `pollContainer` for `GraphSearcher` was created to allow the child classes to poll a list of nodes, ultimately deciding the search algorithm to be used (either BFS or DFS).
-- The concrete class `GraphSearcherBFS` was created and its `pollContainer` polls the first item from its list of nodes.
-- The concrete class `GraphSearcherDFS` was created and its `pollContainer` polls the last item from its list of nodes.
-
-The `GraphSearcher` class (and child classes) and the `graphSearchHelperTemplate` method are provided below:
-
-```java
-//! Abstract class
-public abstract class GraphSearcher {
-    private HashSet<Node> visited;
-    private HashMap<Node, Node> prev;
-    protected Queue container;
-    private Path path = null;
-
-    private void createVisitedSet() {
-        this.visited = new HashSet<>();
-    }
-
-    private void createPrevSet() {
-        this.prev = new HashMap<>();
-    }
-
-    protected void createContainer() {
-        this.container = new Queue();
-    }
-
-    private void clear() {
-        visited.clear();
-        prev.clear();
-        container.clear();
-    }
-
-    //! Abstract class
-    protected abstract Node pollContainer();
-
-    //! Template method
-    protected void search(Node srcNode, Node dstNode) {
-        if (visited == null) {
-            createVisitedSet();
-        }
-        if (prev == null) {
-            createPrevSet();
-        }
-        if (container == null) {
-            createContainer();
-        }
-
-        searchForPath(srcNode, dstNode);
-        clear();
-    }
-
-    private void searchForPath(Node srcNode, Node dstNode) {
-        path = null;
-        container.add(srcNode);
-        visited.add(srcNode);
-
-        boolean isContainerEmpty = container.isEmpty();
-
-        while (!isContainerEmpty) {
-            Node fromNode = pollContainer(); //! abstract method called
-
-            boolean foundDstNode = fromNode.equals(dstNode);
-            if (foundDstNode) {
-                buildPath(dstNode);
-                return;
-            }
-
-            for (Node toNode : fromNode.to.values()) {
-                boolean alreadyVisitedToNode = visited.contains(toNode);
-
-                if (!alreadyVisitedToNode) {
-                    container.add(toNode);
-                    prev.put(toNode, fromNode);
-                    visited.add(toNode);
-                }
-            }
-            isContainerEmpty = container.isEmpty();
-        }
-
-    }
-
-    protected Path getResult() {
-        return path;
-    }
-
-    private void buildPath(Node dstNode) {
-        Node currentNode = dstNode;
-        LinkedList<Node> nodesList = new LinkedList<>();
-        nodesList.add(currentNode);
-        LinkedList<Edge> edgesList = new LinkedList<>();
-
-        while (prev.containsKey(currentNode)) {
-            Node prevNode = prev.get(currentNode);
-            Edge edge = prevNode.to(currentNode);
-            edgesList.addFirst(edge);
-            nodesList.addFirst(prevNode);
-
-            currentNode = prevNode;
-        }
-
-        path = new Path(nodesList.toArray(Node[]::new), edgesList.toArray(Edge[]::new));
-    }
-}
-
-//! Concrete class
-public class GraphSearcherBFS extends GraphSearcher {
-    @Override
-    protected Node pollContainer() {
-        return container.pollFirst();
-    }
-}
-
-//! Concrete class
-public class GraphSearcherDFS extends GraphSearcher {
-    @Override
-    protected Node pollContainer() {
-        return container.pollLast();
-    }
-}
-
-private Path graphSearchHelperTemplate(Node srcNode, Node dstNode, Algorithm algorithm) {
-    GraphSearcher graphSearcher = algorithm.equals(Algorithm.BFS) ? new GraphSearcherBFS() : new GraphSearcherDFS();
-    graphSearcher.search(srcNode, dstNode);
-    return graphSearcher.getResult();
-}
-```
-
-By following this Template Design Pattern, the code is now simpler and more maintainable.
-
-#### Strategy method
-
-The Strategy Design Pattern was already used to implement the `graphSearchHelper` method for `Graph`. To do this, the following was performed:
-
-- The `Container` interface was created to act as a blueprint for a container during the search algorithm. Methods such as `poll`, `add`, `isEmpty`, and `clear`.
-- The `Queue` class was created and extends Java's `LinkedList` class and also implements `Container`. This `poll` method for `Queue` removes the first element of its list.
-- The `Stack` class was created and extends Java's `LinkedList` class and also implements `Container`. This `poll` method for `Stack` removes the last element of its list.
-
-The `Container` interface, `Queue` class, `Stack` class, and `graphSearchHelper` method are show below:
-
-```java
-public interface Container {
-    public Node poll();
-
-    public boolean add(Node node);
-
-    public boolean isEmpty();
-
-    public void clear();
-}
-
-public class Queue extends LinkedList<Node> implements Container {
-    @Override
-    public Node poll() {
-        return pollFirst();
-    }
-}
-
-public class Stack extends LinkedList<Node> implements Container {
-    @Override
-    public Node poll() {
-        return pollLast();
-    }
-}
-
-private Path graphSearchHelper(Node srcNode, Node dstNode, Algorithm algorithm) {
-    HashSet<Node> visited = new HashSet<>();
-    Container container = algorithm.equals(Algorithm.BFS) ? new Queue() : new Stack();
-    HashMap<Node, Node> prev = new HashMap<>();
-
-    container.add(srcNode);
-    visited.add(srcNode);
-
-    while (!container.isEmpty()) {
-        Node fromNode = container.poll();
-
-        if (fromNode.equals(dstNode)) {
-            return buildPath(dstNode, prev);
-        }
-
-        for (Node toNode : fromNode.to.values()) {
-            if (!visited.contains(toNode)) {
-                container.add(toNode);
-                prev.put(toNode, fromNode);
-                visited.add(toNode);
-            }
-        }
-    }
-
-    return null;
-}
-
-//! Method signature changed (srcNode unneeded)
-private Path buildPath(Node dstNode, HashMap<Node, Node> prev) {
-    Node currentNode = dstNode;
-    //! Rename from nodes to nodesList
-    LinkedList<Node> nodesList = new LinkedList<>();
-    nodesList.add(currentNode);
-    //! Rename from edges to edgesList
-    LinkedList<Edge> edgesList = new LinkedList<>();
-
-    while (prev.containsKey(currentNode)) {
-        Node prevNode = prev.get(currentNode);
-        Edge edge = prevNode.to(currentNode);
-        edgesList.addFirst(edge);
-        nodesList.addFirst(prevNode);
-
-        currentNode = prevNode;
-    }
-
-    //! Improve readability
-    Path path = new Path(nodesList.toArray(Node[]::new), edgesList.toArray(Edge[]::new));
-    return path;
-}
-```
-
-By following this Strategy Design Pattern, the code becomes more reusable, easier to read, and more maintainable.
-
-#### Graph search random
-
-The method `graphSearchRandom` is nearly identical to `graphSearch`. The only difference is that it shuffles a node's list of neighbours before iterating through them during the graph traversal. Both `graphSearchRandom` and `graphSearch` still produce the same output, but with `graphSearchRandom`, the visit sequence may be different every time it's executed on the same graph with the same source and destination nodes.
-
-The following is the code for `graphSearchRandom`:
-
-```java
-private Path graphSearchHelperRandom(Node srcNode, Node dstNode, Algorithm algorithm) {
-    HashSet<Node> visited = new HashSet<>();
-    LinkedHashSet<Node> visitedExample = new LinkedHashSet<>();
-    Container container = algorithm.equals(Algorithm.BFS) ? new Queue() : new Stack();
-    HashMap<Node, Node> prev = new HashMap<>();
-
-    container.add(srcNode);
-    visited.add(srcNode);
-
-    while (!container.isEmpty()) {
-        Node fromNode = container.poll();
-        visitedExample.add(fromNode);
-        System.out.println(visitedExample);
-
-        if (fromNode.equals(dstNode)) {
-            return buildPath(dstNode, prev);
-        }
-
-        ArrayList<Node> neighbours = new ArrayList<>(fromNode.to.values());
-        Collections.shuffle(neighbours);
-
-        for (Node toNode : neighbours) {
-            if (!visited.contains(toNode)) {
-                container.add(toNode);
-                prev.put(toNode, fromNode);
-                visited.add(toNode);
-            }
-        }
-    }
-
-    return null;
-}
-```
-
-Also, to show that the visit sequences may differ with `graphSearchRandom`, a list of its visit sequences (for both BFS and DFS) will be provided in this [file](./assets/example_output.txt). The graph used to output this file is:
-
-<div style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
-    <img src="./assets/graphs/graphSearchRandom.svg" style="height: 250px; width: 250px;" />
-</div>
-
-This file was generated from the following example code:
-
-```java
-public static void graphSearchRandom() throws Exception {
-    Graph g = new Graph();
-    g.addPath("a", "b", "c");
-    g.addPath("b", "d", "e");
-    g.addPath("b", "f", "g");
-    g.addPath("b", "h", "i");
-    g.addPath("e", "a");
-
-    String methodName = new Exception().getStackTrace()[0].getMethodName();
-    g.outputGraph(String.format("./assets/graphs/%s", methodName), Format.SVG);
-    Path p;
-
-    for (int i = 0; i < 5; i++) {
-        // BFS
-        System.out.println("BFS");
-        p = g.graphSearchRandom("b", "a", Algorithm.BFS);
-        System.out.println(p);
-
-        // DFS
-        System.out.println("DFS");
-        p = g.graphSearchRandom("b", "a", Algorithm.DFS);
-        System.out.println(p);
-    }
-
-    /*
-    Example BFS visit sequence:
-    [b]
-    [b, c]
-    [b, c, d]
-    [b, c, d, f]
-    [b, c, d, f, h]
-    [b, c, d, f, h, e]
-    [b, c, d, f, h, e, g]
-    [b, c, d, f, h, e, g, i]
-    [b, c, d, f, h, e, g, i, a]
-
-    Resulting path:
-    b -> d -> e -> a
-
-    Example DFS visit sequence:
-    [b]
-    [b, h]
-    [b, h, i]
-    [b, h, i, f]
-    [b, h, i, f, g]
-    [b, h, i, f, g, d]
-    [b, h, i, f, g, d, e]
-    [b, h, i, f, g, d, e, a]
-
-    Resulting path:
-    b -> d -> e -> a
-        */
-}
-```
-
-#### Example of graph search
+_Thank you and have a great day. Cheers._
 
 ## Dependencies
 
@@ -1401,23 +722,10 @@ digraph Master {
         n4 -> n5 [];
 }
 </pre>
-    </div>
-    <div
-        style="
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-left: 20px;
-        "
-        >
-    <p>Result</p>
-    <img src="./assets/graphs/getNumberOfNodes.svg" style="height: 250px; width: 250px;" />
-    </div>
-</div>
 
 ### Get node names
 
-For convenience, a `Graph` lets you get the IDs of its nodes by calling the `getNodeNames` method. This effectively returns the [ID](#id-regex) of the `Node` objects in the nodes HashMap.
+For convenience, a `Graph` lets you get the IDs of its nodes by calling the `getNodeNames` method. This effectively returns the [ID](#ir-regex) of the `Node` objects in the nodes HashMap.
 
 ```java
 Graph g = new Graph("Master");
@@ -1554,7 +862,7 @@ digraph Master {
 
 ### Get edge directions
 
-For convenience, a Graph lets you get the `Edge` directions by calling the `getEdgeDirections` method. This returns all the `Edge` [ID](#id-regex)s from the edges HashMap. An `Edge` ID looks like "node1 -> node2".
+For convenience, a Graph lets you get the `Edge` directions by calling the `getEdgeDirections` method. This returns all the `Edge` [ID](#ir-regex)s from the edges HashMap. An `Edge` ID looks like "node1 -> node2".
 
 ```java
 Graph g = new Graph("Master");
@@ -1711,7 +1019,7 @@ for (int i = 0; i < n; i++) {
 g.outputGraph("./assets/graphs/outputGraphToJSON", Format.JSON); // New filepath is ./assets/graphs/outputGraphToJSON.json
 ```
 
-### Add a path
+### Add a path NEW
 
 The `addPath` provided by a `Graph` lets you easily add a path by providing the IDs of the `Node` objects. A `Path` object will be returned by this method after successfully adding nodes and edges in the path.
 
@@ -1752,11 +1060,10 @@ digraph {
 <p>Result</p>
 <img src="./assets/graphs/addPath.svg" style="height: 250px; width: 250px;" />
 </div>
-</div>
 
 **_Note that if any of the provided IDs are not associated with any node in the `Graph`, then if the ID is a valid one, a `Node` with that ID will be created and added to the `Graph` automatically. However, if the ID is invalid, a `InvalidIDException` will be thrown._**
 
-### Get a path
+### Get a path NEW
 
 In case you need to get a specific path from a `Graph`, you can use the `Graph` object's `getPath` method to retrieve this path. The method returns the corresponding `Path` object if the path exists, otherwise it returns null.
 
@@ -1791,9 +1098,8 @@ digraph {
 <p>Result</p>
 <img src="./assets/graphs/getPath.svg" style="height: 250px; width: 250px;" />
 </div>
-</div>
 
-### Search for a path
+### Search for a path NEW
 
 A `Graph` allows you to search for a path between a source `Node` and destination `Node` by calling the `graphSerach` method. The IDs of these nodes must be passed into the method and the type of algorithm to be used in the search process, either Depth First Search (DFS) or Breadth First Search (BFS), must also be specified. Either algorithm is guaranteed to return a path if the path exists in the graph, but only BFS guarantees the shortest path. If a path is successfully found, a corresponding `Path` object will be returned, otherwise null will be returned.
 
@@ -1867,9 +1173,8 @@ digraph {
 <p>Result</p>
 <img src="./assets/graphs/graphSearch.svg" style="height: 350px; width: 450px;" />
 </div>
-</div>
 
-### Check if path exists
+### Check if path exists NEW
 
 For convenience, a `Graph` allows you to check if a `Path` exists using the `pathExists` method. By passing in the IDs of the nodes in the path (in order), the method will return true if the path exists, otherwise false.
 
@@ -1880,7 +1185,7 @@ g.addPath("n1", "n2", "n3");
 System.out.println(g.pathExists("n1", "n3")); // False since there is no path n1 -> n3
 ```
 
-### Remove a path
+### Remove a path NEW
 
 A `Path` can be removed from a `Graph` via the `removePath` method. By passing in the IDs of the nodes in the order of the `Path`, this method will first check if the `Path` exists, then subsequently remove all `Edge` objects associated with that `Path` if the path does exist. If the `Path` does not exist, no `Edge` objects will be removed and a `PathDoesNotExist` exception will be thrown.
 
@@ -1895,7 +1200,7 @@ A `Path` can be removed from a `Graph` via the `removePath` method. By passing i
     </div>
 </div>
 
-### Remove multiple nodes
+### Remove multiple nodes NEW
 
 A `Graph` allows you to remove multiple nodes using the `removeNodes` method. The method requires an array of the node IDs to be removed from the graph.
 
@@ -2006,8 +1311,8 @@ digraph Master {
         n1 -> n2 [];
 }
 </pre>
-    </div>
-    <div
+</div>
+<div
         style="
             display: flex;
             flex-direction: column;
@@ -2015,9 +1320,8 @@ digraph Master {
             margin-left: 20px;
         "
         >
-    <p>Result</p>
-    <img src="./assets/graphs/connectTo.svg" style="height: 250px; width: 250px;" />
-    </div>
+<p>Result</p>
+<img src="./assets/graphs/connectTo.svg" style="height: 250px; width: 250px;" />
 </div>
 
 ### Connect from another node
@@ -2062,7 +1366,6 @@ digraph Master {
         >
 <p>Result</p>
 <img src="./assets/graphs/connectFrom.svg" style="height: 250px; width: 250px;" />
-</div>
 </div>
 
 ### Get a 'to' edge
@@ -2134,7 +1437,6 @@ digraph Master {
 <p>Result</p>
 <img src="./assets/graphs/disconnectTo.svg" style="height: 250px; width: 250px;" />
 </div>
-</div>
 
 ### Disconnect from a 'from' node
 
@@ -2177,7 +1479,6 @@ digraph Master {
 <p>Result</p>
 <img src="./assets/graphs/disconnectTo.svg" style="height: 250px; width: 250px;" />
 </div>
-</div>
 
 ### Remove from graph
 
@@ -2216,7 +1517,6 @@ digraph Master {
         >
 <p>Result</p>
 <img src="./assets/graphs/removeFromGraphNode_After.svg" style="height: 250px; width: 250px;" />
-</div>
 </div>
 
 ## Edge
@@ -2262,15 +1562,14 @@ digraph Master {
 <p>Result</p>
 <img src="./assets/graphs/removeFromGraphEdge.svg" style="height: 250px; width: 250px;" />
 </div>
-</div>
 
-## Path
+## Path NEW
 
 A `Path` object represents a valid path in a `Graph`, and consists of two lists. The first list contains the `Node` objects of the path in order. The second list contains the `Edge` objects in the path. Note that a `Path` object will have one less many `Edge` objects than `Node` objects.
 
 `Path` objects can only be created from a `Graph` object via the `addPath`, `getPath`, and `graphSearch` methods. This ensures that every `Path` is directly tied to a `Graph`.
 
-### Setting attributes
+### Setting attributes NEW
 
 A `Path` can easily modify the attributes of its `Node` and `Edge` objects via the `setAttributes` method. Since it might be common to change all attributes of the nodes and edges in a path, this `setAttributes` method does exactly that.
 
@@ -2321,7 +1620,7 @@ digraph {
     </div>
 </div>
 
-### Removing attributes
+### Removing attributes NEW
 
 Since a `Path` can modify the attributes of its `Node` and `Edge` objects, it also needs to be able to remove these attributes. This is where the `removeAttributes` method comes into play.
 
@@ -2491,7 +1790,7 @@ public class Logo {
 }
 ```
 
-### Fully connected graph of size 3 (highlighted)
+### Fully connected graph of size 3 (highlighted) NEW
 
 ```java
 Graph g = Graph.parseDOT("src/test/resources/Search/Connected3Graph.dot");
@@ -2556,12 +1855,3 @@ digraph g {
         >
 <img src="./assets/graphs/highlightPathsConnected3.svg" style="height: 250px; width: 250px;" />
 </div>
-</div>
-
-The following was performed:
-
-- Five areas in the code base were refactored.
-- A Template Design Pattern was incorporated into the `graphSearch` method to improve code readability and maintainability.
-- A Strategy Design Pattern was also incorporated into the `graphSearch` method to improve code readability and maintainability.
-- The `graphSearchRandom` method was created, which is identical to the `graphSearch` method except that it randomly traverses the graph instead of traversing it in an ordered fashion.
-- The above was documented under the [README.md](./README.md) file.

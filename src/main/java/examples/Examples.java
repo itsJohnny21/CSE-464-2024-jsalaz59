@@ -484,6 +484,60 @@ public class Examples {
         g.outputGraph(String.format("./assets/graphs/%s_After", methodName), Format.SVG);
     }
 
+    public static void graphSearchRandom() throws Exception {
+        Graph g = new Graph();
+        g.addPath("a", "b", "c");
+        g.addPath("b", "d", "e");
+        g.addPath("b", "f", "g");
+        g.addPath("b", "h", "i");
+        g.addPath("e", "a");
+
+        String methodName = new Exception().getStackTrace()[0].getMethodName();
+        g.outputGraph(String.format("./assets/graphs/%s", methodName), Format.SVG);
+        Path p;
+
+        for (int i = 0; i < 5; i++) {
+            // BFS
+            System.out.println("BFS");
+            p = g.graphSearchRandom("b", "a", Algorithm.BFS);
+            System.out.println(p);
+
+            // DFS
+            System.out.println("DFS");
+            p = g.graphSearchRandom("b", "a", Algorithm.DFS);
+            System.out.println(p);
+        }
+
+        /*
+        Example BFS visit sequence:
+        [b]
+        [b, c]
+        [b, c, d]
+        [b, c, d, f]
+        [b, c, d, f, h]
+        [b, c, d, f, h, e]
+        [b, c, d, f, h, e, g]
+        [b, c, d, f, h, e, g, i]
+        [b, c, d, f, h, e, g, i, a]
+        
+        Resulting path:
+        b -> d -> e -> a
+        
+        Example DFS visit sequence:
+        [b]
+        [b, h]
+        [b, h, i]
+        [b, h, i, f]
+        [b, h, i, f, g]
+        [b, h, i, f, g, d]
+        [b, h, i, f, g, d, e]
+        [b, h, i, f, g, d, e, a]
+        
+        Resulting path:
+        b -> d -> e -> a
+         */
+    }
+
     public static void main(String[] args) throws Exception {
         // getNumberOfNodes();
         // getNumberOfEdges();
@@ -506,6 +560,7 @@ public class Examples {
         // highlightPathsConnected3();
         // removePath();
         // pathExists();
-        removeNodes();
+        // removeNodes();
+        graphSearchRandom();
     }
 }
