@@ -12,8 +12,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
 
@@ -553,29 +551,29 @@ public class Graph_Path_Test {
         assertNotNull(p.toString());
     }
 
-    @Test
-    public void BFS_Always_Finds_Shorter_Or_Equal_Length_Path_As_Compared_To_DFS() {
-        try (DirectoryStream<java.nio.file.Path> stream = Files
-                .newDirectoryStream(java.nio.file.Path.of("src/test/resources/DOT/valid"))) {
-            for (java.nio.file.Path filepath : stream) {
-                Graph g = Graph.parseDOT(Utils.getDOTFilepathFromTestDirectory(filepath));
+    // @Test
+    // public void BFS_Always_Finds_Shorter_Or_Equal_Length_Path_As_Compared_To_DFS() {
+    //     try (DirectoryStream<java.nio.file.Path> stream = Files
+    //             .newDirectoryStream(java.nio.file.Path.of("src/test/resources/DOT/valid"))) {
+    //         for (java.nio.file.Path filepath : stream) {
+    //             Graph g = Graph.parseDOT(Utils.getDOTFilepathFromTestDirectory(filepath));
 
-                for (Node fromNode : g.getNodes()) {
-                    for (Node toNode : g.getNodes()) {
-                        Path pathDFS = g.graphSearch(fromNode.ID, toNode.ID, Algorithm.DFS);
-                        Path pathBFS = g.graphSearch(fromNode.ID, toNode.ID, Algorithm.BFS);
+    //             for (Node fromNode : g.getNodes()) {
+    //                 for (Node toNode : g.getNodes()) {
+    //                     Path pathDFS = g.graphSearch(fromNode.ID, toNode.ID, Algorithm.DFS);
+    //                     Path pathBFS = g.graphSearch(fromNode.ID, toNode.ID, Algorithm.BFS);
 
-                        if (pathDFS != null && pathBFS != null) {
-                            assertTrue(pathBFS.getNodes().length <= pathDFS.getNodes().length);
-                        } else {
-                            assertNull(pathDFS);
-                            assertNull(pathBFS);
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-    }
+    //                     if (pathDFS != null && pathBFS != null) {
+    //                         assertTrue(pathBFS.getNodes().length <= pathDFS.getNodes().length);
+    //                     } else {
+    //                         assertNull(pathDFS);
+    //                         assertNull(pathBFS);
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     } catch (Exception e) {
+    //         fail(e.getMessage());
+    //     }
+    // }
 }

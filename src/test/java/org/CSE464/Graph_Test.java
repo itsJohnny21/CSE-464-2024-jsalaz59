@@ -494,13 +494,16 @@ public class Graph_Test {
     @Test
     public void Graph_Can_Output_To_RAWDOT() {
         try {
+            Utils.removeDirectory(tmpPath, true);
+            Utils.createDirectory(tmpPath, true);
+
             Graph g = Graph.parseDOT(Utils.getDOTFilepathFromTestDirectory(nodesX_Y_ZLabeled));
 
             String path = Path.of(tmpPath.toString(), String.format("tmp_file%s", Format.RAWDOT.extension)).toString();
+
             String dotContent = g.outputGraph(path, Format.RAWDOT);
             assertNotNull(dotContent);
             assertFalse(dotContent.isEmpty());
-
         } catch (Exception e) {
             fail(e.getMessage());
         }
