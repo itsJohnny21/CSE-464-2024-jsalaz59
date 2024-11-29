@@ -1401,10 +1401,23 @@ digraph Master {
         n4 -> n5 [];
 }
 </pre>
+    </div>
+    <div
+        style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-left: 20px;
+        "
+        >
+    <p>Result</p>
+    <img src="./assets/graphs/getNumberOfNodes.svg" style="height: 250px; width: 250px;" />
+    </div>
+</div>
 
 ### Get node names
 
-For convenience, a `Graph` lets you get the IDs of its nodes by calling the `getNodeNames` method. This effectively returns the [ID](#ir-regex) of the `Node` objects in the nodes HashMap.
+For convenience, a `Graph` lets you get the IDs of its nodes by calling the `getNodeNames` method. This effectively returns the [ID](#id-regex) of the `Node` objects in the nodes HashMap.
 
 ```java
 Graph g = new Graph("Master");
@@ -1541,7 +1554,7 @@ digraph Master {
 
 ### Get edge directions
 
-For convenience, a Graph lets you get the `Edge` directions by calling the `getEdgeDirections` method. This returns all the `Edge` [ID](#ir-regex)s from the edges HashMap. An `Edge` ID looks like "node1 -> node2".
+For convenience, a Graph lets you get the `Edge` directions by calling the `getEdgeDirections` method. This returns all the `Edge` [ID](#id-regex)s from the edges HashMap. An `Edge` ID looks like "node1 -> node2".
 
 ```java
 Graph g = new Graph("Master");
@@ -1698,7 +1711,7 @@ for (int i = 0; i < n; i++) {
 g.outputGraph("./assets/graphs/outputGraphToJSON", Format.JSON); // New filepath is ./assets/graphs/outputGraphToJSON.json
 ```
 
-### Add a path NEW
+### Add a path
 
 The `addPath` provided by a `Graph` lets you easily add a path by providing the IDs of the `Node` objects. A `Path` object will be returned by this method after successfully adding nodes and edges in the path.
 
@@ -1739,10 +1752,11 @@ digraph {
 <p>Result</p>
 <img src="./assets/graphs/addPath.svg" style="height: 250px; width: 250px;" />
 </div>
+</div>
 
 **_Note that if any of the provided IDs are not associated with any node in the `Graph`, then if the ID is a valid one, a `Node` with that ID will be created and added to the `Graph` automatically. However, if the ID is invalid, a `InvalidIDException` will be thrown._**
 
-### Get a path NEW
+### Get a path
 
 In case you need to get a specific path from a `Graph`, you can use the `Graph` object's `getPath` method to retrieve this path. The method returns the corresponding `Path` object if the path exists, otherwise it returns null.
 
@@ -1777,8 +1791,9 @@ digraph {
 <p>Result</p>
 <img src="./assets/graphs/getPath.svg" style="height: 250px; width: 250px;" />
 </div>
+</div>
 
-### Search for a path NEW
+### Search for a path
 
 A `Graph` allows you to search for a path between a source `Node` and destination `Node` by calling the `graphSerach` method. The IDs of these nodes must be passed into the method and the type of algorithm to be used in the search process, either Depth First Search (DFS) or Breadth First Search (BFS), must also be specified. Either algorithm is guaranteed to return a path if the path exists in the graph, but only BFS guarantees the shortest path. If a path is successfully found, a corresponding `Path` object will be returned, otherwise null will be returned.
 
@@ -1852,8 +1867,9 @@ digraph {
 <p>Result</p>
 <img src="./assets/graphs/graphSearch.svg" style="height: 350px; width: 450px;" />
 </div>
+</div>
 
-### Check if path exists NEW
+### Check if path exists
 
 For convenience, a `Graph` allows you to check if a `Path` exists using the `pathExists` method. By passing in the IDs of the nodes in the path (in order), the method will return true if the path exists, otherwise false.
 
@@ -1864,7 +1880,7 @@ g.addPath("n1", "n2", "n3");
 System.out.println(g.pathExists("n1", "n3")); // False since there is no path n1 -> n3
 ```
 
-### Remove a path NEW
+### Remove a path
 
 A `Path` can be removed from a `Graph` via the `removePath` method. By passing in the IDs of the nodes in the order of the `Path`, this method will first check if the `Path` exists, then subsequently remove all `Edge` objects associated with that `Path` if the path does exist. If the `Path` does not exist, no `Edge` objects will be removed and a `PathDoesNotExist` exception will be thrown.
 
@@ -1879,7 +1895,7 @@ A `Path` can be removed from a `Graph` via the `removePath` method. By passing i
     </div>
 </div>
 
-### Remove multiple nodes NEW
+### Remove multiple nodes
 
 A `Graph` allows you to remove multiple nodes using the `removeNodes` method. The method requires an array of the node IDs to be removed from the graph.
 
@@ -1990,8 +2006,8 @@ digraph Master {
         n1 -> n2 [];
 }
 </pre>
-</div>
-<div
+    </div>
+    <div
         style="
             display: flex;
             flex-direction: column;
@@ -1999,8 +2015,9 @@ digraph Master {
             margin-left: 20px;
         "
         >
-<p>Result</p>
-<img src="./assets/graphs/connectTo.svg" style="height: 250px; width: 250px;" />
+    <p>Result</p>
+    <img src="./assets/graphs/connectTo.svg" style="height: 250px; width: 250px;" />
+    </div>
 </div>
 
 ### Connect from another node
@@ -2045,6 +2062,7 @@ digraph Master {
         >
 <p>Result</p>
 <img src="./assets/graphs/connectFrom.svg" style="height: 250px; width: 250px;" />
+</div>
 </div>
 
 ### Get a 'to' edge
@@ -2116,6 +2134,7 @@ digraph Master {
 <p>Result</p>
 <img src="./assets/graphs/disconnectTo.svg" style="height: 250px; width: 250px;" />
 </div>
+</div>
 
 ### Disconnect from a 'from' node
 
@@ -2158,6 +2177,7 @@ digraph Master {
 <p>Result</p>
 <img src="./assets/graphs/disconnectTo.svg" style="height: 250px; width: 250px;" />
 </div>
+</div>
 
 ### Remove from graph
 
@@ -2196,6 +2216,7 @@ digraph Master {
         >
 <p>Result</p>
 <img src="./assets/graphs/removeFromGraphNode_After.svg" style="height: 250px; width: 250px;" />
+</div>
 </div>
 
 ## Edge
@@ -2241,14 +2262,15 @@ digraph Master {
 <p>Result</p>
 <img src="./assets/graphs/removeFromGraphEdge.svg" style="height: 250px; width: 250px;" />
 </div>
+</div>
 
-## Path NEW
+## Path
 
 A `Path` object represents a valid path in a `Graph`, and consists of two lists. The first list contains the `Node` objects of the path in order. The second list contains the `Edge` objects in the path. Note that a `Path` object will have one less many `Edge` objects than `Node` objects.
 
 `Path` objects can only be created from a `Graph` object via the `addPath`, `getPath`, and `graphSearch` methods. This ensures that every `Path` is directly tied to a `Graph`.
 
-### Setting attributes NEW
+### Setting attributes
 
 A `Path` can easily modify the attributes of its `Node` and `Edge` objects via the `setAttributes` method. Since it might be common to change all attributes of the nodes and edges in a path, this `setAttributes` method does exactly that.
 
@@ -2299,7 +2321,7 @@ digraph {
     </div>
 </div>
 
-### Removing attributes NEW
+### Removing attributes
 
 Since a `Path` can modify the attributes of its `Node` and `Edge` objects, it also needs to be able to remove these attributes. This is where the `removeAttributes` method comes into play.
 
@@ -2469,7 +2491,7 @@ public class Logo {
 }
 ```
 
-### Fully connected graph of size 3 (highlighted) NEW
+### Fully connected graph of size 3 (highlighted)
 
 ```java
 Graph g = Graph.parseDOT("src/test/resources/Search/Connected3Graph.dot");
@@ -2534,3 +2556,12 @@ digraph g {
         >
 <img src="./assets/graphs/highlightPathsConnected3.svg" style="height: 250px; width: 250px;" />
 </div>
+</div>
+
+The following was performed:
+
+- Five areas in the code base were refactored.
+- A Template Design Pattern was incorporated into the `graphSearch` method to improve code readability and maintainability.
+- A Strategy Design Pattern was also incorporated into the `graphSearch` method to improve code readability and maintainability.
+- The `graphSearchRandom` method was created, which is identical to the `graphSearch` method except that it randomly traverses the graph instead of traversing it in an ordered fashion.
+- The above was documented under the [README.md](./README.md) file.
