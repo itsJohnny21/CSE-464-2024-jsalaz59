@@ -752,7 +752,7 @@ public static void graphSearchRandom() throws Exception {
 
     Resulting path:
     b -> d -> e -> a
-        */
+    */
 }
 ```
 
