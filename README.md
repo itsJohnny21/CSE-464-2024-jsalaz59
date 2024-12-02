@@ -583,93 +583,71 @@ private Path graphSearchHelperTemplate(Node srcNode, Node dstNode, Algorithm alg
 }
 ```
 
-By following this Template Design Pattern, the code is now simpler and more maintainable.
+This new refactored version of `graphSearchHelper` will execute general steps of the algorithm which include the `createVisitedSet`, `createPrevSet`, `createContainer`, `searchForPath`, and `clear` methods. The only method that is abstract is the `createContainer` method in which a `Queue` is created for BFS and a `Stack` is created for DFS.
+
+By following this Template Method Design Pattern, the code becomes more reusable, easier to read, and more maintainable.
 
 #### Strategy method
 
-The Strategy Design Pattern was already used to implement the `graphSearchHelper` method for `Graph`. To do this, the following was performed:
+To apply the Strategy Design Pattern for `graphSearch`, the following was performed:
 
-- The `Container` interface was created to act as a blueprint for a container during the search algorithm. Methods such as `poll`, `add`, `isEmpty`, and `clear`.
-- The `Queue` class was created and extends Java's `LinkedList` class and also implements `Container`. This `poll` method for `Queue` removes the first element of its list.
-- The `Stack` class was created and extends Java's `LinkedList` class and also implements `Container`. This `poll` method for `Stack` removes the last element of its list.
+- The `SearchStrategy` abstract class was created and represents an algorithm for searching a graph.
+- The `SearchBFS` class was created (inherits `SearchStrategy`) and represents the BFS algorithm.
+- The `SearchDFS` class was created (inherits `SearchStrategy`) and represents the DFS algorithm.
+- `PathFinder` class was created that represents an entity that performs the search. A `SearchStrategy` must be provided to it so that it knows which algorithm to use.
+- The `SearchProcessor` class was created which represents as an entity that prepares a `PathFinder` before it actually begins searching.
+- The `searchByStrategy` was implemented that uses this Strategy Design Pattern.
 
-The `Container` interface, `Queue` class, `Stack` class, and `graphSearchHelper` method are show below:
+The `SearchStrategy`, `SearchBFS`, `SearchDFS`, `PathFinder`, and `SearchProcessor` classes, along with the `searchByStrategy` method, are shown below:
 
 ```java
-public interface Container {
-    public Node poll();
-
-    public boolean add(Node node);
-
-    public boolean isEmpty();
-
-    public void clear();
+//! Abstract class for a search strategy
+public static abstract class SearchStrategy {
+    public abstract Path search(Graph g, String srcID, String dstID);
 }
 
-public class Queue extends LinkedList<Node> implements Container {
+//! Class for finding a path in a graph
+public static class PathFinder {
+    protected SearchStrategy strategy;
+
+    public PathFinder(SearchStrategy strategy) {
+        this.strategy = strategy;
+    }
+}
+
+//! Class for BFS strategy
+public static class SearchBFS extends SearchStrategy {
     @Override
-    public Node poll() {
-        return pollFirst();
+    public Path search(Graph g, String srcID, String dstID) {
+        return g.graphSearch(srcID, dstID, Algorithm.BFS);
     }
 }
 
-public class Stack extends LinkedList<Node> implements Container {
+//! Class for DFS strategy
+public static class SearchDFS extends SearchStrategy {
     @Override
-    public Node poll() {
-        return pollLast();
+    public Path search(Graph g, String srcID, String dstID) {
+        return g.graphSearch(srcID, dstID, Algorithm.DFS);
     }
 }
 
-private Path graphSearchHelper(Node srcNode, Node dstNode, Algorithm algorithm) {
-    HashSet<Node> visited = new HashSet<>();
-    Container container = algorithm.equals(Algorithm.BFS) ? new Queue() : new Stack();
-    HashMap<Node, Node> prev = new HashMap<>();
-
-    container.add(srcNode);
-    visited.add(srcNode);
-
-    while (!container.isEmpty()) {
-        Node fromNode = container.poll();
-
-        if (fromNode.equals(dstNode)) {
-            return buildPath(dstNode, prev);
-        }
-
-        for (Node toNode : fromNode.to.values()) {
-            if (!visited.contains(toNode)) {
-                container.add(toNode);
-                prev.put(toNode, fromNode);
-                visited.add(toNode);
-            }
-        }
+//! Class for abstracting out the different search algorithms
+public static class SearchProcessor {
+    public Path search(Graph g, PathFinder finder, String srcID, String dstID) {
+        return finder.strategy.search(g, srcID, dstID);
     }
-
-    return null;
 }
 
-//! Method signature changed (srcNode unneeded)
-private Path buildPath(Node dstNode, HashMap<Node, Node> prev) {
-    Node currentNode = dstNode;
-    //! Rename from nodes to nodesList
-    LinkedList<Node> nodesList = new LinkedList<>();
-    nodesList.add(currentNode);
-    //! Rename from edges to edgesList
-    LinkedList<Edge> edgesList = new LinkedList<>();
-
-    while (prev.containsKey(currentNode)) {
-        Node prevNode = prev.get(currentNode);
-        Edge edge = prevNode.to(currentNode);
-        edgesList.addFirst(edge);
-        nodesList.addFirst(prevNode);
-
-        currentNode = prevNode;
-    }
-
-    //! Improve readability
-    Path path = new Path(nodesList.toArray(Node[]::new), edgesList.toArray(Edge[]::new));
-    return path;
+//! graphSearch using the strategy design pattern
+public Path searchByStrategy(String srcID, String dstID, Algorithm algorithm) {
+    PathFinder finder = algorithm.equals(Algorithm.BFS) ? new PathFinder(new SearchBFS())
+            : new PathFinder(new SearchDFS());
+    SearchProcessor processor = new SearchProcessor();
+    return processor.search(this, finder, srcID, dstID);
 }
 ```
+
+This new `searchByStrategy` method will create a `PathFinder` object and specify its algorithm based on the `algorithm` parameter. Then, the `SearchProcessor` object will be created, and allow for the `PathFinder` object to begin search for a path between source node and destination node.
 
 By following this Strategy Design Pattern, the code becomes more reusable, easier to read, and more maintainable.
 

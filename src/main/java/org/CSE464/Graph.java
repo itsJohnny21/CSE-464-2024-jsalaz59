@@ -56,6 +56,51 @@ public class Graph extends DOTElement {
         this.edges = new LinkedHashMap<>();
     }
 
+    //! Abstract class for a search strategy
+    public static abstract class SearchStrategy {
+        public abstract Path search(Graph g, String srcID, String dstID);
+    }
+
+    //! Class for finding a path in a graph
+    public static class PathFinder {
+        protected SearchStrategy strategy;
+
+        public PathFinder(SearchStrategy strategy) {
+            this.strategy = strategy;
+        }
+    }
+
+    //! Class for BFS strategy
+    public static class SearchBFS extends SearchStrategy {
+        @Override
+        public Path search(Graph g, String srcID, String dstID) {
+            return g.graphSearch(srcID, dstID, Algorithm.BFS);
+        }
+    }
+
+    //! Class for DFS strategy
+    public static class SearchDFS extends SearchStrategy {
+        @Override
+        public Path search(Graph g, String srcID, String dstID) {
+            return g.graphSearch(srcID, dstID, Algorithm.DFS);
+        }
+    }
+
+    //! Class for abstracting out the different search algorithms
+    public static class SearchProcessor {
+        public Path search(Graph g, PathFinder finder, String srcID, String dstID) {
+            return finder.strategy.search(g, srcID, dstID);
+        }
+    }
+
+    //! graphSearch using the strategy design pattern
+    public Path searchByStrategy(String srcID, String dstID, Algorithm algorithm) {
+        PathFinder finder = algorithm.equals(Algorithm.BFS) ? new PathFinder(new SearchBFS())
+                : new PathFinder(new SearchDFS());
+        SearchProcessor processor = new SearchProcessor();
+        return processor.search(this, finder, srcID, dstID);
+    }
+
     public Collection<Node> getNodes() {
         return nodes.values();
     }
@@ -436,7 +481,7 @@ public class Graph extends DOTElement {
             container.clear();
         }
 
-        //! Abstract class
+        //! Abstract method
         protected abstract Node pollContainer();
 
         //! Template method
