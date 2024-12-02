@@ -647,7 +647,7 @@ public Path searchByStrategy(String srcID, String dstID, Algorithm algorithm) {
 }
 ```
 
-This new `searchByStrategy` method will create a `PathFinder` object and specify its algorithm based on the `algorithm` parameter. Then, the `SearchProcessor` object will be created, and allow for the `PathFinder` object to begin search for a path between source node and destination node.
+This new `searchByStrategy` method will create a `PathFinder` object and specify its algorithm (strategy) based on the `algorithm` parameter. Then, the `SearchProcessor` object will be created, and allow for the `PathFinder` object to begin search for a path between source node and destination node.
 
 By following this Strategy Design Pattern, the code becomes more reusable, easier to read, and more maintainable.
 
