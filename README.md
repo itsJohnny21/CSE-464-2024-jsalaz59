@@ -12,9 +12,9 @@ When I first started on this project, I basically piggy-backed off of the [Nidi3
 
 When creating my own Graph class, I actually implemented all features into a single [commit](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/5aff7f33336eb0855351c98a046bec7215281423) (since the features were small and related to each other). The methods were still untested, and so another [commit](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/8242c87ed85042c2bd22a0b19b2abd95931041ec) was made after implementing tests for these features. During the implementation of these tests, I found myself having to improve my code in different ways such as [improving the outputGraph method](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/145d98d98868637a6ca56c4d4cc0b8f6ee657112), [improving the ID regex for edge cases](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/6c8a43f93c63bf484a531acb92efcfdd5de81666), [creating a superclass for Graph Node and Edge](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/a973ccf164dbd4234de62b214d54fab48eb58f35), [adding an exception for parse failure](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/680cef368c3f76b5c9c118000ea4f0b3fa4ba291), and [much more](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commits/master/).
 
-I do apologize for not creating separate commits for each feautre. I did however put a lot of time and effor into this project, and I hope that I don't get deducted points for this.
+I do apologize for not creating separate commits for each feautre. I did however put a lot of time and effort into this project, and I hope that points are not deducted for this.
 
-As for the branches, I did create [four different branches](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/branches) (excluding the [master branch](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/tree/master)). The first branch called [JGraphT](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/tree/JGraphT) used the [JGraphT tools](https://github.com/jgrapht/jgrapht) to parse a DOT file. After struggling with these tools, I decided to look for alternative methods of parsing a DOT file and came across [Nidi3's tools](https://github.com/nidi3/graphviz-java). I then created a separate branch called [Guru-Nidi-DOT-Parser](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/tree/Guru-Nidi-DOT-Parser) that piggy-backed off of these tools. I then decided that I should create my own Graph class from scratch and thus I create a separate branch called [Graph-Redo](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/tree/Graph-Redo). After fully implementing this branch (including testing), I then felt that I was ready to create the README.md which would serve as the documentation for this project. I created a new branch called [documentation](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/tree/documentation) just for this purpose. Now I'm fully finished with this project (although there is still plenty of room for improvement), and I am ready for the part 2.
+As for the branches, I did create [four different branches](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/branches) (excluding the [master branch](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/tree/master)). The first branch, called [JGraphT](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/tree/JGraphT), used the [JGraphT tools](https://github.com/jgrapht/jgrapht) to parse a DOT file. After struggling with these tools, I decided to look for alternative methods of parsing a DOT file and came across [Nidi3's tools](https://github.com/nidi3/graphviz-java). I then created a separate branch called [Guru-Nidi-DOT-Parser](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/tree/Guru-Nidi-DOT-Parser) that piggy-backed off of these tools. Next, I decided that I should create my own Graph class from scratch and thus I created a separate branch called [Graph-Redo](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/tree/Graph-Redo). After fully implementing this branch (including testing), I then felt that I was ready to create the README.md which would serve as the documentation for this project. I created a new branch called [documentation](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/tree/documentation) just for this purpose. Now I'm fully finished with this project part 1 (although there is still plenty of room for improvement), and I am ready for the part 2.
 
 During the completion of this project, I made the following merges:
 
@@ -136,10 +136,10 @@ public static Graph parseDOT(String filepath) {
         //! Extract method
         applyGraphAttributesFromDOT(graph, mutableGraph);
 
-        //! Extract variable
+        //! Extract method
         addNodesFromDOT(graph, mutableGraph);
 
-        //! Extract variable
+        //! Extract method
         addEdgesFromDOT(graph, mutableGraph);
 
         return graph;
@@ -440,21 +440,21 @@ For the `outputGraph` refactoring, the `isRawDot` variable was extracted and als
 
 #### Why Apply These Refactorings
 
-These extractions improve readability and maintainability. The `outputGraph` is now much shorted and the `writeToFile` and `executeDotCommand` it uses can easily be unit tested.
+These extractions improve readability and maintainability. The `outputGraph` is now more compact and the `writeToFile` and `executeDotCommand` it uses can easily be unit tested.
 
 #### More refactorings
 
-Note that additional refactorings were made but are not displayed in this section since the document only requires five refactorings to be shown and explained. The addition refactorings however have been commented and is shown in the following commit: [refactor](https:github.com)
+Note that additional refactorings were made but are not displayed in this section since the document only requires five refactorings to be shown and explained. The additional refactorings however have been commented out and can be observed in the [refactor commit](https://github.com/itsJohnny21/CSE-464-2024-jsalaz59/commit/43a7eea9f14b04b3ca6f7160af2eefad284842ba).
 
 #### Template method
 
-The `graphSearchHelper` method was refactored to follow the Template Design Pattern. This new refactored method is called `graphSearchHelperTemplate` to differentiate itself. To achieve this, the following was performed:
+The `graphSearchHelper` method was refactored to follow the Template Design Pattern. This new refactored method is named `graphSearchHelperTemplate` to differentiate itself from `graphSearchHelper`. During the process of applying the Template Design Pattern, the following was performed:
 
 - The abstract class `GraphSearcher` was created. Its purpose is to provide a skeleton for the search algorithm.
 - The template method `search` for `GraphSearcher` was created and consists of the general steps for the search algorithm.
 - The abstract method `pollContainer` for `GraphSearcher` was created to allow the child classes to poll a list of nodes, ultimately deciding the search algorithm to be used (either BFS or DFS).
-- The concrete class `GraphSearcherBFS` was created and its `pollContainer` polls the first item from its list of nodes.
-- The concrete class `GraphSearcherDFS` was created and its `pollContainer` polls the last item from its list of nodes.
+- The concrete class `GraphSearcherBFS` was created and its `pollContainer` method polls the first item from its list of nodes.
+- The concrete class `GraphSearcherDFS` was created and its `pollContainer` method polls the last item from its list of nodes.
 
 The `GraphSearcher` class (and child classes) and the `graphSearchHelperTemplate` method are provided below:
 
@@ -579,7 +579,7 @@ private Path graphSearchHelperTemplate(Node srcNode, Node dstNode, Algorithm alg
 }
 ```
 
-This new refactored version of `graphSearchHelper` will execute general steps of the algorithm which include the `createVisitedSet`, `createPrevSet`, `createContainer`, `searchForPath`, and `clear` methods. The only method that is abstract is the `createContainer` method in which a `Queue` is created for BFS and a `Stack` is created for DFS.
+This new refactored version of `graphSearchHelper` will execute general steps of the algorithm which include the `createVisitedSet`, `createPrevSet`, `createContainer`, `pollContainer` ,`searchForPath`, and `clear` methods. The only method that is abstract is the `pollContainer` method in which a the item at the head of the list is polled for BFS and the item at the tail of the list is polled for DFS.
 
 By following this Template Method Design Pattern, the code becomes more reusable, easier to read, and more maintainable.
 
@@ -688,7 +688,7 @@ private Path graphSearchHelperRandom(Node srcNode, Node dstNode, Algorithm algor
 }
 ```
 
-Also, to show that the visit sequences may differ with `graphSearchRandom`, a list of its visit sequences (for both BFS and DFS) will be provided in this [file](./assets/example_output.txt). The graph used to output this file is:
+Also, to show that the visit sequences may differ with multiple identical `graphSearchRandom` calls, a list visit sequences (for both BFS and DFS) from there calls will be provided in this [file](./assets/example_output.txt). The graph used to output this file is:
 
 <div style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
     <img src="./assets/graphs/graphSearchRandom.svg" style="height: 250px; width: 250px;" />
