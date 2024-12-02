@@ -779,7 +779,7 @@ A `DOTElement` is an abstract class that serves the purpose of allowing its chil
 
 ### Setting an attribute
 
-To give a `DOTElement` an attribute, you can do so by calling the `setAttribute` method that takes in an attribute (String) and value (String) as its arguments. The attribute and value will then be stored in a HashMap for quick access. The following is an example of setting some attributes for a `Graph` (a specific type of `DOTElement`):
+To give a `DOTElement` an attribute, you can do so by calling the `setAttribute` method that takes in an attribute and value as its arguments. The attribute and value will then be stored in a HashMap for quick access. The following is an example of setting some attributes for a `Graph` (a specific type of `DOTElement`):
 
 ```java
 Graph g = new Graph();
@@ -791,7 +791,7 @@ g.setAttribute(Graph.Attribute.BGCOLOR, "red"); // Setting the "bgcolor" attribu
 
 ### Getting an attribute
 
-To get an attribute from a `DOTElement`, you can use the `getAttribute`, which takes in an attribute (String), and uses it to retrieve the attribute's value.
+To get an attribute from a `DOTElement`, you can use the `getAttribute`, which takes in an attribute, and uses it to retrieve the attribute's value.
 
 ```java
 Graph g = new Graph();
@@ -803,7 +803,7 @@ g.getAttribute(Graph.Attribute.BGCOLOR); // Retrieve attribute value is "red"
 
 ### Removing an attribute
 
-Removing an attribute from a `DOTElement` can be achieved using the `removeAttribute` method, which takes in the attribute (String).
+Removing an attribute from a `DOTElement` can be achieved using the `removeAttribute` method, which takes in a attribute parameter.
 
 ```java
 Graph g = new Graph();
@@ -1090,7 +1090,7 @@ To build a graph from scratch, you can choose from two constructors.
    Graph g1 = new Graph();
    ```
 
-2. Constructor with ID (String) parameter. You can manually provide your own ID for the graph.
+2. Constructor with ID parameter. You can manually provide your own ID for the graph.
 
    ```java
    Graph g2 = new Graph("Master");
@@ -1123,7 +1123,7 @@ Graph g = Graph.parseDOT(dotPath);
 
 ### Add a node
 
-The `Graph` object uses a nested class called `Node` to represent its nodes. There are no public constructors for this `Node` class, ensuring that it can only be created by a `Graph` via the `addNode` method. This method requires an [ID](#id-regex) (String) which will later be used by its `Graph` for quick access.
+The `Graph` object uses a nested class called `Node` to represent its nodes. There are no public constructors for this `Node` class, ensuring that it can only be created by a `Graph` via the `addNode` method. This method requires an [ID](#id-regex) which will later be used by its `Graph` for quick access.
 
 ```java
 Graph g = new Graph("Master");
@@ -1715,7 +1715,7 @@ Notice that the sections are displayed in the following order:
 
 ### Output graph
 
-A `Graph` can also be converted to a wide variety of formats using the `outputGraph` method which takes in a filepath (String) and a [Format](#format) enum value. If the filepath provided does not end in the extension of the `Format`, it will be automatically added. For example, if the filepath is "mygraph" and the format is `Format.DOT`, the new filepath will be "filepath.dot".
+A `Graph` can also be converted to a wide variety of formats using the `outputGraph` method which takes in a filepath and a [Format](#format) enum value. If the filepath provided does not end in the extension of the `Format`, it will be automatically added. For example, if the filepath is "mygraph" and the format is `Format.DOT`, the new filepath will be "filepath.dot".
 
 The list of output formats was acquired from the official [Graphviz Output Formats page](https://graphviz.org/docs/outputs/).
 
