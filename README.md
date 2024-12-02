@@ -67,7 +67,7 @@ _Thank you and have a great day. Cheers._
 
 #### Refactorings
 
-The code based was `refactored` to `improve readability` and `remove duplicate code`. The following are the sections of code that were refactored:
+The code base was `refactored` to `improve readability` and `remove duplicate code`. The following are the sections of code that were refactored:
 
 ##### parseDot (BEFORE)
 
@@ -119,9 +119,7 @@ public static Graph parseDOT(String filepath) {
     } catch (guru.nidi.graphviz.parse.ParserException | IOException e) {
         throw new ParseException(String.format("Error: Unable to parse graph: %s", e.getMessage()));
     }
-
-    #### Refactorings
-    }
+}
 ```
 
 ##### parseDot (AFTER)
@@ -159,9 +157,9 @@ For the `parseDot` refactoring, three methods were **extracted**:
 - `addNodesFromDOT`: converts MutableNode objects (from Guru Nidi) to `Node` objects and adds it to a `Graph`
 - `addEdgesFromDOT`: converts Link objects (from Guru Nidi) to `Edge` objects and adds it to a `Graph`
 
-#### Refactorings
+#### Why Apply These Refactorings
 
-These extractions improve readability and maintainability.
+These extractions improve readability and maintainability. The `parseDot` method is now much smaller and easier to understand.
 
 ##### removeNode (BEFORE)
 
@@ -231,9 +229,9 @@ For the `removeNode` refactoring, two methods were **extracted**:
 - `node.clearTo`: clears the list of nodes that a particular node is connected to
 - `node.clearFrom`: clears the list of nodes that a particular node is connected from
 
-#### Refactorings
+#### Why Apply These Refactorings
 
-These extractions improve readability and maintainability.
+These extractions improve readability and maintainability. It is now more clear what the `node.clearTo` and `node.clearFrom` methods are doing.
 
 ##### addEdge (BEFORE)
 
@@ -253,8 +251,6 @@ public Edge addEdge(String fromID, String toID) {
     toNode.from.put(fromNode.ID, fromNode);
     edges.put(edge.ID, edge);
     return edge;
-
-    #### Refactorings
 }
 ```
 
@@ -285,9 +281,11 @@ public Edge addEdge(String fromID, String toID) {
 
 ##### Type of refactoring for addEdge
 
-#### Refactorings
+For this refactoring, the `addOrGetNode` was reused from the previous refactoring.
 
-For the `addEdge` refactoring, the `addOrGetNode` method was **reused**, resulting in fewer lines of code and improved maintainability.
+#### Why Apply These Refactorings
+
+The `addOrGetNode` method was **reused**, resulting in fewer lines of code and improved maintainability.
 
 ##### addPath (BEFORE)
 
@@ -316,8 +314,6 @@ public Path addPath(String... nodeIDs) {
 
     Path path = new Path(nodes, edges);
     return path;
-
-    #### Refactorings
 }
 ```
 
@@ -355,9 +351,11 @@ public Path addPath(String... nodeIDs) {
 
 ##### Type of refactoring for addPath
 
-#### Refactorings
-
 For the `addPath` refactoring, the `nodes` and `edges` variables were renamed to `nodesArray` and `edgesArray`. This was done to avoid hiding the `nodes` and `edges` attributes of a `Graph` and thus improves the code's readability (by avoiding confusion) reliability.
+
+#### Why Apply These Refactorings
+
+It is now clear which variable is being referred to making the code easier to understand. Code should always be easy to understand to prevent adding bugs into the code base.
 
 ##### outputGraph (BEFORE)
 
@@ -404,8 +402,6 @@ public String outputGraph(String filepath, Format format, String... options)
     }
 
     return dotContent;
-
-    #### Refactorings
 }
 ```
 
@@ -444,7 +440,9 @@ For the `outputGraph` refactoring, the `isRawDot` variable was extracted and als
 - `writeToFile`: writes content to a file
 - `executeDotCommand`: executes a dot command
 
-These extractions improve readability and maintainability.
+#### Why Apply These Refactorings
+
+These extractions improve readability and maintainability. The `outputGraph` is now much shorted and the `writeToFile` and `executeDotCommand` it uses can easily be unit tested.
 
 #### More refactorings
 
