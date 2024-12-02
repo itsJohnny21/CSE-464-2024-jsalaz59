@@ -194,8 +194,6 @@ public void removeNode(String nodeID) {
 
     nodes.remove(node.ID);
     node.setGraph(null);
-
-    #### Refactorings
 }
 ```
 
